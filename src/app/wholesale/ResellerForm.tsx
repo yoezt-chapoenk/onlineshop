@@ -21,12 +21,53 @@ const VOLUMES = [
 
 export default function ResellerForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // Stub — real implementation calls /api/admin/reseller-applications
-    setSubmitted(true);
-    e.currentTarget.reset();
+    if (submitting) return;
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    const channels = data.getAll("selling_channel").map(String).filter(Boolean);
+    const notesRaw = String(data.get("notes") ?? "").trim();
+    const businessNameRaw = String(data.get("business_name") ?? "").trim();
+    const fullName = String(data.get("full_name") ?? "");
+    const composedNotes = [
+      channels.length > 0 ? `Channels: ${channels.join(", ")}` : "",
+      notesRaw,
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+    setError(null);
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/reseller-applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          businessName: businessNameRaw || fullName,
+          contactName: fullName,
+          email: String(data.get("email") ?? ""),
+          phone: String(data.get("phone") ?? ""),
+          city: String(data.get("city") ?? ""),
+          monthlyVolume: String(data.get("estimated_monthly_order") ?? ""),
+          notes: composedNotes || null,
+        }),
+      });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error ?? `Request failed (${res.status})`);
+      }
+      setSubmitted(true);
+      form.reset();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to submit application",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -132,8 +173,20 @@ export default function ResellerForm() {
         </div>
       </div>
 
-      <button type="submit" className="btn btn-primary w-full mt-6">
-        Submit application
+      {error && (
+        <p
+          role="alert"
+          className="mt-4 text-sm text-[color:var(--color-error)]"
+        >
+          {error}
+        </p>
+      )}
+      <button
+        type="submit"
+        disabled={submitting}
+        className="btn btn-primary w-full mt-6"
+      >
+        {submitting ? "Submitting\u2026" : "Submit application"}
       </button>
       <p className="mt-3 text-xs text-[color:var(--color-muted)] text-center">
         By submitting, you agree to be contacted regarding your application.

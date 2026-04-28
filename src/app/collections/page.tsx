@@ -3,8 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import GlassesArt from "@/components/products/GlassesArt";
-import { categories, products } from "@/lib/products";
-import type { Product } from "@/lib/types";
+import { getCategories, getProducts } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Collections",
@@ -12,11 +11,14 @@ export const metadata: Metadata = {
     "Browse Juragan Grosir eyewear collections — Eyeglasses, Sunglasses, Blue Light, and Accessories.",
 };
 
-function sample(category: string): Product | undefined {
-  return products.find((p) => p.category === category);
-}
+export default async function CollectionsPage() {
+  const [categories, products] = await Promise.all([
+    getCategories(),
+    getProducts(),
+  ]);
+  const sample = (slug: string) =>
+    products.find((p) => p.category === slug);
 
-export default function CollectionsPage() {
   return (
     <div>
       <PageHeader

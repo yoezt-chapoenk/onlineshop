@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight, Home, Star } from "lucide-react";
-import { getProductBySlug, getRelatedProducts, products } from "@/lib/products";
+import {
+  getAllProductSlugs,
+  getProductBySlug,
+  getRelatedProducts,
+} from "@/lib/data";
 import ProductDetailClient from "./ProductDetailClient";
 import GlassesArt from "@/components/products/GlassesArt";
 import ProductGrid from "@/components/products/ProductGrid";
@@ -13,14 +17,15 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
+  const slugs = await getAllProductSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) return { title: "Product not found" };
   return {
     title: product.name,
@@ -34,10 +39,10 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: PageProps) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const related = getRelatedProducts(product, 4);
+  const related = await getRelatedProducts(product, 4);
 
   return (
     <div>

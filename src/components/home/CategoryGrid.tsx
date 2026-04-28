@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { categories, products } from "@/lib/products";
 import GlassesArt from "@/components/products/GlassesArt";
-import type { Product } from "@/lib/types";
+import type { Category, Product } from "@/lib/types";
 
-function representativeProduct(slug: string): Product | undefined {
-  return products.find((p) => p.category === slug);
+interface Props {
+  categories: Category[];
+  products: Product[];
 }
 
-export default function CategoryGrid() {
+export default function CategoryGrid({ categories, products }: Props) {
   return (
     <section>
       <div className="flex items-end justify-between gap-4">
@@ -24,7 +24,7 @@ export default function CategoryGrid() {
       </div>
       <div className="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {categories.map((c) => {
-          const sample = representativeProduct(c.slug);
+          const sample = products.find((p) => p.category === c.slug);
           return (
             <Link
               key={c.slug}
@@ -42,9 +42,7 @@ export default function CategoryGrid() {
                 </div>
               </div>
               <div className="mt-auto self-end -mr-2 -mb-2 opacity-90">
-                {sample && (
-                  <GlassesArt product={sample} size={110} />
-                )}
+                {sample && <GlassesArt product={sample} size={110} />}
               </div>
             </Link>
           );

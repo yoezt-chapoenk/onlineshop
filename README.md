@@ -84,21 +84,58 @@ src/
 | §12          | Basic SEO — metadata, sitemap, robots, OG tags    | Done |
 | §5.x         | Brand visual direction & navy palette              | Done |
 
-## Backend integrations (next phases)
+## Supabase backend
 
-The PRD calls for Supabase, RajaOngkir/Komerce, and the admin dashboard. Those
-are scoped for **Phase 3 / 4** of the MVP. Hooks for them already exist in the
-storefront:
+Catalog data and order/lead writes are backed by **Supabase**. The storefront
+falls back to the seed array in `src/lib/products.ts` when env vars are not
+set, so local dev still works without database access.
 
-- The checkout page lays out customer/address/shipping/payment in the structure
-  required by `/api/checkout/create-order` and `/api/checkout/create-payment`.
-- The pricing calculator already supports `reseller` role + promo + tiered
-  rules, ready to be re-implemented server-side.
-- The cart state is shaped to round-trip with the `cart_items` table.
+### 1. Run the SQL schema
+
+1. Open your Supabase project → **SQL Editor** → **New query**.
+2. Paste the entire contents of [`supabase/schema.sql`](supabase/schema.sql)
+   and click **Run**. This creates all tables, RLS policies, and seeds the 12
+   products + 4 categories.
+3. The script is idempotent — safe to re-run after editing.
+
+### 2. Set environment variables
+
+Copy `.env.example` to `.env.local` for local development, and add the same
+three variables to **Vercel → Project Settings → Environment Variables** for
+the deployed site:
+
+| Variable                          | Where it's used | Notes |
+| --------------------------------- | --------------- | ----- |
+| `NEXT_PUBLIC_SUPABASE_URL`        | server + browser | safe to expose |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`   | server + browser | safe to expose |
+| `SUPABASE_SERVICE_ROLE_KEY`       | server only      | never exposed to the browser |
+
+### 3. Wired endpoints
+
+| Route                         | Action |
+| ----------------------------- | ------ |
+| `POST /api/orders`            | Validates + recomputes pricing server-side, upserts the customer, inserts `orders` + `order_items` |
+| `POST /api/reseller-applications` | Inserts a row into `reseller_applications` |
+| `POST /api/contact-messages`  | Inserts a row into `contact_messages` |
+
+Reads (`getProducts`, `getCategories`, `getProductBySlug`,
+`getProductsByCategory`, `getRelatedProducts`) live in `src/lib/data.ts` and
+prefer Supabase when configured; otherwise they fall back to the seed array.
+
+### Re-generating the seed block
+
+After editing `src/lib/products.ts`, regenerate the seed insert section of
+`supabase/schema.sql` with:
+
+```bash
+npx tsx scripts/generate-seed-sql.mjs
+```
+
+This rewrites `supabase/_seed.sql` (a transient file) — paste its contents
+into the bottom of `supabase/schema.sql`, replacing the previous seed block.
 
 ## Deployment
 
-This project is designed to deploy to **Vercel** with a Supabase backend, per
-the PRD §15. No environment variables are required for the storefront scaffold;
-once API integrations are added, the keys listed in PRD §11.1 should be set as
-project env vars.
+Deploy to **Vercel** with the three Supabase env vars above set. Future
+phases (RajaOngkir live shipping rates, Komerce payment redirects, admin
+dashboard) layer on top of the same `orders` / `order_items` tables.

@@ -7,9 +7,13 @@ import WholesaleCTA from "@/components/home/WholesaleCTA";
 import Testimonials from "@/components/home/Testimonials";
 import FAQPreview from "@/components/home/FAQPreview";
 import ProductGrid from "@/components/products/ProductGrid";
-import { products } from "@/lib/products";
+import { getCategories, getProducts } from "@/lib/data";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [products, categories] = await Promise.all([
+    getProducts(),
+    getCategories(),
+  ]);
   const featured = products.filter((p) => p.isFeatured).slice(0, 4);
   const newArrivals = products.filter((p) => p.isNewArrival).slice(0, 4);
   const bestSellers = products.filter((p) => p.isBestSeller).slice(0, 4);
@@ -43,7 +47,7 @@ export default function HomePage() {
 
       {/* Categories */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-14 sm:mt-16">
-        <CategoryGrid />
+        <CategoryGrid categories={categories} products={products} />
       </section>
 
       {/* Best sellers */}

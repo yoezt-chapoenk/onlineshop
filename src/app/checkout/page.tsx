@@ -39,14 +39,13 @@ export default function CheckoutPage() {
   const [shippingId, setShippingId] = useState<string>(SHIPPING_OPTIONS[0].id);
   const [paymentId, setPaymentId] = useState<string>(PAYMENT_METHODS[0].id);
   const [submitting, setSubmitting] = useState(false);
-  const submitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(
     () => () => {
-      if (submitTimerRef.current !== null) {
-        clearTimeout(submitTimerRef.current);
-        submitTimerRef.current = null;
-      }
+      abortRef.current?.abort();
+      abortRef.current = null;
     },
     [],
   );
@@ -84,32 +83,79 @@ export default function CheckoutPage() {
     );
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (submitTimerRef.current !== null) return;
+    if (submitting) return;
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    setError(null);
     setSubmitting(true);
-    // Stub: in production we'd POST to /api/checkout/create-order then
-    // /api/checkout/create-payment with the Komerce/RajaOngkir provider.
-    submitTimerRef.current = setTimeout(() => {
-      submitTimerRef.current = null;
-      const orderNumber = `JG-${Date.now().toString().slice(-7)}`;
+    const controller = new AbortController();
+    abortRef.current = controller;
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
+        body: JSON.stringify({
+          customer: {
+            fullName: String(data.get("full_name") ?? ""),
+            phone: String(data.get("phone") ?? ""),
+            email: String(data.get("email") ?? ""),
+          },
+          address: {
+            province: String(data.get("province") ?? ""),
+            city: String(data.get("city") ?? ""),
+            district: String(data.get("district") ?? ""),
+            postalCode: String(data.get("postal_code") ?? ""),
+            address: String(data.get("address") ?? ""),
+            notes: String(data.get("notes") ?? "") || null,
+          },
+          shippingId,
+          paymentMethod: paymentId,
+          items: items.map((it) => ({
+            productId: it.productId,
+            quantity: it.quantity,
+          })),
+        }),
+      });
+      const body = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        orderNumber?: string;
+        subtotal?: number;
+        shippingCost?: number;
+        total?: number;
+        itemCount?: number;
+        shippingLabel?: string;
+        paymentMethod?: string;
+      };
+      if (!res.ok || !body.orderNumber) {
+        throw new Error(body.error ?? `Request failed (${res.status})`);
+      }
       try {
         sessionStorage.setItem(
           "jg.lastOrder",
           JSON.stringify({
-            orderNumber,
-            subtotal: totals.subtotal,
-            shippingCost,
-            grandTotal,
-            shipping: `${shipping.courier} ${shipping.service}`,
-            payment: PAYMENT_METHODS.find((p) => p.id === paymentId)?.label,
-            itemCount: totals.itemCount,
+            orderNumber: body.orderNumber,
+            subtotal: body.subtotal ?? totals.subtotal,
+            shippingCost: body.shippingCost ?? shippingCost,
+            grandTotal: body.total ?? grandTotal,
+            shipping:
+              body.shippingLabel ?? `${shipping.courier} ${shipping.service}`,
+            payment:
+              PAYMENT_METHODS.find((p) => p.id === (body.paymentMethod ?? paymentId))
+                ?.label ?? paymentId,
+            itemCount: body.itemCount ?? totals.itemCount,
           }),
         );
       } catch {}
       clear();
-      router.push(`/checkout/success?order=${orderNumber}`);
-    }, 700);
+      router.push(`/checkout/success?order=${body.orderNumber}`);
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      setError(err instanceof Error ? err.message : "Failed to place order");
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -298,6 +344,14 @@ export default function CheckoutPage() {
               {formatRupiah(grandTotal)}
             </span>
           </div>
+          {error && (
+            <p
+              role="alert"
+              className="mt-5 text-sm text-[color:var(--color-error)]"
+            >
+              {error}
+            </p>
+          )}
           <button
             type="submit"
             disabled={submitting}

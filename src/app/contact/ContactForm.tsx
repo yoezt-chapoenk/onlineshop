@@ -5,11 +5,38 @@ import { CheckCircle2 } from "lucide-react";
 
 export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
-    e.currentTarget.reset();
+    if (submitting) return;
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    setError(null);
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/contact-messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: String(data.get("name") ?? ""),
+          email: String(data.get("email") ?? ""),
+          subject: String(data.get("subject") ?? ""),
+          message: String(data.get("message") ?? ""),
+        }),
+      });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error ?? `Request failed (${res.status})`);
+      }
+      setSubmitted(true);
+      form.reset();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send message");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -69,8 +96,20 @@ export default function ContactForm() {
           />
         </div>
       </div>
-      <button type="submit" className="btn btn-primary w-full mt-6">
-        Send message
+      {error && (
+        <p
+          role="alert"
+          className="mt-4 text-sm text-[color:var(--color-error)]"
+        >
+          {error}
+        </p>
+      )}
+      <button
+        type="submit"
+        disabled={submitting}
+        className="btn btn-primary w-full mt-6"
+      >
+        {submitting ? "Sending\u2026" : "Send message"}
       </button>
     </form>
   );
