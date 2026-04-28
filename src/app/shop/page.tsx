@@ -144,14 +144,14 @@ export default function ShopPage() {
       : []),
   ];
 
-  const filterPanel = (
+  const renderFilterPanel = (idPrefix: string) => (
     <div className="space-y-7">
       <div>
-        <label className="label" htmlFor="search">
+        <label className="label" htmlFor={`${idPrefix}-search`}>
           Search
         </label>
         <input
-          id="search"
+          id={`${idPrefix}-search`}
           className="input"
           placeholder="e.g. aviator, blue light"
           value={search}
@@ -272,7 +272,7 @@ export default function ShopPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8 lg:gap-10">
           {/* Desktop sidebar */}
           <aside className="hidden lg:block lg:sticky lg:top-24 self-start">
-            <div className="card p-5">{filterPanel}</div>
+            <div className="card p-5">{renderFilterPanel("desktop")}</div>
           </aside>
 
           <div>
@@ -374,7 +374,9 @@ export default function ShopPage() {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto px-5 py-5">{filterPanel}</div>
+            <div className="flex-1 overflow-y-auto px-5 py-5">
+              {renderFilterPanel("mobile")}
+            </div>
             <div className="px-5 py-4 border-t border-[color:var(--color-line)]">
               <button
                 type="button"

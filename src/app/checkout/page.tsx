@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import clsx from "clsx";
@@ -39,6 +39,17 @@ export default function CheckoutPage() {
   const [shippingId, setShippingId] = useState<string>(SHIPPING_OPTIONS[0].id);
   const [paymentId, setPaymentId] = useState<string>(PAYMENT_METHODS[0].id);
   const [submitting, setSubmitting] = useState(false);
+  const submitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (submitTimerRef.current !== null) {
+        clearTimeout(submitTimerRef.current);
+        submitTimerRef.current = null;
+      }
+    },
+    [],
+  );
 
   const shipping = SHIPPING_OPTIONS.find((s) => s.id === shippingId)!;
   const weightKg = Math.max(0.5, totals.weightGram / 1000);
@@ -75,10 +86,12 @@ export default function CheckoutPage() {
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submitTimerRef.current !== null) return;
     setSubmitting(true);
     // Stub: in production we'd POST to /api/checkout/create-order then
     // /api/checkout/create-payment with the Komerce/RajaOngkir provider.
-    window.setTimeout(() => {
+    submitTimerRef.current = setTimeout(() => {
+      submitTimerRef.current = null;
       const orderNumber = `JG-${Date.now().toString().slice(-7)}`;
       try {
         sessionStorage.setItem(
