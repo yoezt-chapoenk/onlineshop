@@ -68,7 +68,16 @@ export default function CategoriesClient({ initial }: { initial: Category[] }) {
       }
       const j = await res.json();
       setList((cur) => [...cur, j.category as Category]);
-      setDraft({ slug: "", name: "", description: "", sort_order: list.length + 2 });
+      // Use a functional updater so the next sort_order is derived
+      // from the just-submitted draft, not the stale `list` closure
+      // captured at render time. After adding category #5 the next
+      // draft now correctly defaults to sort_order 6 instead of 6.
+      setDraft((prev) => ({
+        slug: "",
+        name: "",
+        description: "",
+        sort_order: prev.sort_order + 1,
+      }));
       router.refresh();
     });
   }

@@ -5,7 +5,13 @@ export const dynamic = "force-dynamic";
 
 function csvEscape(value: unknown): string {
   if (value === null || value === undefined) return "";
-  const s = String(value);
+  let s = String(value);
+  // Defend against CSV formula injection (CWE-1236). When a customer
+  // submits a name like '=CMD(...)' or '+EXEC(...)', spreadsheet apps
+  // interpret the leading character as a formula on open. Prefix any
+  // value that begins with =, +, -, @, tab, or CR with a single quote
+  // so it's rendered as text instead of evaluated.
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
   if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
   return s;
 }
