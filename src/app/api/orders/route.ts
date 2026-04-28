@@ -55,6 +55,7 @@ interface ResolvedProduct
     | "resellerPrice"
     | "priceTiers"
     | "weightGram"
+    | "stock"
   > {
   rowId?: string;
 }
@@ -76,7 +77,7 @@ async function resolveProducts(
   // building a manual .or() filter string that would be vulnerable to
   // PostgREST filter injection.
   const PRODUCT_COLUMNS =
-    "id, slug, sku, name, retail_price, promotional_price, reseller_price, weight_gram, product_price_tiers(min_qty, max_qty, unit_price, label)";
+    "id, slug, sku, name, retail_price, promotional_price, reseller_price, weight_gram, stock, product_price_tiers(min_qty, max_qty, unit_price, label)";
   const uuids = productIds.filter((i) => /^[0-9a-f-]{36}$/i.test(i));
   const slugQuery = supabase
     .from("products")
@@ -112,6 +113,7 @@ async function resolveProducts(
     promotional_price: number | null;
     reseller_price: number | null;
     weight_gram: number;
+    stock: number;
     product_price_tiers: {
       min_qty: number;
       max_qty: number | null;
@@ -137,6 +139,7 @@ async function resolveProducts(
         }))
         .sort((a, b) => a.minQty - b.minQty),
       weightGram: row.weight_gram,
+      stock: row.stock,
       rowId: row.id,
     };
     if (productIds.includes(row.id)) map.set(row.id, resolved);
@@ -197,6 +200,29 @@ export async function POST(request: Request) {
       {
         error: "Some products were not found",
         missing: missing.map((m) => m.productId),
+      },
+      { status: 400 },
+    );
+  }
+
+  // Server-side stock validation. The /cart and /shop/[slug] pages
+  // already cap quantity at product.stock, but those limits run in the
+  // browser and can be trivially bypassed by hitting this endpoint
+  // directly. Reject any line whose quantity exceeds available stock
+  // before we reserve an order number or write rows.
+  const overstocked = items
+    .map((line) => ({ line, product: resolved.get(line.productId)! }))
+    .filter(({ line, product }) => line.quantity > product.stock);
+  if (overstocked.length > 0) {
+    return NextResponse.json(
+      {
+        error: "Some items exceed available stock",
+        items: overstocked.map(({ line, product }) => ({
+          productId: line.productId,
+          name: product.name,
+          requested: line.quantity,
+          available: product.stock,
+        })),
       },
       { status: 400 },
     );
