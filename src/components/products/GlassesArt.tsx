@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { Product } from "@/lib/types";
 
 interface Props {
@@ -51,6 +52,14 @@ export function GlassesArt({ product, className, size = 320 }: Props) {
 
   const frameStrokeRef = stroke;
 
+  // SVG fragment IDs are document-global, so generate a unique suffix per
+  // instance to avoid collisions when multiple GlassesArt SVGs render on
+  // the same page (e.g. the accessories grid mixing leather case + cleaning
+  // kit, which use different gradient stops).
+  const uid = useId().replace(/:/g, "");
+  const caseGradId = `case-grad-${uid}`;
+  const lensShineId = `lens-shine-${uid}`;
+
   if (category === "accessories") {
     return (
       <svg
@@ -62,7 +71,7 @@ export function GlassesArt({ product, className, size = 320 }: Props) {
         aria-hidden
       >
         <defs>
-          <linearGradient id="case-grad" x1="0" x2="0" y1="0" y2="1">
+          <linearGradient id={caseGradId} x1="0" x2="0" y1="0" y2="1">
             <stop offset="0%" stopColor={highlight} />
             <stop offset="100%" stopColor={stroke} />
           </linearGradient>
@@ -74,7 +83,7 @@ export function GlassesArt({ product, className, size = 320 }: Props) {
           width="208"
           height="110"
           rx="20"
-          fill="url(#case-grad)"
+          fill={`url(#${caseGradId})`}
           stroke={stroke}
           strokeWidth="2"
         />
@@ -170,7 +179,7 @@ export function GlassesArt({ product, className, size = 320 }: Props) {
       aria-hidden
     >
       <defs>
-        <linearGradient id="lens-shine" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={lensShineId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#ffffff" stopOpacity="0.45" />
           <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
         </linearGradient>
@@ -209,8 +218,8 @@ export function GlassesArt({ product, className, size = 320 }: Props) {
       {renderLens(270, 100)}
 
       {/* Subtle lens shine */}
-      <ellipse cx="78" cy="86" rx="14" ry="4" fill="url(#lens-shine)" opacity="0.7" />
-      <ellipse cx="258" cy="86" rx="14" ry="4" fill="url(#lens-shine)" opacity="0.7" />
+      <ellipse cx="78" cy="86" rx="14" ry="4" fill={`url(#${lensShineId})`} opacity="0.7" />
+      <ellipse cx="258" cy="86" rx="14" ry="4" fill={`url(#${lensShineId})`} opacity="0.7" />
 
       {/* Hinge dot */}
       <circle cx="44" cy="96" r="2.6" fill={highlight} />
