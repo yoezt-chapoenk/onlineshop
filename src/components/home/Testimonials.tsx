@@ -39,7 +39,7 @@ export default function Testimonials() {
             key={t.name}
             className="card p-6 flex flex-col gap-4"
           >
-            <div className="flex gap-1 text-[color:var(--color-warning)]">
+            <div className="flex gap-1 text-[color:var(--color-navy-900)]">
               {Array.from({ length: t.rating }).map((_, i) => (
                 <Star key={i} className="h-4 w-4 fill-current" />
               ))}

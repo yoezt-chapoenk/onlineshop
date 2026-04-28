@@ -49,14 +49,14 @@ export default function ProductCard({ product, className }: Props) {
           className={clsx(
             "h-4 w-4 transition-colors",
             favorited
-              ? "fill-[color:var(--color-error)] text-[color:var(--color-error)]"
-              : "text-[color:var(--color-ink)]",
+              ? "fill-[color:var(--color-navy-900)] text-[color:var(--color-navy-900)]"
+              : "text-[color:var(--color-navy-900)]",
           )}
         />
       </button>
 
       {showSale && (
-        <span className="absolute left-3 top-3 z-10 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-[color:var(--color-warning)] text-white">
+        <span className="absolute left-3 top-3 z-10 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-[color:var(--color-blue-500)] text-white">
           Sale
         </span>
       )}

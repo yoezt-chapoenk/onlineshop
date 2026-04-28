@@ -35,7 +35,7 @@ export const products: Product[] = [
     isNewArrival: false,
     rating: 4.8,
     reviewCount: 132,
-    colors: ["#0b1024", "#3a3f55"],
+    colors: ["#01083c", "#1a225a"],
     frameColor: "black",
     lensColor: "clear",
     specs: [
@@ -70,7 +70,7 @@ export const products: Product[] = [
     isNewArrival: true,
     rating: 4.7,
     reviewCount: 88,
-    colors: ["#c9a84a", "#6b5224"],
+    colors: ["#1a225a", "#2a3470"],
     frameColor: "gold",
     lensColor: "clear",
     specs: [
@@ -105,7 +105,7 @@ export const products: Product[] = [
     isNewArrival: false,
     rating: 4.9,
     reviewCount: 214,
-    colors: ["#1a1f1a", "#7a8d6b"],
+    colors: ["#01083c", "#2a6df0"],
     frameColor: "black",
     lensColor: "green",
     specs: [
@@ -141,7 +141,7 @@ export const products: Product[] = [
     isNewArrival: true,
     rating: 4.6,
     reviewCount: 95,
-    colors: ["#7a4a23", "#3b2412"],
+    colors: ["#060c3f", "#1a225a"],
     frameColor: "tortoise",
     lensColor: "clear",
     specs: [
@@ -177,7 +177,7 @@ export const products: Product[] = [
     isNewArrival: true,
     rating: 4.7,
     reviewCount: 168,
-    colors: ["#0b1024", "#1a225a"],
+    colors: ["#01083c", "#2a6df0"],
     frameColor: "navy",
     lensColor: "amber",
     specs: [
@@ -212,7 +212,7 @@ export const products: Product[] = [
     isNewArrival: true,
     rating: 4.6,
     reviewCount: 47,
-    colors: ["#c47b7b", "#7a3a3a"],
+    colors: ["#7cabff", "#1a225a"],
     frameColor: "rose",
     lensColor: "clear",
     specs: [
@@ -246,7 +246,7 @@ export const products: Product[] = [
     isNewArrival: false,
     rating: 4.5,
     reviewCount: 73,
-    colors: ["#3a4a26", "#1f2a14"],
+    colors: ["#2a3470", "#01083c"],
     frameColor: "olive",
     lensColor: "smoke",
     specs: [
@@ -281,7 +281,7 @@ export const products: Product[] = [
     isNewArrival: true,
     rating: 4.8,
     reviewCount: 36,
-    colors: ["#b3b8c2", "#5d6273"],
+    colors: ["#aab2cf", "#495489"],
     frameColor: "silver",
     lensColor: "mirror",
     specs: [
@@ -316,7 +316,7 @@ export const products: Product[] = [
     isNewArrival: false,
     rating: 4.7,
     reviewCount: 51,
-    colors: ["#1a225a", "#7681ad"],
+    colors: ["#1a225a", "#7cabff"],
     frameColor: "navy",
     lensColor: "amber",
     specs: [
@@ -351,7 +351,7 @@ export const products: Product[] = [
     isNewArrival: true,
     rating: 4.9,
     reviewCount: 41,
-    colors: ["#3a3f55", "#0b1024"],
+    colors: ["#1a225a", "#01083c"],
     frameColor: "silver",
     lensColor: "clear",
     specs: [
@@ -387,7 +387,7 @@ export const products: Product[] = [
     isNewArrival: false,
     rating: 4.8,
     reviewCount: 312,
-    colors: ["#0b1024", "#7a4a23"],
+    colors: ["#01083c", "#2a3470"],
     frameColor: "black",
     specs: [
       { label: "Material", value: "Vegan leather, hard shell" },

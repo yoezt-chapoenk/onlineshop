@@ -6,51 +6,37 @@ interface Props {
   size?: number;
 }
 
+// Strict navy + light-blue palette only — every former colour family
+// (gold / tortoise / rose / olive) maps to a navy or light-blue tone so
+// the storefront imagery stays on-brand.
 const FRAME_COLORS: Record<Product["frameColor"], string> = {
-  black: "#0b1024",
-  gold: "#c9a64a",
-  silver: "#9aa1ad",
-  tortoise: "#6e3a16",
-  navy: "#1a225a",
-  rose: "#c47b7b",
-  olive: "#4a5a2a",
+  black: "#01083c",
+  gold: "#1a225a",
+  silver: "#aab2cf",
+  tortoise: "#060c3f",
+  navy: "#01083c",
+  rose: "#7cabff",
+  olive: "#2a3470",
 };
 
 const FRAME_HIGHLIGHT: Record<Product["frameColor"], string> = {
-  black: "#2a2f44",
-  gold: "#e6c876",
-  silver: "#c4cad3",
-  tortoise: "#a86932",
-  navy: "#3a4276",
-  rose: "#dca0a0",
-  olive: "#728240",
+  black: "#1a225a",
+  gold: "#2a3470",
+  silver: "#d6dae9",
+  tortoise: "#1a225a",
+  navy: "#2a3470",
+  rose: "#a8c8ff",
+  olive: "#495489",
 };
 
 const LENS_COLORS: Record<NonNullable<Product["lensColor"]>, string> = {
-  clear: "#dde3ec",
-  smoke: "#2c3140",
-  green: "#4a5a3e",
-  amber: "#caa257",
-  blue: "#3a5a8c",
-  mirror: "#c4d2dc",
+  clear: "#d4e4ff",
+  smoke: "#0f164a",
+  green: "#1a225a",
+  amber: "#4f8eff",
+  blue: "#2a6df0",
+  mirror: "#a8c8ff",
 };
-
-function tortoisePattern() {
-  return (
-    <pattern
-      id="tortoise-pattern"
-      patternUnits="userSpaceOnUse"
-      width="14"
-      height="14"
-    >
-      <rect width="14" height="14" fill="#6e3a16" />
-      <circle cx="3" cy="4" r="2.4" fill="#3b1e08" opacity="0.85" />
-      <circle cx="9" cy="2" r="1.4" fill="#a86932" opacity="0.7" />
-      <circle cx="11" cy="9" r="2.6" fill="#3b1e08" opacity="0.7" />
-      <circle cx="5" cy="11" r="1.6" fill="#a86932" opacity="0.6" />
-    </pattern>
-  );
-}
 
 /**
  * Stylised SVG eyewear illustration used as product imagery.
@@ -63,8 +49,7 @@ export function GlassesArt({ product, className, size = 320 }: Props) {
   const highlight = FRAME_HIGHLIGHT[frameColor];
   const lens = LENS_COLORS[lensColor];
 
-  const useTortoise = frameColor === "tortoise";
-  const frameStrokeRef = useTortoise ? "url(#tortoise-pattern)" : stroke;
+  const frameStrokeRef = stroke;
 
   if (category === "accessories") {
     return (
@@ -185,7 +170,6 @@ export function GlassesArt({ product, className, size = 320 }: Props) {
       aria-hidden
     >
       <defs>
-        {useTortoise && tortoisePattern()}
         <linearGradient id="lens-shine" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#ffffff" stopOpacity="0.45" />
           <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />

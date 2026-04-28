@@ -4,7 +4,7 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
-  /* Brand */
+  /* Brand — navy primary */
   --color-navy-50: #eef0f7;
   --color-navy-100: #d6dae9;
   --color-navy-200: #aab2cf;
@@ -16,6 +16,16 @@
   --color-navy-800: #060c3f;
   --color-navy-900: #01083c;
 
+  /* Light blue accent — only secondary palette allowed */
+  --color-blue-50: #eaf2ff;
+  --color-blue-100: #d4e4ff;
+  --color-blue-200: #a8c8ff;
+  --color-blue-300: #7cabff;
+  --color-blue-400: #4f8eff;
+  --color-blue-500: #2a6df0;
+  --color-blue-600: #1d54c4;
+  --color-blue-700: #163f95;
+
   --color-cloud-50: #fafbfc;
   --color-cloud-100: #f3f5f7;
   --color-cloud-200: #e6eaef;
@@ -25,9 +35,10 @@
   --color-muted: #5b6478;
   --color-line: #e6e8ee;
 
-  --color-success: #16a34a;
-  --color-warning: #ea580c;
-  --color-error: #dc2626;
+  /* Status tokens remapped to the navy/blue palette only */
+  --color-success: var(--color-navy-700);
+  --color-warning: var(--color-navy-600);
+  --color-error: var(--color-navy-800);
 
   --radius-card: 0.75rem;
   --radius-button: 0.5rem;

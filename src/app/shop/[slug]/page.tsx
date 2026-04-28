@@ -102,7 +102,7 @@ export default async function ProductPage({ params }: PageProps) {
               {product.name}
             </h1>
             <div className="mt-2 flex items-center gap-2 text-sm">
-              <div className="flex items-center text-[color:var(--color-warning)]">
+              <div className="flex items-center text-[color:var(--color-navy-900)]">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
                     key={i}
