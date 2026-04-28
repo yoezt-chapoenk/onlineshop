@@ -1,5 +1,4 @@
 import type { CartItem, Product } from "./types";
-import { products } from "./products";
 
 export type AppliedPriceType = "retail" | "promo" | "wholesale" | "reseller";
 
@@ -87,13 +86,12 @@ export function calculateCartTotals(
   let weightGram = 0;
 
   const lineItems = items.map((item) => {
-    const product = products.find((p) => p.id === item.productId);
     const pricing = calculatePrice(
-      product ?? {
+      {
         retailPrice: item.retailPrice,
-        promotionalPrice: undefined,
-        resellerPrice: undefined,
-        priceTiers: [],
+        promotionalPrice: item.promotionalPrice,
+        resellerPrice: item.resellerPrice,
+        priceTiers: item.priceTiers ?? [],
       },
       item.quantity,
       isReseller,

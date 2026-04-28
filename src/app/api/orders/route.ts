@@ -131,7 +131,11 @@ async function resolveProducts(
 }
 
 function generateOrderNumber(): string {
-  return `JG-${Date.now().toString().slice(-7)}`;
+  // Base36 timestamp + 6 random chars. Avoids the ~2.78h collision window of
+  // a 7-digit decimal-millis suffix while staying short enough to print.
+  const ts = Date.now().toString(36).toUpperCase();
+  const rand = Math.random().toString(36).slice(2, 8).toUpperCase();
+  return `JG-${ts}-${rand}`;
 }
 
 export async function POST(request: Request) {

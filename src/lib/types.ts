@@ -54,6 +54,9 @@ export interface CartItem {
   sku: string;
   quantity: number;
   retailPrice: number;
+  promotionalPrice?: number;
+  resellerPrice?: number;
+  priceTiers: PriceTier[];
   weightGram: number;
   frameColor: Product["frameColor"];
   lensColor?: Product["lensColor"];
