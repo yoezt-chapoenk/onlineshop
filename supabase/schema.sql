@@ -93,6 +93,33 @@ create table if not exists public.product_price_tiers (
 );
 create index if not exists tiers_product_idx on public.product_price_tiers (product_id);
 
+-- Atomic tier replacement used by /api/admin/products PATCH so that
+-- a delete-then-insert pair never strands a product with no tiers
+-- when the insert fails (constraint violation, network error, etc).
+create or replace function public.replace_product_price_tiers(
+  p_product_id uuid,
+  p_tiers      jsonb
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  delete from public.product_price_tiers where product_id = p_product_id;
+  if p_tiers is not null and jsonb_typeof(p_tiers) = 'array' and jsonb_array_length(p_tiers) > 0 then
+    insert into public.product_price_tiers (product_id, min_qty, max_qty, unit_price, label)
+    select
+      p_product_id,
+      (t->>'min_qty')::int,
+      nullif(t->>'max_qty','')::int,
+      (t->>'unit_price')::int,
+      t->>'label'
+    from jsonb_array_elements(p_tiers) as t;
+  end if;
+end;
+$$;
+
 -- 4. Customer / order tables -------------------------------------------
 create table if not exists public.customers (
   id          uuid primary key default gen_random_uuid(),

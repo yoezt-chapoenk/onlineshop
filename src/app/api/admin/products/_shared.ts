@@ -46,7 +46,3 @@ export function productToRow(p: ProductInput) {
   void _tiers;
   return row;
 }
-
-export function tiersToRows(productId: string, tiers: ProductInput["price_tiers"]) {
-  return tiers.map((t) => ({ ...t, product_id: productId }));
-}

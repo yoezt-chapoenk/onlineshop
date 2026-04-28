@@ -26,13 +26,24 @@ export function proxy(request: NextRequest) {
 
   const header = request.headers.get("authorization") ?? "";
   if (header.startsWith("Basic ")) {
-    const decoded = atob(header.slice(6));
-    const idx = decoded.indexOf(":");
-    if (idx >= 0) {
-      const u = decoded.slice(0, idx);
-      const p = decoded.slice(idx + 1);
-      if (u === user && p === pass) {
-        return NextResponse.next();
+    // Wrap atob in try/catch: a malformed base64 payload throws a
+    // DOMException, which would otherwise turn the proxy into a 500
+    // for every /admin and /api/admin request and surface a stack
+    // trace to the client.
+    let decoded: string | null = null;
+    try {
+      decoded = atob(header.slice(6));
+    } catch {
+      decoded = null;
+    }
+    if (decoded !== null) {
+      const idx = decoded.indexOf(":");
+      if (idx >= 0) {
+        const u = decoded.slice(0, idx);
+        const p = decoded.slice(idx + 1);
+        if (u === user && p === pass) {
+          return NextResponse.next();
+        }
       }
     }
   }

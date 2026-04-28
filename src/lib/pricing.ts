@@ -36,9 +36,16 @@ export function calculatePrice(
     };
   }
 
-  // Find the highest-min-qty tier that applies (tiers are sorted ascending).
+  // Find the highest-min-qty tier that applies. A tier applies when the
+  // quantity falls within [minQty, maxQty]; maxQty=null means open-ended.
+  // This matters when admins configure non-contiguous tiers (e.g.
+  // 6-11 then 20+): without the maxQty check, a qty of 15 would
+  // incorrectly receive the 6-11 tier price.
   const applicableTier = [...product.priceTiers]
-    .filter((tier) => qty >= tier.minQty)
+    .filter(
+      (tier) =>
+        qty >= tier.minQty && (tier.maxQty === null || qty <= tier.maxQty),
+    )
     .sort((a, b) => b.minQty - a.minQty)[0];
 
   if (applicableTier) {
