@@ -70,22 +70,37 @@ async function resolveProducts(
     }
     return map;
   }
-  // Seed product ids (e.g. "p-classic-black") won't match Supabase uuids,
-  // so we always also look up by slug. Supabase .or() with an empty list
-  // is invalid, so build the filter conditionally.
+  // Seed product ids (e.g. "p-classic-black") won't match Supabase uuids, so
+  // we always also look up by slug. We issue two parameterized queries
+  // (.in() escapes values internally) and merge the results, instead of
+  // building a manual .or() filter string that would be vulnerable to
+  // PostgREST filter injection.
+  const PRODUCT_COLUMNS =
+    "id, slug, sku, name, retail_price, promotional_price, reseller_price, weight_gram, product_price_tiers(min_qty, max_qty, unit_price, label)";
   const uuids = productIds.filter((i) => /^[0-9a-f-]{36}$/i.test(i));
-  const slugFilter = `slug.in.(${productIds.map((i) => `"${i}"`).join(",")})`;
-  const filter =
-    uuids.length > 0 ? `id.in.(${uuids.join(",")}),${slugFilter}` : slugFilter;
-  let query = supabase
+  const slugQuery = supabase
     .from("products")
-    .select(
-      "id, slug, sku, name, retail_price, promotional_price, reseller_price, weight_gram, product_price_tiers(min_qty, max_qty, unit_price, label)",
-    );
-  query = uuids.length > 0 ? query.or(filter) : query.in("slug", productIds);
-  const { data, error } = await query;
-  if (error || !data) {
-    throw new Error(error?.message ?? "Failed to load products");
+    .select(PRODUCT_COLUMNS)
+    .in("slug", productIds);
+  const idQuery = uuids.length > 0
+    ? supabase.from("products").select(PRODUCT_COLUMNS).in("id", uuids)
+    : null;
+  const results = await Promise.all(
+    idQuery ? [slugQuery, idQuery] : [slugQuery],
+  );
+  const firstError = results.find((r) => r.error)?.error;
+  if (firstError) {
+    throw new Error(firstError.message);
+  }
+  const seen = new Set<string>();
+  const data: unknown[] = [];
+  for (const r of results) {
+    for (const row of r.data ?? []) {
+      const id = (row as { id: string }).id;
+      if (seen.has(id)) continue;
+      seen.add(id);
+      data.push(row);
+    }
   }
   const map = new Map<string, ResolvedProduct>();
   type Row = {
@@ -133,8 +148,15 @@ async function resolveProducts(
 function generateOrderNumber(): string {
   // Base36 timestamp + 6 random chars. Avoids the ~2.78h collision window of
   // a 7-digit decimal-millis suffix while staying short enough to print.
+  // `Math.random().toString(36).slice(2)` can be unexpectedly short for some
+  // values (e.g. 0.5 -> "0.i" -> "i"), so pad and take exactly 6 chars.
   const ts = Date.now().toString(36).toUpperCase();
-  const rand = Math.random().toString(36).slice(2, 8).toUpperCase();
+  const rand = Math.random()
+    .toString(36)
+    .slice(2)
+    .padEnd(6, "0")
+    .slice(0, 6)
+    .toUpperCase();
   return `JG-${ts}-${rand}`;
 }
 

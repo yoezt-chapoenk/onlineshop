@@ -17,11 +17,28 @@ create extension if not exists "pgcrypto";
 
 -- 2. Enums --------------------------------------------------------------
 do $$ begin
-  create type public.order_status as enum ('pending','paid','fulfilled','cancelled');
+  create type public.order_status as enum (
+    'pending','paid','processing','packed','shipped',
+    'fulfilled','cancelled','refunded'
+  );
 exception when duplicate_object then null; end $$;
+
+-- Append-safe value upserts for clusters that already had the older enum.
+do $$ begin alter type public.order_status add value if not exists 'processing'; exception when others then null; end $$;
+do $$ begin alter type public.order_status add value if not exists 'packed';     exception when others then null; end $$;
+do $$ begin alter type public.order_status add value if not exists 'shipped';    exception when others then null; end $$;
+do $$ begin alter type public.order_status add value if not exists 'refunded';   exception when others then null; end $$;
 
 do $$ begin
   create type public.payment_method as enum ('qris','va','transfer');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type public.user_role as enum ('customer','reseller','wholesale','admin');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type public.reseller_status as enum ('none','pending','approved','rejected');
 exception when duplicate_object then null; end $$;
 
 -- 3. Catalog tables -----------------------------------------------------
@@ -107,10 +124,19 @@ create table if not exists public.orders (
   item_count            int  not null,
   weight_gram           int  not null,
   status                public.order_status not null default 'pending',
+  tracking_courier      text,
+  tracking_number       text,
+  admin_note            text,
+  updated_at            timestamptz not null default now(),
   created_at            timestamptz not null default now()
 );
+alter table public.orders add column if not exists tracking_courier text;
+alter table public.orders add column if not exists tracking_number  text;
+alter table public.orders add column if not exists admin_note       text;
+alter table public.orders add column if not exists updated_at       timestamptz not null default now();
 create index if not exists orders_email_idx on public.orders (customer_email);
 create index if not exists orders_status_idx on public.orders (status);
+create index if not exists orders_created_idx on public.orders (created_at desc);
 
 create table if not exists public.order_items (
   id            bigserial primary key,
@@ -137,8 +163,12 @@ create table if not exists public.reseller_applications (
   monthly_volume  text not null,
   notes           text,
   status          text not null default 'new',
+  admin_note      text,
+  reviewed_at     timestamptz,
   created_at      timestamptz not null default now()
 );
+alter table public.reseller_applications add column if not exists admin_note  text;
+alter table public.reseller_applications add column if not exists reviewed_at timestamptz;
 
 create table if not exists public.contact_messages (
   id          uuid primary key default gen_random_uuid(),
@@ -147,8 +177,45 @@ create table if not exists public.contact_messages (
   subject     text not null,
   message     text not null,
   status      text not null default 'new',
+  admin_note  text,
   created_at  timestamptz not null default now()
 );
+alter table public.contact_messages add column if not exists admin_note text;
+
+-- 5b. Auth + settings tables (admin dashboard) -------------------------
+create table if not exists public.users (
+  id               uuid primary key default gen_random_uuid(),
+  email            text unique not null,
+  phone            text,
+  full_name        text not null,
+  role             public.user_role not null default 'customer',
+  reseller_status  public.reseller_status not null default 'none',
+  created_at       timestamptz not null default now(),
+  updated_at       timestamptz not null default now()
+);
+create index if not exists users_role_idx on public.users (role);
+create index if not exists users_reseller_status_idx on public.users (reseller_status);
+
+create table if not exists public.site_settings (
+  id                          int primary key default 1,
+  store_name                  text not null default 'Juragan Grosir',
+  store_logo_url              text,
+  contact_email               text,
+  whatsapp_number             text,
+  store_address               text,
+  rajaongkir_api_key          text,
+  rajaongkir_payment_settings text,
+  default_origin_id           text,
+  default_origin_pinpoint     text,
+  pixel_meta_id               text,
+  pixel_tiktok_id             text,
+  pixel_google_id             text,
+  seo_default_title           text,
+  seo_default_description     text,
+  updated_at                  timestamptz not null default now(),
+  constraint site_settings_singleton check (id = 1)
+);
+insert into public.site_settings (id) values (1) on conflict (id) do nothing;
 
 -- 6. Row Level Security -------------------------------------------------
 alter table public.categories             enable row level security;
@@ -159,6 +226,8 @@ alter table public.orders                 enable row level security;
 alter table public.order_items            enable row level security;
 alter table public.reseller_applications  enable row level security;
 alter table public.contact_messages       enable row level security;
+alter table public.users                   enable row level security;
+alter table public.site_settings           enable row level security;
 
 -- Public catalog: anon may SELECT.
 drop policy if exists "Public read categories"   on public.categories;

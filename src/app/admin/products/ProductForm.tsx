@@ -1,0 +1,348 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+
+export interface ProductFormValues {
+  id?: string;
+  slug: string;
+  sku: string;
+  name: string;
+  short_description: string;
+  description: string;
+  category_slug: string;
+  category_label: string;
+  gender: string;
+  style: string;
+  frame: string;
+  retail_price: number;
+  promotional_price: number | null;
+  reseller_price: number | null;
+  min_wholesale_qty: number;
+  stock: number;
+  weight_gram: number;
+  is_featured: boolean;
+  is_best_seller: boolean;
+  is_new_arrival: boolean;
+  rating: number;
+  review_count: number;
+  colors: string[];
+  frame_color: string;
+  lens_color: string | null;
+  specs: { label: string; value: string }[];
+  price_tiers: { min_qty: number; max_qty: number | null; unit_price: number; label: string }[];
+}
+
+interface Category {
+  slug: string;
+  name: string;
+}
+
+interface Props {
+  initial: ProductFormValues;
+  categories: Category[];
+  mode: "create" | "edit";
+}
+
+const GENDERS = ["men", "women", "unisex", "kids"];
+const STYLES = ["fashion", "casual", "sport", "vintage", "premium"];
+const FRAMES = ["classic", "round", "aviator", "rectangle", "cateye", "browline"];
+const FRAME_COLORS = ["black", "gold", "silver", "tortoise", "navy", "rose", "olive"];
+const LENS_COLORS = ["clear", "smoke", "green", "amber", "blue", "mirror"];
+
+export default function ProductForm({ initial, categories, mode }: Props) {
+  const router = useRouter();
+  const [v, setV] = useState<ProductFormValues>(initial);
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  function update<K extends keyof ProductFormValues>(key: K, value: ProductFormValues[K]) {
+    setV((c) => ({ ...c, [key]: value }));
+  }
+
+  function setCategory(slug: string) {
+    const cat = categories.find((c) => c.slug === slug);
+    setV((c) => ({
+      ...c,
+      category_slug: slug,
+      category_label: cat?.name ?? c.category_label,
+    }));
+  }
+
+  function addTier() {
+    update("price_tiers", [
+      ...v.price_tiers,
+      { min_qty: 1, max_qty: null, unit_price: v.retail_price, label: "Wholesale" },
+    ]);
+  }
+
+  function addSpec() {
+    update("specs", [...v.specs, { label: "", value: "" }]);
+  }
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    startTransition(async () => {
+      const url = mode === "create" ? "/api/admin/products" : `/api/admin/products/${v.id}`;
+      const method = mode === "create" ? "POST" : "PATCH";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(v),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => null);
+        setError(j?.error ?? `Failed (${res.status})`);
+        return;
+      }
+      router.push("/admin/products");
+      router.refresh();
+    });
+  }
+
+  async function remove() {
+    if (!v.id) return;
+    if (!confirm("Delete this product? This cannot be undone.")) return;
+    startTransition(async () => {
+      const res = await fetch(`/api/admin/products/${v.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const j = await res.json().catch(() => null);
+        setError(j?.error ?? `Failed (${res.status})`);
+        return;
+      }
+      router.push("/admin/products");
+      router.refresh();
+    });
+  }
+
+  return (
+    <form onSubmit={submit} className="space-y-6">
+      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <label className="block">
+          <span className="label">Name</span>
+          <input className="input mt-1" required value={v.name} onChange={(e) => update("name", e.target.value)} />
+        </label>
+        <label className="block">
+          <span className="label">SKU</span>
+          <input className="input mt-1" required value={v.sku} onChange={(e) => update("sku", e.target.value)} />
+        </label>
+        <label className="block">
+          <span className="label">Slug</span>
+          <input className="input mt-1" required value={v.slug} onChange={(e) => update("slug", e.target.value)} />
+        </label>
+        <label className="block">
+          <span className="label">Category</span>
+          <select className="input mt-1" required value={v.category_slug} onChange={(e) => setCategory(e.target.value)}>
+            <option value="" disabled>Select…</option>
+            {categories.map((c) => (
+              <option key={c.slug} value={c.slug}>{c.name}</option>
+            ))}
+          </select>
+        </label>
+        <label className="block md:col-span-2">
+          <span className="label">Short description</span>
+          <textarea className="input mt-1" rows={2} required value={v.short_description} onChange={(e) => update("short_description", e.target.value)} />
+        </label>
+        <label className="block md:col-span-2">
+          <span className="label">Full description</span>
+          <textarea className="input mt-1" rows={5} required value={v.description} onChange={(e) => update("description", e.target.value)} />
+        </label>
+      </section>
+
+      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <label className="block">
+          <span className="label">Retail price (Rp)</span>
+          <input type="number" min={0} className="input mt-1" required value={v.retail_price} onChange={(e) => update("retail_price", Number(e.target.value))} />
+        </label>
+        <label className="block">
+          <span className="label">Promo price</span>
+          <input type="number" min={0} className="input mt-1" value={v.promotional_price ?? ""} onChange={(e) => update("promotional_price", e.target.value === "" ? null : Number(e.target.value))} />
+        </label>
+        <label className="block">
+          <span className="label">Reseller price</span>
+          <input type="number" min={0} className="input mt-1" value={v.reseller_price ?? ""} onChange={(e) => update("reseller_price", e.target.value === "" ? null : Number(e.target.value))} />
+        </label>
+        <label className="block">
+          <span className="label">Min wholesale qty</span>
+          <input type="number" min={0} className="input mt-1" value={v.min_wholesale_qty} onChange={(e) => update("min_wholesale_qty", Number(e.target.value))} />
+        </label>
+        <label className="block">
+          <span className="label">Stock</span>
+          <input type="number" min={0} className="input mt-1" required value={v.stock} onChange={(e) => update("stock", Number(e.target.value))} />
+        </label>
+        <label className="block">
+          <span className="label">Weight (g)</span>
+          <input type="number" min={0} className="input mt-1" required value={v.weight_gram} onChange={(e) => update("weight_gram", Number(e.target.value))} />
+        </label>
+        <label className="block">
+          <span className="label">Rating</span>
+          <input type="number" step="0.01" min={0} max={5} className="input mt-1" value={v.rating} onChange={(e) => update("rating", Number(e.target.value))} />
+        </label>
+        <label className="block">
+          <span className="label">Review count</span>
+          <input type="number" min={0} className="input mt-1" value={v.review_count} onChange={(e) => update("review_count", Number(e.target.value))} />
+        </label>
+      </section>
+
+      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 grid grid-cols-2 md:grid-cols-3 gap-4">
+        <label className="block">
+          <span className="label">Gender</span>
+          <select className="input mt-1" value={v.gender} onChange={(e) => update("gender", e.target.value)}>
+            {GENDERS.map((g) => <option key={g}>{g}</option>)}
+          </select>
+        </label>
+        <label className="block">
+          <span className="label">Style</span>
+          <select className="input mt-1" value={v.style} onChange={(e) => update("style", e.target.value)}>
+            {STYLES.map((s) => <option key={s}>{s}</option>)}
+          </select>
+        </label>
+        <label className="block">
+          <span className="label">Frame</span>
+          <select className="input mt-1" value={v.frame} onChange={(e) => update("frame", e.target.value)}>
+            {FRAMES.map((f) => <option key={f}>{f}</option>)}
+          </select>
+        </label>
+        <label className="block">
+          <span className="label">Frame color</span>
+          <select className="input mt-1" value={v.frame_color} onChange={(e) => update("frame_color", e.target.value)}>
+            {FRAME_COLORS.map((c) => <option key={c}>{c}</option>)}
+          </select>
+        </label>
+        <label className="block">
+          <span className="label">Lens color</span>
+          <select className="input mt-1" value={v.lens_color ?? ""} onChange={(e) => update("lens_color", e.target.value || null)}>
+            <option value="">— none —</option>
+            {LENS_COLORS.map((c) => <option key={c}>{c}</option>)}
+          </select>
+        </label>
+        <label className="block md:col-span-3">
+          <span className="label">Color swatches (comma-separated hex)</span>
+          <input className="input mt-1" value={v.colors.join(", ")} onChange={(e) => update("colors", e.target.value.split(",").map((s) => s.trim()).filter(Boolean))} placeholder="#01083C, #4f8eff" />
+        </label>
+      </section>
+
+      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 flex flex-wrap gap-4 text-sm">
+        <label className="inline-flex items-center gap-2">
+          <input type="checkbox" checked={v.is_featured} onChange={(e) => update("is_featured", e.target.checked)} /> Featured
+        </label>
+        <label className="inline-flex items-center gap-2">
+          <input type="checkbox" checked={v.is_best_seller} onChange={(e) => update("is_best_seller", e.target.checked)} /> Best seller
+        </label>
+        <label className="inline-flex items-center gap-2">
+          <input type="checkbox" checked={v.is_new_arrival} onChange={(e) => update("is_new_arrival", e.target.checked)} /> New arrival
+        </label>
+      </section>
+
+      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold uppercase tracking-[0.18em]">Wholesale price tiers</h2>
+          <button type="button" className="btn btn-outline text-xs" onClick={addTier}>+ Add tier</button>
+        </div>
+        {v.price_tiers.length === 0 ? (
+          <p className="text-sm text-[color:var(--color-navy-400)]">No tiers configured.</p>
+        ) : (
+          <div className="space-y-2">
+            {v.price_tiers.map((t, i) => (
+              <div key={i} className="grid grid-cols-12 gap-2 items-end text-sm">
+                <label className="col-span-2 block">
+                  <span className="label">Min qty</span>
+                  <input type="number" min={1} className="input mt-1" value={t.min_qty} onChange={(e) => {
+                    const tiers = [...v.price_tiers];
+                    tiers[i] = { ...tiers[i], min_qty: Number(e.target.value) };
+                    update("price_tiers", tiers);
+                  }} />
+                </label>
+                <label className="col-span-2 block">
+                  <span className="label">Max qty</span>
+                  <input type="number" min={1} className="input mt-1" placeholder="∞" value={t.max_qty ?? ""} onChange={(e) => {
+                    const tiers = [...v.price_tiers];
+                    tiers[i] = { ...tiers[i], max_qty: e.target.value === "" ? null : Number(e.target.value) };
+                    update("price_tiers", tiers);
+                  }} />
+                </label>
+                <label className="col-span-3 block">
+                  <span className="label">Unit price</span>
+                  <input type="number" min={0} className="input mt-1" value={t.unit_price} onChange={(e) => {
+                    const tiers = [...v.price_tiers];
+                    tiers[i] = { ...tiers[i], unit_price: Number(e.target.value) };
+                    update("price_tiers", tiers);
+                  }} />
+                </label>
+                <label className="col-span-4 block">
+                  <span className="label">Label</span>
+                  <input className="input mt-1" value={t.label} onChange={(e) => {
+                    const tiers = [...v.price_tiers];
+                    tiers[i] = { ...tiers[i], label: e.target.value };
+                    update("price_tiers", tiers);
+                  }} />
+                </label>
+                <button
+                  type="button"
+                  className="col-span-1 text-xs text-[color:var(--color-error)] hover:underline pb-2.5"
+                  onClick={() => update("price_tiers", v.price_tiers.filter((_, j) => j !== i))}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold uppercase tracking-[0.18em]">Specs</h2>
+          <button type="button" className="btn btn-outline text-xs" onClick={addSpec}>+ Add spec</button>
+        </div>
+        {v.specs.length === 0 ? (
+          <p className="text-sm text-[color:var(--color-navy-400)]">No specs.</p>
+        ) : (
+          <div className="space-y-2">
+            {v.specs.map((s, i) => (
+              <div key={i} className="grid grid-cols-12 gap-2 items-end text-sm">
+                <label className="col-span-4 block">
+                  <span className="label">Label</span>
+                  <input className="input mt-1" value={s.label} onChange={(e) => {
+                    const specs = [...v.specs];
+                    specs[i] = { ...specs[i], label: e.target.value };
+                    update("specs", specs);
+                  }} />
+                </label>
+                <label className="col-span-7 block">
+                  <span className="label">Value</span>
+                  <input className="input mt-1" value={s.value} onChange={(e) => {
+                    const specs = [...v.specs];
+                    specs[i] = { ...specs[i], value: e.target.value };
+                    update("specs", specs);
+                  }} />
+                </label>
+                <button
+                  type="button"
+                  className="col-span-1 text-xs text-[color:var(--color-error)] hover:underline pb-2.5"
+                  onClick={() => update("specs", v.specs.filter((_, j) => j !== i))}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {error ? <p className="text-sm text-[color:var(--color-error)]">{error}</p> : null}
+
+      <div className="flex flex-wrap gap-2 sticky bottom-0 bg-[color:var(--color-cloud-100)] py-3 border-t border-[color:var(--color-cloud-200)] -mx-5 sm:-mx-8 px-5 sm:px-8">
+        <button type="submit" className="btn btn-primary" disabled={pending}>
+          {pending ? "Saving…" : mode === "create" ? "Create product" : "Save changes"}
+        </button>
+        {mode === "edit" && (
+          <button type="button" className="btn btn-ghost text-[color:var(--color-error)]" onClick={remove} disabled={pending}>
+            Delete
+          </button>
+        )}
+      </div>
+    </form>
+  );
+}
