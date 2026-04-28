@@ -201,6 +201,7 @@ export default function CheckoutPage() {
                         name="shipping"
                         value={opt.id}
                         checked={selected}
+                        disabled={submitting}
                         onChange={() => setShippingId(opt.id)}
                         className="h-4 w-4 accent-[color:var(--color-navy-900)]"
                       />
@@ -245,6 +246,7 @@ export default function CheckoutPage() {
                         name="payment"
                         value={m.id}
                         checked={selected}
+                        disabled={submitting}
                         onChange={() => setPaymentId(m.id)}
                         className="h-4 w-4 mt-0.5 accent-[color:var(--color-navy-900)]"
                       />
