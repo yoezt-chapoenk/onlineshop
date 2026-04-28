@@ -83,35 +83,33 @@ export default function ProductCard({ product, className }: Props) {
           </p>
         </Link>
 
-        <div className="flex items-end justify-between gap-2">
-          <div className="min-w-0">
-            {showSale ? (
-              <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="text-base sm:text-[17px] font-bold text-[color:var(--color-navy-900)]">
-                  {formatRupiah(product.promotionalPrice ?? 0)}
-                </span>
-                <span className="text-xs text-[color:var(--color-muted)] line-through">
-                  {formatRupiah(product.retailPrice)}
-                </span>
-              </div>
-            ) : (
-              <div className="text-base sm:text-[17px] font-bold text-[color:var(--color-navy-900)]">
+        <div>
+          {showSale ? (
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <span className="text-base sm:text-[17px] font-bold text-[color:var(--color-navy-900)]">
+                {formatRupiah(product.promotionalPrice ?? 0)}
+              </span>
+              <span className="text-xs text-[color:var(--color-muted)] line-through">
                 {formatRupiah(product.retailPrice)}
-              </div>
-            )}
-          </div>
-
-          <button
-            type="button"
-            onClick={handleAdd}
-            disabled={product.stock === 0}
-            className="btn btn-primary !py-2 !px-3 text-xs whitespace-nowrap"
-            aria-label={`Add ${product.name} to cart`}
-          >
-            <ShoppingCart className="h-3.5 w-3.5" />
-            <span>{added ? "Added" : "Add to Cart"}</span>
-          </button>
+              </span>
+            </div>
+          ) : (
+            <div className="text-base sm:text-[17px] font-bold text-[color:var(--color-navy-900)]">
+              {formatRupiah(product.retailPrice)}
+            </div>
+          )}
         </div>
+
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={product.stock === 0}
+          className="btn btn-primary w-full !py-2 text-xs"
+          aria-label={`Add ${product.name} to cart`}
+        >
+          <ShoppingCart className="h-3.5 w-3.5" />
+          <span>{added ? "Added to cart" : "Add to Cart"}</span>
+        </button>
 
         {product.minWholesaleQty > 0 && (
           <div className="text-[11px] text-[color:var(--color-muted)]">
