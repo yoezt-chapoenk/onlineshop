@@ -72,6 +72,14 @@ interface AreasResponse {
 export async function searchAreas(query: string): Promise<BiteshipArea[]> {
   if (!query || query.length < 3) return [];
 
+  let apiKey: string;
+  try {
+    apiKey = getApiKey();
+  } catch {
+    console.warn("[biteship] BITESHIP_API_KEY not configured, skipping area search");
+    return [];
+  }
+
   const url = new URL(`${BITESHIP_BASE}/maps/areas`);
   url.searchParams.set("countries", "ID");
   url.searchParams.set("input", query);
@@ -80,10 +88,10 @@ export async function searchAreas(query: string): Promise<BiteshipArea[]> {
   const res = await fetch(url.toString(), {
     method: "GET",
     headers: {
-      Authorization: getApiKey(),
+      Authorization: apiKey,
       "Content-Type": "application/json",
     },
-    next: { revalidate: 3600 }, // cache area lookups for 1 hour
+    cache: "no-store",
   });
 
   if (!res.ok) {
