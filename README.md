@@ -112,6 +112,11 @@ the deployed site:
 | `NEXT_PUBLIC_SITE_URL`            | server only      | **Required in production.** Canonical origin (no trailing slash) used to build Supabase auth email-confirmation and password-reset links. If unset in production the register / forgot-password actions return an error instead of falling back to attacker-controllable `Host` headers. |
 | `ADMIN_BASIC_AUTH_USER`           | server only      | HTTP Basic-Auth username for `/admin/*`. If unset, `/admin` returns 503. |
 | `ADMIN_BASIC_AUTH_PASSWORD`       | server only      | HTTP Basic-Auth password for `/admin/*`. |
+| `R2_ACCOUNT_ID`                   | server only      | Cloudflare account id (R2 dashboard, top-right). Used to build the S3 endpoint `https://<id>.r2.cloudflarestorage.com`. |
+| `R2_ACCESS_KEY_ID`                | server only      | Cloudflare R2 API token Access Key ID (Object Read & Write, scoped to the products bucket). |
+| `R2_SECRET_ACCESS_KEY`            | server only      | R2 API token Secret. Pair with `R2_ACCESS_KEY_ID`. |
+| `R2_BUCKET`                       | server only      | R2 bucket name (e.g. `juragan-grosir-products`). |
+| `R2_PUBLIC_URL`                   | server only      | Public URL prefix for the bucket (custom domain like `https://images.juragangrosir.com`, or the auto-generated `https://pub-<hash>.r2.dev`). No trailing slash. Final image URL is `${R2_PUBLIC_URL}/<key>`. |
 
 ### 3. Wired endpoints
 

@@ -86,12 +86,10 @@ alter table public.products
 create index if not exists products_category_idx on public.products (category_slug);
 create index if not exists products_featured_idx on public.products (is_featured);
 
--- Storage bucket for product images. Public read so storefront <img>
--- tags work; writes are gated by the service-role key (admin API
--- uploads only). Bucket creation is idempotent.
-insert into storage.buckets (id, name, public)
-values ('product-images', 'product-images', true)
-on conflict (id) do update set public = true;
+-- Note: product images live in Cloudflare R2, not Supabase Storage.
+-- The `image_urls` column above stores the absolute public URLs
+-- returned by the R2 upload endpoint (`/api/admin/products/upload-image`).
+-- See README for the five required R2_* env vars.
 
 create table if not exists public.product_price_tiers (
   id          bigserial primary key,
