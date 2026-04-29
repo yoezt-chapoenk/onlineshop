@@ -112,9 +112,12 @@ export const ENABLED_COURIERS = "jne,jnt,sentralcargo";
 
 interface RatesResponse {
   success: boolean;
-  object: string;
-  message: string;
-  pricing: BiteshipCourierRate[];
+  object?: string;
+  message?: string;
+  pricing?: BiteshipCourierRate[];
+  data?: {
+    pricing: BiteshipCourierRate[];
+  };
 }
 
 export interface GetRatesParams {
@@ -167,5 +170,5 @@ export async function getCourierRates(
   }
 
   const json = (await res.json()) as RatesResponse;
-  return json.pricing ?? [];
+  return json.data?.pricing ?? json.pricing ?? [];
 }
