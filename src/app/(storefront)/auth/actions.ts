@@ -26,11 +26,16 @@ const ForgotSchema = z.object({
 export type AuthState = { error?: string; success?: string } | undefined;
 
 async function siteOrigin(): Promise<string> {
+  // Prefer the server-configured origin so attacker-controlled
+  // `x-forwarded-host` / `host` headers can't redirect auth emails.
+  const envUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (envUrl) return envUrl.replace(/\/$/, "");
+  // Fallback for local dev where the env var isn't set.
   const h = await headers();
   const proto = h.get("x-forwarded-proto") ?? "https";
   const host = h.get("x-forwarded-host") ?? h.get("host");
   if (host) return `${proto}://${host}`;
-  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  return "http://localhost:3000";
 }
 
 export async function loginAction(_prev: AuthState, formData: FormData): Promise<AuthState> {
