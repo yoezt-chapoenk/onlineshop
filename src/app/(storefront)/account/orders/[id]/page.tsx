@@ -12,7 +12,7 @@ const STATUS_LABEL: Record<string, string> = {
   processing: t.orderStatus.processing,
   packed: t.orderStatus.packed,
   shipped: t.orderStatus.shipped,
-  delivered: t.orderStatus.delivered,
+  fulfilled: t.orderStatus.delivered,
   cancelled: t.orderStatus.cancelled,
   refunded: t.orderStatus.refunded,
 };

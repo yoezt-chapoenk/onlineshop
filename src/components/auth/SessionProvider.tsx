@@ -52,8 +52,11 @@ export function SessionProvider({
     };
   }, []);
 
+  // Mirror the server-side gate in /api/orders so cart/checkout never show
+  // a price the order handler will refuse to honor.
   const isReseller =
-    user?.role === "reseller" || user?.role === "wholesale";
+    (user?.role === "reseller" || user?.role === "wholesale") &&
+    user?.resellerStatus === "approved";
 
   return (
     <SessionContext.Provider value={{ user, isLoading, isReseller }}>

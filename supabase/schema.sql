@@ -264,6 +264,16 @@ create policy "Public read categories"  on public.categories            for sele
 create policy "Public read products"    on public.products              for select using (true);
 create policy "Public read price tiers" on public.product_price_tiers   for select using (true);
 
+-- Authenticated users can read their own profile row. Without this,
+-- RLS on public.users silently returns empty, so getCurrentUser() never
+-- finds a profile and reseller pricing can never be granted.
+drop policy if exists "Users can read own row"   on public.users;
+drop policy if exists "Users can update own row" on public.users;
+create policy "Users can read own row"
+  on public.users for select using (auth.uid() = id);
+create policy "Users can update own row"
+  on public.users for update using (auth.uid() = id) with check (auth.uid() = id);
+
 -- Customers / orders / items / form submissions: NO public access.
 -- The Next.js API routes use the service-role key, which bypasses RLS,
 -- so no permissive policy is needed for inserts.
