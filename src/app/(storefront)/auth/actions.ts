@@ -25,14 +25,20 @@ const ForgotSchema = z.object({
 
 export type AuthState = { error?: string; success?: string } | undefined;
 
-async function siteOrigin(): Promise<string> {
+async function siteOrigin(): Promise<string | null> {
   // Prefer the server-configured origin so attacker-controlled
-  // `x-forwarded-host` / `host` headers can't redirect auth emails.
+  // `x-forwarded-host` / `host` headers can't redirect auth emails to
+  // a hostile origin (which would let the attacker steal the auth
+  // code from the confirmation/reset email).
   const envUrl = process.env.NEXT_PUBLIC_SITE_URL;
   if (envUrl) return envUrl.replace(/\/$/, "");
-  // Fallback for local dev where the env var isn't set.
+  // Fail-closed in production: refuse to derive the origin from
+  // request headers. Caller must surface an actionable error so the
+  // operator sets NEXT_PUBLIC_SITE_URL.
+  if (process.env.NODE_ENV === "production") return null;
+  // Local-dev fallback only.
   const h = await headers();
-  const proto = h.get("x-forwarded-proto") ?? "https";
+  const proto = h.get("x-forwarded-proto") ?? "http";
   const host = h.get("x-forwarded-host") ?? h.get("host");
   if (host) return `${proto}://${host}`;
   return "http://localhost:3000";
@@ -67,12 +73,18 @@ export async function registerAction(
     return { error: msg };
   }
   const confirm = formData.get("confirm_password");
-  if (typeof confirm === "string" && confirm !== parsed.data.password) {
+  if (typeof confirm !== "string" || confirm !== parsed.data.password) {
     return { error: "Konfirmasi password tidak cocok." };
   }
   const supabase = await getServerSupabase();
   if (!supabase) return { error: "Layanan autentikasi belum dikonfigurasi." };
   const origin = await siteOrigin();
+  if (!origin) {
+    return {
+      error:
+        "Konfigurasi server belum lengkap (NEXT_PUBLIC_SITE_URL). Hubungi admin.",
+    };
+  }
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
@@ -158,6 +170,12 @@ export async function forgotPasswordAction(
   const supabase = await getServerSupabase();
   if (!supabase) return { error: "Layanan autentikasi belum dikonfigurasi." };
   const origin = await siteOrigin();
+  if (!origin) {
+    return {
+      error:
+        "Konfigurasi server belum lengkap (NEXT_PUBLIC_SITE_URL). Hubungi admin.",
+    };
+  }
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo: `${origin}/auth/callback`,
   });

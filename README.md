@@ -101,7 +101,7 @@ set, so local dev still works without database access.
 ### 2. Set environment variables
 
 Copy `.env.example` to `.env.local` for local development, and add the same
-three variables to **Vercel → Project Settings → Environment Variables** for
+variables to **Vercel → Project Settings → Environment Variables** for
 the deployed site:
 
 | Variable                          | Where it's used | Notes |
@@ -109,6 +109,9 @@ the deployed site:
 | `NEXT_PUBLIC_SUPABASE_URL`        | server + browser | safe to expose |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY`   | server + browser | safe to expose |
 | `SUPABASE_SERVICE_ROLE_KEY`       | server only      | never exposed to the browser |
+| `NEXT_PUBLIC_SITE_URL`            | server only      | **Required in production.** Canonical origin (no trailing slash) used to build Supabase auth email-confirmation and password-reset links. If unset in production the register / forgot-password actions return an error instead of falling back to attacker-controllable `Host` headers. |
+| `ADMIN_BASIC_AUTH_USER`           | server only      | HTTP Basic-Auth username for `/admin/*`. If unset, `/admin` returns 503. |
+| `ADMIN_BASIC_AUTH_PASSWORD`       | server only      | HTTP Basic-Auth password for `/admin/*`. |
 
 ### 3. Wired endpoints
 
