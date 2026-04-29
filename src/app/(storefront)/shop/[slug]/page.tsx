@@ -138,12 +138,26 @@ export default async function ProductPage({ params }: PageProps) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[color:var(--color-line)]">
-                    <tr>
-                      <td className="py-2.5 px-4">1–5 pcs</td>
-                      <td className="py-2.5 px-4 text-right font-semibold">
-                        {formatRupiah(product.retailPrice)}
-                      </td>
-                    </tr>
+                    {(() => {
+                      // The retail row label should end right before the first
+                      // wholesale tier kicks in — admin-configured tiers may
+                      // start at any quantity, not just 6.
+                      const firstTierMin = product.priceTiers[0]?.minQty;
+                      const retailRange =
+                        firstTierMin && firstTierMin > 1
+                          ? `1–${firstTierMin - 1} pcs`
+                          : firstTierMin === 1
+                            ? "Harga retail"
+                            : "1+ pcs";
+                      return (
+                        <tr>
+                          <td className="py-2.5 px-4">{retailRange}</td>
+                          <td className="py-2.5 px-4 text-right font-semibold">
+                            {formatRupiah(product.retailPrice)}
+                          </td>
+                        </tr>
+                      );
+                    })()}
                     {product.priceTiers.map((t) => (
                       <tr key={t.minQty}>
                         <td className="py-2.5 px-4">

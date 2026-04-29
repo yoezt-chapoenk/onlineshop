@@ -26,7 +26,7 @@ const GENDERS: Gender[] = ["men", "women", "unisex", "kids"];
 const STYLES: Style[] = ["fashion", "casual", "sport", "vintage", "premium"];
 
 const PRICE_MIN = 50000;
-const PRICE_MAX = 300000;
+const PRICE_MAX_FALLBACK = 300000;
 
 function rupiah(n: number) {
   return `Rp ${n.toLocaleString("id-ID")}`;
@@ -36,13 +36,25 @@ export default function ShopClient({
   products: allProducts,
   categories,
 }: Props) {
+  // Derive the slider ceiling from the actual catalog so admin-added
+  // products above the original Rp 300.000 default are still reachable.
+  // Round up to the nearest Rp 10.000 so the slider lands on a tidy
+  // value and always offers at least the legacy fallback range.
+  const priceMax = useMemo(() => {
+    const highest = allProducts.reduce(
+      (acc, p) => (p.retailPrice > acc ? p.retailPrice : acc),
+      PRICE_MAX_FALLBACK,
+    );
+    return Math.ceil(highest / 10000) * 10000;
+  }, [allProducts]);
+
   const [search, setSearch] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<CategorySlug[]>([]);
   const [selectedGenders, setSelectedGenders] = useState<Gender[]>([]);
   const [selectedStyles, setSelectedStyles] = useState<Style[]>([]);
   const [wholesaleOnly, setWholesaleOnly] = useState(false);
   const [inStockOnly, setInStockOnly] = useState(false);
-  const [maxPrice, setMaxPrice] = useState<number>(PRICE_MAX);
+  const [maxPrice, setMaxPrice] = useState<number>(priceMax);
   const [sort, setSort] = useState<SortValue>("newest");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -116,7 +128,7 @@ export default function ShopClient({
     setSelectedStyles([]);
     setWholesaleOnly(false);
     setInStockOnly(false);
-    setMaxPrice(PRICE_MAX);
+    setMaxPrice(priceMax);
   }
 
   const activeFilters: { label: string; onRemove: () => void }[] = [
@@ -142,11 +154,11 @@ export default function ShopClient({
     ...(inStockOnly
       ? [{ label: "Hanya stok ada", onRemove: () => setInStockOnly(false) }]
       : []),
-    ...(maxPrice < PRICE_MAX
+    ...(maxPrice < priceMax
       ? [
           {
             label: `Sampai ${rupiah(maxPrice)}`,
-            onRemove: () => setMaxPrice(PRICE_MAX),
+            onRemove: () => setMaxPrice(priceMax),
           },
         ]
       : []),
@@ -227,7 +239,7 @@ export default function ShopClient({
         <input
           type="range"
           min={PRICE_MIN}
-          max={PRICE_MAX}
+          max={priceMax}
           step={5000}
           value={maxPrice}
           onChange={(e) => setMaxPrice(Number(e.target.value))}
