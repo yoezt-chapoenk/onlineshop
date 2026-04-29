@@ -70,9 +70,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ rates: options });
   } catch (err) {
-    console.error("[shipping/rates] error:", err);
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("[shipping/rates] error:", message);
     return NextResponse.json(
-      { error: "Failed to fetch shipping rates" },
+      { error: message },
       { status: 500 },
     );
   }

@@ -132,6 +132,8 @@ export interface GetRatesParams {
 export async function getCourierRates(
   params: GetRatesParams,
 ): Promise<BiteshipCourierRate[]> {
+  const apiKey = getApiKey();
+
   const body = {
     origin_postal_code: Number(params.originPostalCode),
     destination_postal_code: Number(params.destinationPostalCode),
@@ -151,16 +153,17 @@ export async function getCourierRates(
   const res = await fetch(`${BITESHIP_BASE}/rates/couriers`, {
     method: "POST",
     headers: {
-      Authorization: getApiKey(),
+      Authorization: apiKey,
       "Content-Type": "application/json",
     },
+    cache: "no-store",
     body: JSON.stringify(body),
   });
 
   if (!res.ok) {
     const text = await res.text();
     console.error("[biteship] getCourierRates failed:", res.status, text);
-    throw new Error(`Biteship rates request failed (${res.status})`);
+    throw new Error(`Biteship rates request failed (${res.status}): ${text}`);
   }
 
   const json = (await res.json()) as RatesResponse;
