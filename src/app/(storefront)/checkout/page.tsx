@@ -120,6 +120,7 @@ export default function CheckoutPage() {
           paymentMethod: paymentId,
           items: items.map((it) => ({
             productId: it.productId,
+            variantId: it.variantId,
             quantity: it.quantity,
           })),
         }),
@@ -318,9 +319,14 @@ export default function CheckoutPage() {
           <h2 className="text-base font-semibold">Ringkasan Pesanan</h2>
           <ul className="mt-4 space-y-3 max-h-[280px] overflow-y-auto pr-1">
             {totals.lineItems.map(({ item, pricing }) => (
-              <li key={item.productId} className="flex items-start justify-between gap-4 text-sm">
+              <li key={item.lineId} className="flex items-start justify-between gap-4 text-sm">
                 <div className="min-w-0">
                   <div className="font-semibold line-clamp-1">{item.name}</div>
+                  {item.variantLabel ? (
+                    <div className="text-xs text-[color:var(--color-navy-900)]">
+                      {item.variantLabel}
+                    </div>
+                  ) : null}
                   <div className="text-xs text-[color:var(--color-muted)]">
                     {item.quantity} × {formatRupiah(pricing.unitPrice)}
                     {pricing.tierLabel ? ` · ${pricing.tierLabel}` : ""}

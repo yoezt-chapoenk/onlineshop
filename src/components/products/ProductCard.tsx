@@ -21,6 +21,10 @@ export default function ProductCard({ product, className }: Props) {
 
   const showSale =
     product.promotionalPrice && product.promotionalPrice < product.retailPrice;
+  // Products with variants require a size/color/type selection before
+  // we can add anything sensible to the cart, so the card CTA becomes
+  // a nav link to the detail page instead of a quick-add.
+  const hasVariants = (product.variants?.length ?? 0) > 0;
 
   function handleAdd(e: React.MouseEvent) {
     e.preventDefault();
@@ -100,16 +104,27 @@ export default function ProductCard({ product, className }: Props) {
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={handleAdd}
-          disabled={product.stock === 0}
-          className="btn btn-primary w-full !py-2 text-xs"
-          aria-label={`Tambahkan ${product.name} ke keranjang`}
-        >
-          <ShoppingCart className="h-3.5 w-3.5" />
-          <span>{added ? "Ditambahkan" : "Tambah ke Keranjang"}</span>
-        </button>
+        {hasVariants ? (
+          <Link
+            href={`/shop/${product.slug}`}
+            className="btn btn-primary w-full !py-2 text-xs"
+            aria-label={`Pilih varian ${product.name}`}
+          >
+            <ShoppingCart className="h-3.5 w-3.5" />
+            <span>Pilih Varian</span>
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={handleAdd}
+            disabled={product.stock === 0}
+            className="btn btn-primary w-full !py-2 text-xs"
+            aria-label={`Tambahkan ${product.name} ke keranjang`}
+          >
+            <ShoppingCart className="h-3.5 w-3.5" />
+            <span>{added ? "Ditambahkan" : "Tambah ke Keranjang"}</span>
+          </button>
+        )}
 
         {product.minWholesaleQty > 0 && (
           <div className="text-[11px] text-[color:var(--color-muted)]">

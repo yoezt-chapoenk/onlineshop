@@ -45,6 +45,7 @@ export const products: Product[] = [
       { label: "Bridge", value: "20 mm" },
       { label: "Temple", value: "145 mm" },
     ],
+    variants: [],
   },
   {
     id: "p-round-gold",
@@ -80,6 +81,7 @@ export const products: Product[] = [
       { label: "Bridge", value: "21 mm" },
       { label: "Temple", value: "145 mm" },
     ],
+    variants: [],
   },
   {
     id: "p-aviator-elite",
@@ -115,6 +117,7 @@ export const products: Product[] = [
       { label: "Bridge", value: "14 mm" },
       { label: "Temple", value: "140 mm" },
     ],
+    variants: [],
   },
   {
     id: "p-tortoise-brown",
@@ -151,6 +154,7 @@ export const products: Product[] = [
       { label: "Bridge", value: "21 mm" },
       { label: "Temple", value: "145 mm" },
     ],
+    variants: [],
   },
   {
     id: "p-bluelight-pro",
@@ -187,6 +191,7 @@ export const products: Product[] = [
       { label: "Bridge", value: "18 mm" },
       { label: "Temple", value: "145 mm" },
     ],
+    variants: [],
   },
   {
     id: "p-cateye-rose",
@@ -221,6 +226,7 @@ export const products: Product[] = [
       { label: "Bridge", value: "18 mm" },
       { label: "Temple", value: "140 mm" },
     ],
+    variants: [],
   },
   {
     id: "p-sport-runner",
@@ -256,6 +262,7 @@ export const products: Product[] = [
       { label: "Bridge", value: "12 mm" },
       { label: "Temple", value: "135 mm" },
     ],
+    variants: [],
   },
   {
     id: "p-mirror-silver",
@@ -291,6 +298,7 @@ export const products: Product[] = [
       { label: "Bridge", value: "14 mm" },
       { label: "Temple", value: "140 mm" },
     ],
+    variants: [],
   },
   {
     id: "p-kid-buddy",
@@ -326,6 +334,7 @@ export const products: Product[] = [
       { label: "Bridge", value: "16 mm" },
       { label: "Temple", value: "120 mm" },
     ],
+    variants: [],
   },
   {
     id: "p-premium-titanium",
@@ -361,6 +370,7 @@ export const products: Product[] = [
       { label: "Bridge", value: "18 mm" },
       { label: "Temple", value: "145 mm" },
     ],
+    variants: [],
   },
   {
     id: "p-case-leather",
@@ -394,6 +404,7 @@ export const products: Product[] = [
       { label: "Closure", value: "Magnetic snap" },
       { label: "Includes", value: "Microfiber cleaning cloth" },
     ],
+    variants: [],
   },
   {
     id: "p-cleaning-kit",
@@ -426,6 +437,7 @@ export const products: Product[] = [
       { label: "Includes", value: "30ml spray + 2 microfiber cloths" },
       { label: "Coatings", value: "Safe for AR, BL, and mirror lenses" },
     ],
+    variants: [],
   },
 ];
 

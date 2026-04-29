@@ -38,11 +38,22 @@ const OrderSchema = z.object({
     .array(
       z.object({
         productId: z.string().min(1),
+        variantId: z.string().min(1).optional().nullable(),
         quantity: z.number().int().positive().max(999),
       }),
     )
     .min(1),
 });
+
+interface ResolvedVariant {
+  id: string;
+  sku: string;
+  color?: string;
+  type?: string;
+  size?: string;
+  stock: number;
+  priceOverride?: number;
+}
 
 interface ResolvedProduct
   extends Pick<
@@ -59,6 +70,7 @@ interface ResolvedProduct
     | "stock"
   > {
   rowId?: string;
+  variants: ResolvedVariant[];
 }
 
 async function resolveProducts(
@@ -68,7 +80,20 @@ async function resolveProducts(
   if (!supabase) {
     const map = new Map<string, ResolvedProduct>();
     for (const p of seedProducts) {
-      if (productIds.includes(p.id)) map.set(p.id, p);
+      if (productIds.includes(p.id)) {
+        map.set(p.id, {
+          ...p,
+          variants: (p.variants ?? []).map((v) => ({
+            id: v.id,
+            sku: v.sku,
+            color: v.color,
+            type: v.type,
+            size: v.size,
+            stock: v.stock,
+            priceOverride: v.priceOverride,
+          })),
+        });
+      }
     }
     return map;
   }
@@ -78,7 +103,7 @@ async function resolveProducts(
   // building a manual .or() filter string that would be vulnerable to
   // PostgREST filter injection.
   const PRODUCT_COLUMNS =
-    "id, slug, sku, name, retail_price, promotional_price, reseller_price, weight_gram, stock, product_price_tiers(min_qty, max_qty, unit_price, label)";
+    "id, slug, sku, name, retail_price, promotional_price, reseller_price, weight_gram, stock, product_price_tiers(min_qty, max_qty, unit_price, label), product_variants(id, sku, color, variant_type, size, stock, price_override)";
   const uuids = productIds.filter((i) => /^[0-9a-f-]{36}$/i.test(i));
   const slugQuery = supabase
     .from("products")
@@ -121,6 +146,15 @@ async function resolveProducts(
       unit_price: number;
       label: string;
     }[];
+    product_variants: {
+      id: string;
+      sku: string;
+      color: string | null;
+      variant_type: string | null;
+      size: string | null;
+      stock: number;
+      price_override: number | null;
+    }[];
   };
   for (const row of data as Row[]) {
     const resolved: ResolvedProduct = {
@@ -142,6 +176,15 @@ async function resolveProducts(
       weightGram: row.weight_gram,
       stock: row.stock,
       rowId: row.id,
+      variants: (row.product_variants ?? []).map((v) => ({
+        id: v.id,
+        sku: v.sku,
+        color: v.color ?? undefined,
+        type: v.variant_type ?? undefined,
+        size: v.size ?? undefined,
+        stock: v.stock,
+        priceOverride: v.price_override ?? undefined,
+      })),
     };
     if (productIds.includes(row.id)) map.set(row.id, resolved);
     if (productIds.includes(row.slug)) map.set(row.slug, resolved);
@@ -214,40 +257,89 @@ export async function POST(request: Request) {
     );
   }
 
-  // Aggregate quantities by productId before validating stock and
-  // computing pricing. Without this step, a malicious client could
+  // Aggregate quantities by (productId, variantId) before validating
+  // stock and pricing. Without this step, a malicious client could
   // POST [{productId: X, qty: 50}, {productId: X, qty: 50}] against
   // a product with stock=60: each line individually passes the check,
-  // but together they oversell. Aggregating also ensures tiered
-  // pricing reflects the true total quantity per product.
-  const aggregated = new Map<string, { productId: string; quantity: number }>();
+  // but together they oversell. Aggregating per-variant also lets two
+  // different variants of the same product be ordered together while
+  // each respects its own stock cap.
+  type AggLine = {
+    productId: string;
+    variantId: string | null;
+    quantity: number;
+  };
+  const aggregated = new Map<string, AggLine>();
   for (const line of items) {
-    const existing = aggregated.get(line.productId);
+    const variantId = line.variantId ?? null;
+    const key = `${line.productId}::${variantId ?? ""}`;
+    const existing = aggregated.get(key);
     if (existing) {
       existing.quantity += line.quantity;
     } else {
-      aggregated.set(line.productId, { productId: line.productId, quantity: line.quantity });
+      aggregated.set(key, {
+        productId: line.productId,
+        variantId,
+        quantity: line.quantity,
+      });
     }
   }
   const dedupedItems = Array.from(aggregated.values());
 
+  // Reject lines whose declared variantId doesn't actually belong to the
+  // resolved product. Prevents stuffing a variantId from product B onto
+  // product A to dodge stock caps or price overrides.
+  const variantMismatch = dedupedItems
+    .map((line) => ({
+      line,
+      product: resolved.get(line.productId)!,
+      variant: line.variantId
+        ? resolved
+            .get(line.productId)!
+            .variants.find((v) => v.id === line.variantId)
+        : undefined,
+    }))
+    .filter(({ line, variant }) => line.variantId && !variant);
+  if (variantMismatch.length > 0) {
+    return NextResponse.json(
+      {
+        error: "Unknown variant for product",
+        items: variantMismatch.map(({ line, product }) => ({
+          productId: line.productId,
+          variantId: line.variantId,
+          name: product.name,
+        })),
+      },
+      { status: 400 },
+    );
+  }
+
   // Server-side stock validation. The /cart and /shop/[slug] pages
-  // already cap quantity at product.stock, but those limits run in the
-  // browser and can be trivially bypassed by hitting this endpoint
-  // directly. Reject any product whose aggregated quantity exceeds
-  // available stock before we reserve an order number or write rows.
+  // already cap quantity at the active stock, but those limits run in
+  // the browser and can be trivially bypassed by hitting this endpoint
+  // directly. Reject any line whose aggregated quantity exceeds
+  // available stock (per-variant when present, otherwise per-product).
   const overstocked = dedupedItems
-    .map((line) => ({ line, product: resolved.get(line.productId)! }))
-    .filter(({ line, product }) => line.quantity > product.stock);
+    .map((line) => {
+      const product = resolved.get(line.productId)!;
+      const variant = line.variantId
+        ? product.variants.find((v) => v.id === line.variantId)
+        : undefined;
+      const available = variant ? variant.stock : product.stock;
+      return { line, product, variant, available };
+    })
+    .filter(({ line, available }) => line.quantity > available);
   if (overstocked.length > 0) {
     return NextResponse.json(
       {
         error: "Some items exceed available stock",
-        items: overstocked.map(({ line, product }) => ({
+        items: overstocked.map(({ line, product, variant, available }) => ({
           productId: line.productId,
+          variantId: line.variantId,
           name: product.name,
+          variantSku: variant?.sku,
           requested: line.quantity,
-          available: product.stock,
+          available,
         })),
       },
       { status: 400 },
@@ -255,25 +347,37 @@ export async function POST(request: Request) {
   }
 
   // Recompute pricing server-side so the cart cannot inject prices.
+  // Variant `priceOverride` (when set) wins over tier/promo/reseller
+  // pricing — it's an explicit per-variant override.
   let subtotal = 0;
   let itemCount = 0;
   let weightGram = 0;
   const lineItems = dedupedItems.map((line) => {
     const product = resolved.get(line.productId)!;
-    const pricing = calculatePrice(
-      {
-        retailPrice: product.retailPrice,
-        promotionalPrice: product.promotionalPrice,
-        resellerPrice: product.resellerPrice,
-        priceTiers: product.priceTiers,
-      },
-      line.quantity,
-      isReseller,
-    );
+    const variant = line.variantId
+      ? product.variants.find((v) => v.id === line.variantId)
+      : undefined;
+    const pricing = variant?.priceOverride
+      ? {
+          unitPrice: variant.priceOverride,
+          subtotal: variant.priceOverride * line.quantity,
+          appliedType: "retail" as const,
+          tierLabel: null,
+        }
+      : calculatePrice(
+          {
+            retailPrice: product.retailPrice,
+            promotionalPrice: product.promotionalPrice,
+            resellerPrice: product.resellerPrice,
+            priceTiers: product.priceTiers,
+          },
+          line.quantity,
+          isReseller,
+        );
     subtotal += pricing.subtotal;
     itemCount += line.quantity;
     weightGram += product.weightGram * line.quantity;
-    return { product, line, pricing };
+    return { product, variant, line, pricing };
   });
 
   const weightKg = Math.max(0.5, weightGram / 1000);
@@ -352,17 +456,27 @@ export async function POST(request: Request) {
   }
 
   const { error: itemsErr } = await supabase.from("order_items").insert(
-    lineItems.map(({ product, line, pricing }) => ({
-      order_id: orderRow.id,
-      product_id: product.rowId ?? null,
-      product_slug: product.slug,
-      product_sku: product.sku,
-      product_name: product.name,
-      quantity: line.quantity,
-      unit_price: pricing.unitPrice,
-      tier_label: pricing.tierLabel,
-      subtotal: pricing.subtotal,
-    })),
+    lineItems.map(({ product, variant, line, pricing }) => {
+      const variantLabel = variant
+        ? [variant.color, variant.type, variant.size].filter(Boolean).join(" · ")
+        : null;
+      return {
+        order_id: orderRow.id,
+        product_id: product.rowId ?? null,
+        product_slug: product.slug,
+        product_sku: product.sku,
+        product_name: product.name,
+        variant_id: variant?.id ?? null,
+        variant_label: variantLabel || null,
+        variant_color: variant?.color ?? null,
+        variant_type: variant?.type ?? null,
+        variant_size: variant?.size ?? null,
+        quantity: line.quantity,
+        unit_price: pricing.unitPrice,
+        tier_label: pricing.tierLabel,
+        subtotal: pricing.subtotal,
+      };
+    }),
   );
   if (itemsErr) {
     // Best-effort rollback so we don't leave a headless order.

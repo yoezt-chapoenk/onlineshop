@@ -36,13 +36,29 @@ export const ProductSchema = z.object({
       label: z.string().min(1),
     }),
   ),
+  variants: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        sku: z.string().min(1),
+        color: z.string().nullable().optional(),
+        variant_type: z.string().nullable().optional(),
+        size: z.string().nullable().optional(),
+        stock: z.number().int().nonnegative(),
+        price_override: z.number().int().nonnegative().nullable().optional(),
+        sort_order: z.number().int().nonnegative().optional(),
+      }),
+    )
+    .default([]),
 });
 
 export type ProductInput = z.infer<typeof ProductSchema>;
 
 export function productToRow(p: ProductInput) {
-  // The database row excludes price_tiers, which live in their own table.
-  const { price_tiers: _tiers, ...row } = p;
+  // The database row excludes price_tiers and variants, which live in
+  // their own tables and are replaced via dedicated RPC calls.
+  const { price_tiers: _tiers, variants: _variants, ...row } = p;
   void _tiers;
+  void _variants;
   return row;
 }

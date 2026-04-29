@@ -93,6 +93,61 @@ create table if not exists public.product_price_tiers (
 );
 create index if not exists tiers_product_idx on public.product_price_tiers (product_id);
 
+-- Per-product variants (color / type / size). A product may have zero
+-- variants (single-SKU behaviour, stock tracked on products.stock) or
+-- many. When variants exist, per-variant stock is authoritative and the
+-- storefront forces the shopper to pick a combination before adding to
+-- cart.
+create table if not exists public.product_variants (
+  id              uuid primary key default gen_random_uuid(),
+  product_id      uuid not null references public.products(id) on delete cascade,
+  sku             text not null,
+  color           text,
+  variant_type    text,
+  size            text,
+  stock           int  not null default 0,
+  price_override  int,
+  sort_order      int  not null default 0,
+  created_at      timestamptz not null default now(),
+  unique (product_id, sku)
+);
+create index if not exists variants_product_idx on public.product_variants (product_id);
+
+-- Atomic variant replacement used by /api/admin/products PATCH so that
+-- a delete-then-insert pair never strands a product without variants
+-- when the insert fails (constraint violation, network error, etc).
+-- Variant ids carried in the payload are preserved so order_items
+-- foreign keys don't dangle when an admin reorders variants.
+create or replace function public.replace_product_variants(
+  p_product_id uuid,
+  p_variants   jsonb
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  delete from public.product_variants where product_id = p_product_id;
+  if p_variants is not null and jsonb_typeof(p_variants) = 'array' and jsonb_array_length(p_variants) > 0 then
+    insert into public.product_variants (
+      id, product_id, sku, color, variant_type, size, stock, price_override, sort_order
+    )
+    select
+      coalesce(nullif(v->>'id','')::uuid, gen_random_uuid()),
+      p_product_id,
+      v->>'sku',
+      nullif(v->>'color',''),
+      nullif(v->>'variant_type',''),
+      nullif(v->>'size',''),
+      coalesce((v->>'stock')::int, 0),
+      nullif(v->>'price_override','')::int,
+      coalesce((v->>'sort_order')::int, 0)
+    from jsonb_array_elements(p_variants) as v;
+  end if;
+end;
+$$;
+
 -- Atomic tier replacement used by /api/admin/products PATCH so that
 -- a delete-then-insert pair never strands a product with no tiers
 -- when the insert fails (constraint violation, network error, etc).
@@ -172,11 +227,21 @@ create table if not exists public.order_items (
   product_slug  text not null,
   product_sku   text not null,
   product_name  text not null,
+  variant_id    uuid references public.product_variants(id) on delete set null,
+  variant_label text,
+  variant_color text,
+  variant_type  text,
+  variant_size  text,
   quantity      int  not null,
   unit_price    int  not null,
   tier_label    text,
   subtotal      int  not null
 );
+alter table public.order_items add column if not exists variant_id    uuid references public.product_variants(id) on delete set null;
+alter table public.order_items add column if not exists variant_label text;
+alter table public.order_items add column if not exists variant_color text;
+alter table public.order_items add column if not exists variant_type  text;
+alter table public.order_items add column if not exists variant_size  text;
 create index if not exists order_items_order_idx on public.order_items (order_id);
 
 -- 5. Form submissions --------------------------------------------------
@@ -248,6 +313,7 @@ insert into public.site_settings (id) values (1) on conflict (id) do nothing;
 alter table public.categories             enable row level security;
 alter table public.products               enable row level security;
 alter table public.product_price_tiers    enable row level security;
+alter table public.product_variants       enable row level security;
 alter table public.customers              enable row level security;
 alter table public.orders                 enable row level security;
 alter table public.order_items            enable row level security;
@@ -260,9 +326,11 @@ alter table public.site_settings           enable row level security;
 drop policy if exists "Public read categories"   on public.categories;
 drop policy if exists "Public read products"     on public.products;
 drop policy if exists "Public read price tiers"  on public.product_price_tiers;
+drop policy if exists "Public read variants"     on public.product_variants;
 create policy "Public read categories"  on public.categories            for select using (true);
 create policy "Public read products"    on public.products              for select using (true);
 create policy "Public read price tiers" on public.product_price_tiers   for select using (true);
+create policy "Public read variants"    on public.product_variants      for select using (true);
 
 -- Authenticated users can read their own profile row. Without this,
 -- RLS on public.users silently returns empty, so getCurrentUser() never

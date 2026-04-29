@@ -17,6 +17,17 @@ export interface PriceTier {
   label: string;
 }
 
+export interface ProductVariant {
+  id: string;
+  sku: string;
+  color?: string;
+  type?: string;
+  size?: string;
+  stock: number;
+  priceOverride?: number;
+  sortOrder: number;
+}
+
 export interface Product {
   id: string;
   slug: string;
@@ -45,10 +56,23 @@ export interface Product {
   frameColor: "black" | "gold" | "silver" | "tortoise" | "navy" | "rose" | "olive";
   lensColor?: "clear" | "smoke" | "green" | "amber" | "blue" | "mirror";
   specs: { label: string; value: string }[];
+  variants: ProductVariant[];
 }
 
 export interface CartItem {
+  /**
+   * Stable client-side key identifying this line. Either the product id
+   * (single-SKU products) or `${productId}::${variantId}` when a variant
+   * is selected, so two sizes of the same product appear as two rows.
+   */
+  lineId: string;
   productId: string;
+  variantId?: string;
+  variantLabel?: string;
+  variantColor?: string;
+  variantType?: string;
+  variantSize?: string;
+  variantSku?: string;
   slug: string;
   name: string;
   sku: string;

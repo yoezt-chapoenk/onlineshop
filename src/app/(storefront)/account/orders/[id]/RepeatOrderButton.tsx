@@ -10,6 +10,7 @@ import { t } from "@/lib/i18n";
 interface OrderItem {
   product_slug: string;
   quantity: number;
+  variant_id?: string | null;
 }
 
 export default function RepeatOrderButton({ items }: { items: OrderItem[] }) {
@@ -33,7 +34,13 @@ export default function RepeatOrderButton({ items }: { items: OrderItem[] }) {
         if (!product) {
           product = seedProducts.find((p) => p.slug === it.product_slug) ?? null;
         }
-        if (product) addItem(product, it.quantity);
+        if (!product) continue;
+        const variant = it.variant_id
+          ? product.variants?.find(
+              (v: { id: string }) => v.id === it.variant_id,
+            )
+          : undefined;
+        addItem(product, it.quantity, variant);
       }
       router.push("/cart");
     } finally {

@@ -3,7 +3,12 @@ import {
   categories as seedCategories,
 } from "@/lib/products";
 import { getPublicClient } from "@/lib/supabase/public";
-import type { Category, PriceTier, Product } from "@/lib/types";
+import type {
+  Category,
+  PriceTier,
+  Product,
+  ProductVariant,
+} from "@/lib/types";
 
 /**
  * Server-side data access layer. Reads from Supabase when configured;
@@ -42,6 +47,7 @@ interface ProductRow {
   lens_color: NonNullable<Product["lensColor"]> | null;
   specs: Product["specs"];
   product_price_tiers?: PriceTierRow[];
+  product_variants?: VariantRow[];
 }
 
 interface PriceTierRow {
@@ -49,6 +55,17 @@ interface PriceTierRow {
   max_qty: number | null;
   unit_price: number;
   label: string;
+}
+
+interface VariantRow {
+  id: string;
+  sku: string;
+  color: string | null;
+  variant_type: string | null;
+  size: string | null;
+  stock: number;
+  price_override: number | null;
+  sort_order: number;
 }
 
 interface CategoryRow {
@@ -67,6 +84,18 @@ function rowToProduct(row: ProductRow): Product {
       label: t.label,
     }))
     .sort((a, b) => a.minQty - b.minQty);
+  const variants: ProductVariant[] = (row.product_variants ?? [])
+    .map((v) => ({
+      id: v.id,
+      sku: v.sku,
+      color: v.color ?? undefined,
+      type: v.variant_type ?? undefined,
+      size: v.size ?? undefined,
+      stock: v.stock,
+      priceOverride: v.price_override ?? undefined,
+      sortOrder: v.sort_order,
+    }))
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 
   return {
     id: row.id,
@@ -96,6 +125,7 @@ function rowToProduct(row: ProductRow): Product {
     frameColor: row.frame_color,
     lensColor: row.lens_color ?? undefined,
     specs: row.specs ?? [],
+    variants,
   };
 }
 
@@ -106,7 +136,8 @@ const PRODUCT_SELECT = `
   min_wholesale_qty, stock, weight_gram,
   is_featured, is_best_seller, is_new_arrival,
   rating, review_count, colors, frame_color, lens_color, specs,
-  product_price_tiers ( min_qty, max_qty, unit_price, label )
+  product_price_tiers ( min_qty, max_qty, unit_price, label ),
+  product_variants ( id, sku, color, variant_type, size, stock, price_override, sort_order )
 `;
 
 export async function getProducts(): Promise<Product[]> {

@@ -53,5 +53,22 @@ export async function POST(request: Request) {
   if (rpcErr) {
     return NextResponse.json({ error: rpcErr.message }, { status: 500 });
   }
+
+  const { error: varErr } = await ctx.supabase.rpc("replace_product_variants", {
+    p_product_id: productId,
+    p_variants: (parsed.data.variants ?? []).map((v, idx) => ({
+      id: v.id ?? null,
+      sku: v.sku,
+      color: v.color ?? null,
+      variant_type: v.variant_type ?? null,
+      size: v.size ?? null,
+      stock: v.stock,
+      price_override: v.price_override ?? null,
+      sort_order: v.sort_order ?? idx,
+    })),
+  });
+  if (varErr) {
+    return NextResponse.json({ error: varErr.message }, { status: 500 });
+  }
   return NextResponse.json({ product: data });
 }

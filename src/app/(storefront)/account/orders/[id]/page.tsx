@@ -21,6 +21,8 @@ interface OrderItemRow {
   product_slug: string;
   product_sku: string;
   product_name: string;
+  variant_id: string | null;
+  variant_label: string | null;
   quantity: number;
   unit_price: number;
   tier_label: string | null;
@@ -63,7 +65,7 @@ export default async function AccountOrderDetailPage({
   const { data } = await admin
     .from("orders")
     .select(
-      "id, order_number, customer_email, customer_name, customer_phone, shipping_province, shipping_city, shipping_district, shipping_postal_code, shipping_address, shipping_courier, shipping_service, shipping_cost, payment_method, subtotal, total, status, tracking_courier, tracking_number, created_at, order_items(product_slug, product_sku, product_name, quantity, unit_price, tier_label, subtotal)",
+      "id, order_number, customer_email, customer_name, customer_phone, shipping_province, shipping_city, shipping_district, shipping_postal_code, shipping_address, shipping_courier, shipping_service, shipping_cost, payment_method, subtotal, total, status, tracking_courier, tracking_number, created_at, order_items(product_slug, product_sku, product_name, variant_id, variant_label, quantity, unit_price, tier_label, subtotal)",
     )
     .eq("id", id)
     .eq("customer_email", authUser.email ?? "")
@@ -105,6 +107,11 @@ export default async function AccountOrderDetailPage({
               <tr key={`${item.product_slug}-${idx}`}>
                 <td className="py-2">
                   <p className="font-semibold">{item.product_name}</p>
+                  {item.variant_label && (
+                    <p className="text-xs text-[color:var(--color-navy-900)]">
+                      {item.variant_label}
+                    </p>
+                  )}
                   <p className="text-xs text-[color:var(--color-muted)]">SKU {item.product_sku}</p>
                   {item.tier_label && (
                     <p className="text-xs text-[color:var(--color-navy-900)] mt-0.5">

@@ -31,6 +31,7 @@ const EMPTY: ProductFormValues = {
   lens_color: null,
   specs: [],
   price_tiers: [],
+  variants: [],
 };
 
 export default async function NewProductPage() {

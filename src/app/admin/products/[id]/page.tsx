@@ -33,6 +33,16 @@ interface ProductRow {
   lens_color: string | null;
   specs: { label: string; value: string }[];
   product_price_tiers: { min_qty: number; max_qty: number | null; unit_price: number; label: string }[];
+  product_variants: {
+    id: string;
+    sku: string;
+    color: string | null;
+    variant_type: string | null;
+    size: string | null;
+    stock: number;
+    price_override: number | null;
+    sort_order: number;
+  }[];
 }
 
 export default async function EditProductPage({
@@ -52,7 +62,9 @@ export default async function EditProductPage({
   const [{ data: product }, { data: categories }] = await Promise.all([
     supabase
       .from("products")
-      .select("*, product_price_tiers(min_qty, max_qty, unit_price, label)")
+      .select(
+        "*, product_price_tiers(min_qty, max_qty, unit_price, label), product_variants(id, sku, color, variant_type, size, stock, price_override, sort_order)",
+      )
       .eq("id", id)
       .maybeSingle(),
     supabase.from("categories").select("slug, name").order("sort_order"),
@@ -87,6 +99,18 @@ export default async function EditProductPage({
     lens_color: p.lens_color,
     specs: p.specs ?? [],
     price_tiers: (p.product_price_tiers ?? []).sort((a, b) => a.min_qty - b.min_qty),
+    variants: (p.product_variants ?? [])
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map((v) => ({
+        id: v.id,
+        sku: v.sku,
+        color: v.color,
+        variant_type: v.variant_type,
+        size: v.size,
+        stock: v.stock,
+        price_override: v.price_override,
+        sort_order: v.sort_order,
+      })),
   };
   return (
     <div className="space-y-4">

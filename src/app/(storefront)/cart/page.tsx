@@ -78,7 +78,7 @@ export default function CartPage() {
                 const frame = item.frame ?? "rectangle";
                 const maxQty = item.stock ?? 99;
                 return (
-                  <tr key={item.productId}>
+                  <tr key={item.lineId}>
                     <td className="py-4 px-5">
                       <div className="flex items-center gap-4">
                         <div className="h-20 w-20 shrink-0 rounded-lg bg-[color:var(--color-cloud-100)] flex items-center justify-center">
@@ -99,6 +99,11 @@ export default function CartPage() {
                           >
                             {item.name}
                           </Link>
+                          {item.variantLabel ? (
+                            <div className="mt-0.5 text-xs text-[color:var(--color-navy-900)]">
+                              {item.variantLabel}
+                            </div>
+                          ) : null}
                           <div className="mt-0.5 text-xs text-[color:var(--color-muted)]">
                             SKU {item.sku}
                           </div>
@@ -109,7 +114,7 @@ export default function CartPage() {
                           <div className="mt-2 sm:hidden">
                             <QtyControl
                               value={item.quantity}
-                              onChange={(q) => updateQuantity(item.productId, q)}
+                              onChange={(q) => updateQuantity(item.lineId, q)}
                               max={maxQty}
                             />
                           </div>
@@ -120,7 +125,7 @@ export default function CartPage() {
                       <div className="flex justify-center">
                         <QtyControl
                           value={item.quantity}
-                          onChange={(q) => updateQuantity(item.productId, q)}
+                          onChange={(q) => updateQuantity(item.lineId, q)}
                           max={maxQty}
                         />
                       </div>
@@ -131,7 +136,7 @@ export default function CartPage() {
                       </div>
                       <button
                         type="button"
-                        onClick={() => removeItem(item.productId)}
+                        onClick={() => removeItem(item.lineId)}
                         className="mt-2 inline-flex items-center gap-1 text-xs text-[color:var(--color-muted)] hover:text-[color:var(--color-error)]"
                       >
                         <Trash2 className="h-3 w-3" /> Hapus

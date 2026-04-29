@@ -31,6 +31,16 @@ export interface ProductFormValues {
   lens_color: string | null;
   specs: { label: string; value: string }[];
   price_tiers: { min_qty: number; max_qty: number | null; unit_price: number; label: string }[];
+  variants: {
+    id?: string;
+    sku: string;
+    color: string | null;
+    variant_type: string | null;
+    size: string | null;
+    stock: number;
+    price_override: number | null;
+    sort_order: number;
+  }[];
 }
 
 interface Category {
@@ -78,6 +88,21 @@ export default function ProductForm({ initial, categories, mode }: Props) {
 
   function addSpec() {
     update("specs", [...v.specs, { label: "", value: "" }]);
+  }
+
+  function addVariant() {
+    update("variants", [
+      ...v.variants,
+      {
+        sku: `${v.sku}-V${v.variants.length + 1}`,
+        color: "",
+        variant_type: "",
+        size: "",
+        stock: 0,
+        price_override: null,
+        sort_order: v.variants.length,
+      },
+    ]);
   }
 
   async function submit(e: React.FormEvent) {
@@ -322,6 +347,126 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                   type="button"
                   className="col-span-1 text-xs text-[color:var(--color-error)] hover:underline pb-2.5"
                   onClick={() => update("specs", v.specs.filter((_, j) => j !== i))}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-bold uppercase tracking-[0.18em]">Variants</h2>
+            <p className="text-xs text-[color:var(--color-navy-400)] mt-0.5">
+              Kosongkan jika produk tanpa varian. Jika diisi, stok per
+              varian menggantikan stok utama dan pelanggan wajib memilih.
+            </p>
+          </div>
+          <button type="button" className="btn btn-outline text-xs" onClick={addVariant}>
+            + Add variant
+          </button>
+        </div>
+        {v.variants.length === 0 ? (
+          <p className="text-sm text-[color:var(--color-navy-400)]">No variants configured.</p>
+        ) : (
+          <div className="space-y-2">
+            {v.variants.map((vr, i) => (
+              <div key={vr.id ?? i} className="grid grid-cols-12 gap-2 items-end text-sm">
+                <label className="col-span-2 block">
+                  <span className="label">SKU</span>
+                  <input
+                    className="input mt-1"
+                    value={vr.sku}
+                    onChange={(e) => {
+                      const next = [...v.variants];
+                      next[i] = { ...next[i], sku: e.target.value };
+                      update("variants", next);
+                    }}
+                  />
+                </label>
+                <label className="col-span-2 block">
+                  <span className="label">Warna</span>
+                  <input
+                    className="input mt-1"
+                    value={vr.color ?? ""}
+                    onChange={(e) => {
+                      const next = [...v.variants];
+                      next[i] = { ...next[i], color: e.target.value || null };
+                      update("variants", next);
+                    }}
+                  />
+                </label>
+                <label className="col-span-2 block">
+                  <span className="label">Tipe</span>
+                  <input
+                    className="input mt-1"
+                    value={vr.variant_type ?? ""}
+                    onChange={(e) => {
+                      const next = [...v.variants];
+                      next[i] = { ...next[i], variant_type: e.target.value || null };
+                      update("variants", next);
+                    }}
+                  />
+                </label>
+                <label className="col-span-2 block">
+                  <span className="label">Ukuran</span>
+                  <input
+                    className="input mt-1"
+                    value={vr.size ?? ""}
+                    onChange={(e) => {
+                      const next = [...v.variants];
+                      next[i] = { ...next[i], size: e.target.value || null };
+                      update("variants", next);
+                    }}
+                  />
+                </label>
+                <label className="col-span-1 block">
+                  <span className="label">Stok</span>
+                  <input
+                    type="number"
+                    min={0}
+                    className="input mt-1"
+                    value={vr.stock}
+                    onChange={(e) => {
+                      const next = [...v.variants];
+                      next[i] = { ...next[i], stock: Number(e.target.value) };
+                      update("variants", next);
+                    }}
+                  />
+                </label>
+                <label className="col-span-2 block">
+                  <span className="label">Override harga</span>
+                  <input
+                    type="number"
+                    min={0}
+                    placeholder="—"
+                    className="input mt-1"
+                    value={vr.price_override ?? ""}
+                    onChange={(e) => {
+                      const next = [...v.variants];
+                      next[i] = {
+                        ...next[i],
+                        price_override:
+                          e.target.value === "" ? null : Number(e.target.value),
+                      };
+                      update("variants", next);
+                    }}
+                  />
+                </label>
+                <button
+                  type="button"
+                  className="col-span-1 text-xs text-[color:var(--color-error)] hover:underline pb-2.5"
+                  onClick={() =>
+                    update(
+                      "variants",
+                      v.variants
+                        .filter((_, j) => j !== i)
+                        .map((x, idx) => ({ ...x, sort_order: idx })),
+                    )
+                  }
                 >
                   Remove
                 </button>
