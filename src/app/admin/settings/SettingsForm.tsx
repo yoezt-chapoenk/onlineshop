@@ -8,10 +8,8 @@ export interface Settings {
   contact_email: string;
   whatsapp_number: string;
   store_address: string;
-  rajaongkir_api_key: string;
-  rajaongkir_payment_settings: string;
-  default_origin_id: string;
-  default_origin_pinpoint: string;
+  biteship_api_key: string;
+  origin_postal_code: string;
   pixel_meta_id: string;
   pixel_tiktok_id: string;
   pixel_google_id: string;
@@ -26,10 +24,8 @@ const FIELDS: { key: keyof Settings; label: string; type?: string; group: string
   { key: "whatsapp_number", label: "WhatsApp number", group: "Store" },
   { key: "store_address", label: "Store address", group: "Store" },
 
-  { key: "rajaongkir_api_key", label: "RajaOngkir API key", type: "password", group: "Shipping & payment" },
-  { key: "rajaongkir_payment_settings", label: "RajaOngkir payment settings (JSON)", group: "Shipping & payment" },
-  { key: "default_origin_id", label: "Default origin ID", group: "Shipping & payment" },
-  { key: "default_origin_pinpoint", label: "Default origin pinpoint", group: "Shipping & payment" },
+  { key: "biteship_api_key", label: "Biteship API key", type: "password", group: "Shipping" },
+  { key: "origin_postal_code", label: "Origin postal code (kode pos asal)", group: "Shipping" },
 
   { key: "pixel_meta_id", label: "Meta Pixel ID", group: "Tracking & SEO" },
   { key: "pixel_tiktok_id", label: "TikTok Pixel ID", group: "Tracking & SEO" },
@@ -77,7 +73,7 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
             {FIELDS.filter((f) => f.group === group).map((f) => (
               <label key={f.key} className="block">
                 <span className="label">{f.label}</span>
-                {f.key === "seo_default_description" || f.key === "store_address" || f.key === "rajaongkir_payment_settings" ? (
+                {f.key === "seo_default_description" || f.key === "store_address" ? (
                   <textarea className="input mt-1" rows={3} value={v[f.key] ?? ""} onChange={(e) => update(f.key, e.target.value)} />
                 ) : (
                   <input

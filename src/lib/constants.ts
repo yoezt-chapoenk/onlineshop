@@ -14,7 +14,8 @@ export const SITE_URL = (
 export const WHATSAPP_NUMBER = "6281234567890";
 export const SUPPORT_EMAIL = "support@juragangrosir.id";
 export const STORE_PHONE = "+62 812 3456 7890";
-export const STORE_ADDRESS = "Jl. Gatot Subroto No. 123, Jakarta Selatan, DKI Jakarta 12930";
+export const STORE_ADDRESS = "Dusun Krajan 1, RT 002/008 Jombang, Kec. Jombang, Kab. Jember, Jawa Timur 68168";
+export const STORE_ORIGIN_POSTAL_CODE = "68168";
 
 export const NAV_LINKS = [
   { label: "Beranda", href: "/" },

@@ -8,7 +8,7 @@ const FAQS = [
   },
   {
     q: "Bagaimana ongkos kirim dihitung?",
-    a: "Kami integrasi dengan RajaOngkir/Komerce untuk menghitung tarif kurir secara real-time berdasarkan tujuan dan total berat pesanan. Anda memilih kurir dan layanan sebelum pembayaran.",
+    a: "Kami integrasi dengan Biteship untuk menghitung tarif kurir secara real-time berdasarkan tujuan dan total berat pesanan. Anda memilih kurir dan layanan sebelum pembayaran.",
   },
   {
     q: "Metode pembayaran apa saja yang tersedia?",

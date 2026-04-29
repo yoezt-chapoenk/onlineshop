@@ -35,7 +35,7 @@ export default function AboutPage() {
             {
               icon: Globe2,
               title: "Pengiriman nasional",
-              desc: "Tarif RajaOngkir realtime untuk JNE, J&T, SiCepat, dan lainnya.",
+              desc: "Tarif Biteship realtime untuk JNE, J&T, Central Cargo, dan lainnya.",
             },
           ].map(({ icon: Icon, title, desc }) => (
             <div key={title} className="card p-6">

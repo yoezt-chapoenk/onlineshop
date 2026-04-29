@@ -144,6 +144,7 @@ into the bottom of `supabase/schema.sql`, replacing the previous seed block.
 
 ## Deployment
 
-Deploy to **Vercel** with the three Supabase env vars above set. Future
-phases (RajaOngkir live shipping rates, Komerce payment redirects, admin
-dashboard) layer on top of the same `orders` / `order_items` tables.
+Deploy to **Vercel** with the Supabase + Biteship env vars set. The
+shipping integration uses **Biteship** for live courier rates (JNE, J&T,
+Central Cargo). Future phases (Komerce payment redirects, admin
+dashboard enhancements) layer on top of the same `orders` / `order_items` tables.

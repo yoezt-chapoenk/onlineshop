@@ -354,6 +354,8 @@ create table if not exists public.site_settings (
   rajaongkir_payment_settings text,
   default_origin_id           text,
   default_origin_pinpoint     text,
+  biteship_api_key            text,
+  origin_postal_code          text default '68168',
   pixel_meta_id               text,
   pixel_tiktok_id             text,
   pixel_google_id             text,

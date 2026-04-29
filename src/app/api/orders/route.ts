@@ -4,17 +4,12 @@ import { getAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { calculatePrice } from "@/lib/pricing";
 import { products as seedProducts } from "@/lib/products";
+import { getCourierRates, ENABLED_COURIERS } from "@/lib/biteship";
+import { STORE_ORIGIN_POSTAL_CODE } from "@/lib/constants";
 import type { Product } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-const SHIPPING_OPTIONS = [
-  { id: "jne-reg", courier: "JNE", service: "Reguler", costPerKg: 18000 },
-  { id: "jne-yes", courier: "JNE", service: "YES (Next Day)", costPerKg: 32000 },
-  { id: "jnt-reg", courier: "J&T", service: "EZ", costPerKg: 16000 },
-  { id: "sicepat-best", courier: "SiCepat", service: "BEST", costPerKg: 22000 },
-] as const;
 
 const PAYMENT_METHODS = ["qris", "va", "transfer"] as const;
 
@@ -32,7 +27,11 @@ const OrderSchema = z.object({
     address: z.string().min(1),
     notes: z.string().optional().nullable(),
   }),
-  shippingId: z.string().min(1),
+  shipping: z.object({
+    courierCode: z.string().min(1),
+    courierServiceCode: z.string().min(1),
+    destinationPostalCode: z.string().min(1),
+  }),
   paymentMethod: z.enum(PAYMENT_METHODS),
   items: z
     .array(
@@ -223,11 +222,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { customer, address, shippingId, paymentMethod, items } = parsed.data;
-  const shipping = SHIPPING_OPTIONS.find((s) => s.id === shippingId);
-  if (!shipping) {
-    return NextResponse.json({ error: "Unknown shipping option" }, { status: 400 });
-  }
+  const { customer, address, shipping, paymentMethod, items } = parsed.data;
 
   // Determine reseller status from the authenticated session, never
   // from the client request body. Only approved reseller/wholesale
@@ -406,8 +401,60 @@ export async function POST(request: Request) {
     return { product, variant, line, pricing };
   });
 
-  const weightKg = Math.max(0.5, weightGram / 1000);
-  const shippingCost = Math.ceil(weightKg) * shipping.costPerKg;
+  // ----------------------------------------------------------------
+  // Server-side shipping validation via Biteship.
+  // Re-fetch rates and find the selected courier+service to prevent
+  // the client from injecting a fabricated low shipping cost.
+  // ----------------------------------------------------------------
+  let shippingCost: number;
+  let shippingCourier: string;
+  let shippingService: string;
+
+  try {
+    const rateItems = lineItems.map(({ product, line }) => ({
+      name: product.name,
+      value: product.retailPrice,
+      weight: product.weightGram * line.quantity,
+      quantity: line.quantity,
+    }));
+
+    const rates = await getCourierRates({
+      originPostalCode: STORE_ORIGIN_POSTAL_CODE,
+      destinationPostalCode: shipping.destinationPostalCode,
+      items: rateItems,
+      couriers: ENABLED_COURIERS,
+    });
+
+    const matchedRate = rates.find(
+      (r) =>
+        r.courier_code === shipping.courierCode &&
+        r.courier_service_code === shipping.courierServiceCode,
+    );
+
+    if (!matchedRate) {
+      return NextResponse.json(
+        {
+          error:
+            "Layanan kurir yang dipilih tidak tersedia untuk tujuan ini. Silakan pilih ulang metode pengiriman.",
+        },
+        { status: 400 },
+      );
+    }
+
+    shippingCost = matchedRate.price;
+    shippingCourier = matchedRate.courier_name;
+    shippingService = matchedRate.courier_service_name;
+  } catch (err) {
+    console.error("[orders] Biteship rate verification failed:", err);
+    return NextResponse.json(
+      {
+        error:
+          "Gagal memverifikasi tarif pengiriman. Silakan coba lagi.",
+      },
+      { status: 500 },
+    );
+  }
+
   const total = subtotal + shippingCost;
   const orderNumber = generateOrderNumber();
 
@@ -422,7 +469,7 @@ export async function POST(request: Request) {
       shippingCost,
       total,
       itemCount,
-      shippingLabel: `${shipping.courier} ${shipping.service}`,
+      shippingLabel: `${shippingCourier} ${shippingService}`,
       paymentMethod,
       persisted: false,
     });
@@ -462,8 +509,8 @@ export async function POST(request: Request) {
       shipping_postal_code: address.postalCode,
       shipping_address: address.address,
       shipping_notes: address.notes ?? null,
-      shipping_courier: shipping.courier,
-      shipping_service: shipping.service,
+      shipping_courier: shippingCourier,
+      shipping_service: shippingService,
       shipping_cost: shippingCost,
       payment_method: paymentMethod,
       subtotal,
@@ -544,7 +591,7 @@ export async function POST(request: Request) {
     shippingCost,
     total,
     itemCount,
-    shippingLabel: `${shipping.courier} ${shipping.service}`,
+    shippingLabel: `${shippingCourier} ${shippingService}`,
     paymentMethod,
     persisted: true,
   });

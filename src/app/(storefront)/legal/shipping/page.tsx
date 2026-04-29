@@ -21,7 +21,7 @@ export default function ShippingPolicyPage() {
         {
           heading: "Kurir & tarif",
           body: [
-            "Tarif pengiriman dihitung secara realtime saat checkout via RajaOngkir / Komerce, berdasarkan tujuan dan total berat pesanan. Kurir yang tersedia: JNE, J&T, SiCepat, dan Anteraja.",
+            "Tarif pengiriman dihitung secara realtime saat checkout via Biteship, berdasarkan tujuan dan total berat pesanan. Kurir yang tersedia: JNE, J&T, dan Central Cargo.",
             "Pelanggan dapat memilih kurir dan layanan favorit pada saat checkout.",
           ],
         },
