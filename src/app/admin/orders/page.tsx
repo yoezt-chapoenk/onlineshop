@@ -48,9 +48,17 @@ async function loadOrders(searchParams: SearchParams): Promise<{
   if (searchParams.q) {
     const q = searchParams.q.trim();
     if (q) {
-      query = query.or(
-        `order_number.ilike.%${q.replace(/[%,()"]/g, "")}%,customer_name.ilike.%${q.replace(/[%,()"]/g, "")}%,customer_email.ilike.%${q.replace(/[%,()"]/g, "")}%`,
-      );
+      // Strip PostgREST .or() filter delimiters AND the two ILIKE
+      // wildcard chars (`%`, `_`) plus the escape char (`\`). Without
+      // stripping `_` an admin search for "_" would match any single
+      // character in every row; without stripping `\` an attacker
+      // could alter the ILIKE escape semantics.
+      const safe = q.replace(/[%_\\,()"]/g, "");
+      if (safe) {
+        query = query.or(
+          `order_number.ilike.%${safe}%,customer_name.ilike.%${safe}%,customer_email.ilike.%${safe}%`,
+        );
+      }
     }
   }
 

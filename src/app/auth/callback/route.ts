@@ -12,7 +12,9 @@ export async function GET(request: Request) {
   // Only allow same-origin absolute paths. Reject protocol-relative
   // (`//evil.com`) and backslash-prefixed (`/\evil.com`) values that
   // some URL parsers interpret as cross-origin redirects (CWE-601).
-  const next = /^\/[^/\\]/.test(raw) ? raw : "/account";
+  // Accept bare `/`, `/?…`, and `/<path>` while still blocking `//`
+  // and `/\` prefixes.
+  const next = /^\/(?:$|\?|[^/\\])/.test(raw) ? raw : "/account";
 
   if (code) {
     const supabase = await getServerSupabase();
