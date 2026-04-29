@@ -72,9 +72,10 @@ export default function ProductDetailClient({ product }: Props) {
 
   const effectiveQty = Math.max(1, Math.min(quantity, activeStock || 1));
   // If a variant has a price override, use it directly; otherwise fall back
-  // to tiered product pricing (reseller/promo/wholesale).
+  // to tiered product pricing (reseller/promo/wholesale). Compare against
+  // null so a legitimate override of 0 is honoured (matches cart + server).
   const variantUnitPrice = matchedVariant?.priceOverride;
-  const pricing = variantUnitPrice
+  const pricing = variantUnitPrice != null
     ? {
         unitPrice: variantUnitPrice,
         subtotal: variantUnitPrice * effectiveQty,

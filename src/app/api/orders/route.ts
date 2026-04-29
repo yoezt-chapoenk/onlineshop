@@ -314,6 +314,28 @@ export async function POST(request: Request) {
     );
   }
 
+  // Reject lines that omit variantId for products that have variants.
+  // Without this, a malicious client could POST {productId, qty} for a
+  // variant-product to spend product-level stock instead of per-variant
+  // stock — leading to overselling (product.stock=100 but each variant
+  // only has 50 each, the order would succeed against the product row
+  // and the variant rows would still be untouched).
+  const variantRequired = dedupedItems
+    .map((line) => ({ line, product: resolved.get(line.productId)! }))
+    .filter(({ line, product }) => product.variants.length > 0 && !line.variantId);
+  if (variantRequired.length > 0) {
+    return NextResponse.json(
+      {
+        error: "Variant selection required",
+        items: variantRequired.map(({ line, product }) => ({
+          productId: line.productId,
+          name: product.name,
+        })),
+      },
+      { status: 400 },
+    );
+  }
+
   // Server-side stock validation. The /cart and /shop/[slug] pages
   // already cap quantity at the active stock, but those limits run in
   // the browser and can be trivially bypassed by hitting this endpoint
@@ -357,7 +379,11 @@ export async function POST(request: Request) {
     const variant = line.variantId
       ? product.variants.find((v) => v.id === line.variantId)
       : undefined;
-    const pricing = variant?.priceOverride
+    // Use `!= null` (not truthy) so a legitimate priceOverride of 0
+    // is honoured. The cart already uses `?? product.retailPrice` for
+    // its display, so without this fix the cart would show 0 while
+    // the server charges full price.
+    const pricing = variant?.priceOverride != null
       ? {
           unitPrice: variant.priceOverride,
           subtotal: variant.priceOverride * line.quantity,
