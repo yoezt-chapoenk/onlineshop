@@ -7,7 +7,6 @@ import GlassesArt from "@/components/products/GlassesArt";
 import { useCart } from "@/components/cart/CartProvider";
 import { calculateCartTotals } from "@/lib/pricing";
 import { formatRupiah } from "@/lib/format";
-import { products as allProducts } from "@/lib/products";
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, isHydrated } = useCart();
@@ -70,7 +69,12 @@ export default function CartPage() {
             </thead>
             <tbody className="divide-y divide-[color:var(--color-line)]">
               {totals.lineItems.map(({ item, pricing }) => {
-                const product = allProducts.find((p) => p.id === item.productId);
+                // The cart now reads `frame` and `stock` straight off
+                // the cart item itself (set in CartProvider.addItem),
+                // so it works for both seed and Supabase-sourced
+                // products without doing an id lookup.
+                const frame = item.frame ?? "rectangle";
+                const maxQty = item.stock ?? 99;
                 return (
                   <tr key={item.productId}>
                     <td className="py-4 px-5">
@@ -78,7 +82,7 @@ export default function CartPage() {
                         <div className="h-20 w-20 shrink-0 rounded-lg bg-[color:var(--color-cloud-100)] flex items-center justify-center">
                           <GlassesArt
                             product={{
-                              frame: product?.frame ?? "rectangle",
+                              frame,
                               frameColor: item.frameColor,
                               lensColor: item.lensColor,
                               category: item.category,
@@ -104,7 +108,7 @@ export default function CartPage() {
                             <QtyControl
                               value={item.quantity}
                               onChange={(q) => updateQuantity(item.productId, q)}
-                              max={product?.stock ?? 99}
+                              max={maxQty}
                             />
                           </div>
                         </div>
@@ -115,7 +119,7 @@ export default function CartPage() {
                         <QtyControl
                           value={item.quantity}
                           onChange={(q) => updateQuantity(item.productId, q)}
-                          max={product?.stock ?? 99}
+                          max={maxQty}
                         />
                       </div>
                     </td>

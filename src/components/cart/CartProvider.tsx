@@ -77,6 +77,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         resellerPrice: product.resellerPrice,
         priceTiers: product.priceTiers,
         weightGram: product.weightGram,
+        frame: product.frame,
+        stock: product.stock,
         frameColor: product.frameColor,
         lensColor: product.lensColor,
         category: product.category,

@@ -58,6 +58,14 @@ export interface CartItem {
   resellerPrice?: number;
   priceTiers: PriceTier[];
   weightGram: number;
+  // The cart needs `frame` and `stock` to render the correct
+  // GlassesArt thumbnail and to clamp the quantity stepper. Storing
+  // them on the cart item itself keeps the cart self-contained: the
+  // /cart page (a client component) doesn't need to look the product
+  // up in the seed array, which would break for Supabase-sourced
+  // products whose ids are uuids that never match the seed slug-ids.
+  frame: Product["frame"];
+  stock: number;
   frameColor: Product["frameColor"];
   lensColor?: Product["lensColor"];
   category: Product["category"];
