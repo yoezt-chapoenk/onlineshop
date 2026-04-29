@@ -33,7 +33,7 @@ export default function ContactForm() {
       setSubmitted(true);
       form.reset();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send message");
+      setError(err instanceof Error ? err.message : "Gagal mengirim pesan");
     } finally {
       setSubmitting(false);
     }
@@ -47,17 +47,17 @@ export default function ContactForm() {
             <CheckCircle2 className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold">Message sent</h3>
+            <h3 className="text-lg font-semibold">Pesan terkirim</h3>
             <p className="mt-2 text-sm text-[color:var(--color-muted)] leading-relaxed">
-              Thanks for reaching out — we&apos;ll get back to you within one
-              business day. For faster responses, please reach us via WhatsApp.
+              Terima kasih sudah menghubungi — kami akan membalas dalam satu
+              hari kerja. Untuk respons lebih cepat, silakan hubungi via WhatsApp.
             </p>
             <button
               type="button"
               onClick={() => setSubmitted(false)}
               className="btn btn-ghost mt-5 !px-3 !py-2 text-sm"
             >
-              Send another message
+              Kirim pesan lain
             </button>
           </div>
         </div>
@@ -69,30 +69,30 @@ export default function ContactForm() {
     <form
       onSubmit={handleSubmit}
       className="card p-7"
-      aria-label="Contact form"
+      aria-label="Form kontak"
     >
-      <h2 className="text-xl font-bold tracking-tight">Send us a message</h2>
+      <h2 className="text-xl font-bold tracking-tight">Kirim pesan ke kami</h2>
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="label" htmlFor="contact_name">Name</label>
-          <input id="contact_name" name="name" required className="input" placeholder="Your name" />
+          <label className="label" htmlFor="contact_name">Nama</label>
+          <input id="contact_name" name="name" required className="input" placeholder="Nama Anda" />
         </div>
         <div>
           <label className="label" htmlFor="contact_email">Email</label>
-          <input id="contact_email" name="email" required type="email" className="input" placeholder="you@example.com" />
+          <input id="contact_email" name="email" required type="email" className="input" placeholder="anda@email.com" />
         </div>
         <div className="sm:col-span-2">
-          <label className="label" htmlFor="contact_subject">Subject</label>
-          <input id="contact_subject" name="subject" required className="input" placeholder="How can we help?" />
+          <label className="label" htmlFor="contact_subject">Subjek</label>
+          <input id="contact_subject" name="subject" required className="input" placeholder="Ada yang bisa kami bantu?" />
         </div>
         <div className="sm:col-span-2">
-          <label className="label" htmlFor="contact_message">Message</label>
+          <label className="label" htmlFor="contact_message">Pesan</label>
           <textarea
             id="contact_message"
             name="message"
             required
             className="input min-h-[140px] resize-y"
-            placeholder="Tell us a bit about what you need help with…"
+            placeholder="Ceritakan sedikit hal yang ingin kami bantu…"
           />
         </div>
       </div>
@@ -109,7 +109,7 @@ export default function ContactForm() {
         disabled={submitting}
         className="btn btn-primary w-full mt-6"
       >
-        {submitting ? "Sending\u2026" : "Send message"}
+        {submitting ? "Mengirim\u2026" : "Kirim pesan"}
       </button>
     </form>
   );

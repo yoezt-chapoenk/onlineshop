@@ -3,9 +3,9 @@ import { getCategories, getProducts } from "@/lib/data";
 import ShopClient from "./ShopClient";
 
 export const metadata: Metadata = {
-  title: "Shop",
+  title: "Belanja",
   description:
-    "Browse the complete Juragan Grosir eyewear catalog with retail and wholesale tier pricing.",
+    "Telusuri seluruh katalog kacamata Juragan Grosir dengan harga retail dan grosir bertingkat.",
 };
 
 export default async function ShopPage() {

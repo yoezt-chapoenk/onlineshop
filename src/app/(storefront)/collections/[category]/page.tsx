@@ -20,7 +20,7 @@ export async function generateMetadata({
   const { category } = await params;
   const categories = await getCategories();
   const cat = categories.find((c) => c.slug === category);
-  if (!cat) return { title: "Collection not found" };
+  if (!cat) return { title: "Koleksi tidak ditemukan" };
   return {
     title: cat.name,
     description: cat.description,
@@ -41,17 +41,17 @@ export default async function CategoryPage({ params }: PageProps) {
         title={cat.name}
         description={cat.description}
         breadcrumbs={[
-          { label: "Collections", href: "/collections" },
+          { label: "Koleksi", href: "/collections" },
           { label: cat.name },
         ]}
       />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-sm text-[color:var(--color-muted)] mb-5">
-          Showing{" "}
+          Menampilkan{" "}
           <span className="font-semibold text-[color:var(--color-ink)]">
             {list.length}
           </span>{" "}
-          products in {cat.name}
+          produk dalam {cat.name}
         </div>
         <ProductGrid products={list} />
       </div>

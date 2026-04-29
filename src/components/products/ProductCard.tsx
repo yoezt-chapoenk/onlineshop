@@ -42,7 +42,7 @@ export default function ProductCard({ product, className }: Props) {
           e.preventDefault();
           setFavorited((f) => !f);
         }}
-        aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
+        aria-label={favorited ? "Hapus dari favorit" : "Tambah ke favorit"}
         className="absolute right-3 top-3 z-10 h-8 w-8 inline-flex items-center justify-center rounded-full bg-white/90 backdrop-blur border border-[color:var(--color-line)] hover:bg-white transition-colors"
       >
         <Heart
@@ -57,12 +57,12 @@ export default function ProductCard({ product, className }: Props) {
 
       {showSale && (
         <span className="absolute left-3 top-3 z-10 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-[color:var(--color-blue-500)] text-white">
-          Sale
+          Promo
         </span>
       )}
       {!showSale && product.isNewArrival && (
         <span className="absolute left-3 top-3 z-10 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-[color:var(--color-navy-900)] text-white">
-          New
+          Baru
         </span>
       )}
 
@@ -105,15 +105,15 @@ export default function ProductCard({ product, className }: Props) {
           onClick={handleAdd}
           disabled={product.stock === 0}
           className="btn btn-primary w-full !py-2 text-xs"
-          aria-label={`Add ${product.name} to cart`}
+          aria-label={`Tambahkan ${product.name} ke keranjang`}
         >
           <ShoppingCart className="h-3.5 w-3.5" />
-          <span>{added ? "Added to cart" : "Add to Cart"}</span>
+          <span>{added ? "Ditambahkan" : "Tambah ke Keranjang"}</span>
         </button>
 
         {product.minWholesaleQty > 0 && (
           <div className="text-[11px] text-[color:var(--color-muted)]">
-            Wholesale from{" "}
+            Grosir mulai{" "}
             <span className="font-semibold text-[color:var(--color-ink)]">
               {product.minWholesaleQty} pcs
             </span>

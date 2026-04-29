@@ -2,13 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingCart, Menu, X } from "lucide-react";
+import { Search, ShoppingCart, Menu, X, User, LogIn } from "lucide-react";
 import { useState } from "react";
 import clsx from "clsx";
 import { NAV_LINKS, SITE_NAME } from "@/lib/constants";
 import { useCart } from "@/components/cart/CartProvider";
+import { t } from "@/lib/i18n";
 
-export default function Header() {
+export interface HeaderAuthState {
+  isAuthenticated: boolean;
+  displayName: string | null;
+}
+
+export default function Header({ auth }: { auth: HeaderAuthState }) {
   const pathname = usePathname();
   const { itemCount, isHydrated } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -53,14 +59,31 @@ export default function Header() {
           <div className="flex items-center gap-1 sm:gap-2">
             <Link
               href="/shop"
-              aria-label="Search products"
+              aria-label={t.common.search}
               className="hidden sm:inline-flex h-10 w-10 items-center justify-center rounded-lg text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)] transition-colors"
             >
               <Search className="h-5 w-5" />
             </Link>
+            {auth.isAuthenticated ? (
+              <Link
+                href="/account"
+                className="hidden sm:inline-flex h-10 items-center gap-2 rounded-lg px-3 text-sm font-medium text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)] transition-colors"
+              >
+                <User className="h-4 w-4" />
+                <span className="max-w-[8rem] truncate">{auth.displayName ?? t.nav.account}</span>
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="hidden sm:inline-flex h-10 items-center gap-2 rounded-lg px-3 text-sm font-medium text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)] transition-colors"
+              >
+                <LogIn className="h-4 w-4" />
+                {t.nav.login}
+              </Link>
+            )}
             <Link
               href="/cart"
-              aria-label="View cart"
+              aria-label={t.nav.cart}
               className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)] transition-colors"
             >
               <ShoppingCart className="h-5 w-5" />
@@ -75,7 +98,7 @@ export default function Header() {
               type="button"
               className="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)] transition-colors"
               onClick={() => setMobileOpen((o) => !o)}
-              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-label={mobileOpen ? "Tutup menu" : "Buka menu"}
               aria-expanded={mobileOpen}
             >
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -108,6 +131,25 @@ export default function Header() {
                   </li>
                 );
               })}
+              <li className="pt-2 mt-2 border-t border-[color:var(--color-line)]">
+                {auth.isAuthenticated ? (
+                  <Link
+                    href="/account"
+                    onClick={() => setMobileOpen(false)}
+                    className="block px-3 py-2.5 rounded-lg text-sm font-medium text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)]"
+                  >
+                    {t.nav.account}
+                  </Link>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="block px-3 py-2.5 rounded-lg text-sm font-medium text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)]"
+                  >
+                    {t.nav.login}
+                  </Link>
+                )}
+              </li>
             </ul>
           </nav>
         )}

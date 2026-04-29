@@ -2,39 +2,39 @@ import type { Metadata } from "next";
 import LegalPage from "@/components/legal/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Return Policy",
+  title: "Kebijakan Pengembalian",
 };
 
 export default function ReturnsPage() {
   return (
     <LegalPage
-      title="Return Policy"
-      description="How to return or exchange a Juragan Grosir product if it doesn't meet your expectations."
-      breadcrumbLabel="Return Policy"
+      title="Kebijakan Pengembalian"
+      description="Cara mengembalikan atau menukar produk Juragan Grosir jika tidak sesuai harapan Anda."
+      breadcrumbLabel="Kebijakan Pengembalian"
       sections={[
         {
-          heading: "Return window",
+          heading: "Periode pengembalian",
           body: [
-            "We accept returns within 7 days of delivery for unused, unopened products in original packaging. For wholesale and reseller orders, please contact your account manager.",
+            "Kami menerima pengembalian dalam 7 hari setelah barang diterima untuk produk yang belum digunakan dan masih dalam kemasan asli. Untuk pesanan grosir dan reseller, silakan hubungi account manager Anda.",
           ],
         },
         {
-          heading: "How to start a return",
+          heading: "Cara memulai pengembalian",
           body: [
-            "Contact us via WhatsApp or email with your order number and photos of the product. Our team will issue a return authorization within 1 business day.",
-            "Customers are responsible for return shipping unless the product arrived damaged or incorrect.",
+            "Hubungi kami via WhatsApp atau email dengan menyertakan nomor pesanan dan foto produk. Tim kami akan menerbitkan otorisasi pengembalian dalam 1 hari kerja.",
+            "Pelanggan menanggung ongkos kirim pengembalian, kecuali produk tiba dalam kondisi rusak atau salah kirim.",
           ],
         },
         {
-          heading: "Defective items",
+          heading: "Produk cacat",
           body: [
-            "If your eyewear arrives with a manufacturing defect, we will cover return shipping and offer a free replacement. Please report defects within 7 days of delivery.",
+            "Jika kacamata Anda tiba dengan cacat produksi, kami akan menanggung ongkos kirim pengembalian dan memberikan penggantian gratis. Mohon laporkan cacat dalam 7 hari setelah diterima.",
           ],
         },
         {
-          heading: "Refunds",
+          heading: "Pengembalian dana",
           body: [
-            "Refunds are processed within 7–14 business days of receiving your returned item. Refunds are returned to the original payment method.",
+            "Pengembalian dana diproses dalam 7–14 hari kerja setelah barang retur kami terima. Dana dikembalikan ke metode pembayaran semula.",
           ],
         },
       ]}

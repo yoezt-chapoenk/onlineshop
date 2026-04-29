@@ -3,23 +3,23 @@ import { Star } from "lucide-react";
 const TESTIMONIALS = [
   {
     name: "Adinda P.",
-    role: "Retail customer · Jakarta",
+    role: "Pelanggan retail · Jakarta",
     quote:
-      "The build quality blew me away for the price. The Round Gold has become my everyday frame — I get compliments at every meeting.",
+      "Kualitasnya jauh di atas harganya. Round Gold sekarang jadi frame harian saya — selalu dipuji di setiap meeting.",
     rating: 5,
   },
   {
     name: "Toko Optik Bahagia",
     role: "Reseller · Bandung",
     quote:
-      "Tiered pricing is fair and the wholesale stock is consistent. Our customers love the JG Classic Black — we restock it every two weeks.",
+      "Harga grosirnya wajar dan stoknya konsisten. Pelanggan kami suka JG Classic Black — kami restock setiap dua minggu.",
     rating: 5,
   },
   {
     name: "Rizky H.",
-    role: "Retail customer · Surabaya",
+    role: "Pelanggan retail · Surabaya",
     quote:
-      "Shipping was faster than I expected and the case is genuinely premium. The Bluelight Pro has saved my eyes during long workdays.",
+      "Pengirimannya lebih cepat dari ekspektasi dan case-nya benar-benar premium. Bluelight Pro menyelamatkan mata saya saat lembur.",
     rating: 5,
   },
 ];
@@ -28,9 +28,9 @@ export default function Testimonials() {
   return (
     <section>
       <div className="text-center max-w-2xl mx-auto">
-        <span className="eyebrow">Loved by 10,000+ customers</span>
+        <span className="eyebrow">Dipercaya 10.000+ pelanggan</span>
         <h2 className="mt-4 text-2xl sm:text-3xl font-bold tracking-tight">
-          Real stories from real customers
+          Cerita nyata dari pelanggan kami
         </h2>
       </div>
       <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-5">

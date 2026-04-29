@@ -2,48 +2,48 @@ import type { Metadata } from "next";
 import LegalPage from "@/components/legal/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
+  title: "Kebijakan Privasi",
   description:
-    "How Juragan Grosir collects, uses, and protects your personal information.",
+    "Bagaimana Juragan Grosir mengumpulkan, menggunakan, dan melindungi informasi pribadi Anda.",
 };
 
 export default function PrivacyPage() {
   return (
     <LegalPage
-      title="Privacy Policy"
-      description="We respect your privacy and are committed to protecting the personal information you share with us."
-      breadcrumbLabel="Privacy Policy"
+      title="Kebijakan Privasi"
+      description="Kami menghormati privasi Anda dan berkomitmen melindungi informasi pribadi yang Anda bagikan kepada kami."
+      breadcrumbLabel="Kebijakan Privasi"
       sections={[
         {
-          heading: "1. Information we collect",
+          heading: "1. Informasi yang kami kumpulkan",
           body: [
-            "When you place an order or create an account, we collect identifying information such as your name, phone number, email, and shipping address.",
-            "We also collect technical information such as IP address, device type, and browsing behaviour for analytics and fraud prevention.",
+            "Saat Anda memesan atau membuat akun, kami mengumpulkan informasi seperti nama, nomor telepon, email, dan alamat pengiriman.",
+            "Kami juga mengumpulkan informasi teknis seperti alamat IP, jenis perangkat, dan perilaku penjelajahan untuk analitik dan pencegahan penipuan.",
           ],
         },
         {
-          heading: "2. How we use your information",
+          heading: "2. Bagaimana kami menggunakan informasi Anda",
           body: [
-            "Your information is used to fulfill orders, calculate shipping, process payments, send order updates, and improve our products and services.",
-            "We never sell your personal information to third parties. We share data with service providers (payment, shipping, analytics) only to the extent required to operate our business.",
+            "Informasi Anda digunakan untuk memproses pesanan, menghitung ongkos kirim, memproses pembayaran, mengirim pembaruan pesanan, serta meningkatkan produk dan layanan kami.",
+            "Kami tidak pernah menjual informasi pribadi Anda kepada pihak ketiga. Data hanya kami bagikan ke penyedia layanan (pembayaran, pengiriman, analitik) sebatas yang diperlukan untuk operasional bisnis.",
           ],
         },
         {
-          heading: "3. Marketing communications",
+          heading: "3. Komunikasi pemasaran",
           body: [
-            "We may send marketing emails and WhatsApp messages about new collections, promotions, and reseller updates. You can opt out at any time via the unsubscribe link or by contacting support.",
+            "Kami dapat mengirim email dan pesan WhatsApp pemasaran tentang koleksi baru, promo, dan informasi reseller. Anda dapat berhenti berlangganan kapan saja melalui tautan unsubscribe atau menghubungi tim dukungan.",
           ],
         },
         {
-          heading: "4. Cookies & tracking",
+          heading: "4. Cookie & pelacakan",
           body: [
-            "We use cookies and pixels (Google Analytics, Meta Pixel, TikTok Pixel) to understand how customers use the site and to measure advertising effectiveness.",
+            "Kami menggunakan cookie dan pixel (Google Analytics, Meta Pixel, TikTok Pixel) untuk memahami cara pelanggan menggunakan situs serta mengukur efektivitas iklan.",
           ],
         },
         {
-          heading: "5. Your rights",
+          heading: "5. Hak Anda",
           body: [
-            "You can request to access, update, or delete your personal information at any time by contacting us at support@juragangrosir.id.",
+            "Anda dapat meminta akses, pembaruan, atau penghapusan informasi pribadi Anda kapan saja dengan menghubungi kami di support@juragangrosir.id.",
           ],
         },
       ]}

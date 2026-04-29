@@ -26,7 +26,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-  if (!product) return { title: "Product not found" };
+  if (!product) return { title: "Produk tidak ditemukan" };
   return {
     title: product.name,
     description: product.shortDescription,
@@ -58,7 +58,7 @@ export default async function ProductPage({ params }: PageProps) {
               <li className="flex items-center gap-1">
                 <ChevronRight className="h-3 w-3 text-[color:var(--color-cloud-300)]" />
                 <Link href="/shop" className="hover:text-[color:var(--color-navy-900)]">
-                  Shop
+                  Belanja
                 </Link>
               </li>
               <li className="flex items-center gap-1">
@@ -116,7 +116,7 @@ export default async function ProductPage({ params }: PageProps) {
                 ))}
               </div>
               <span className="text-[color:var(--color-muted)]">
-                {product.rating.toFixed(1)} ({product.reviewCount} reviews)
+                {product.rating.toFixed(1)} ({product.reviewCount} ulasan)
               </span>
             </div>
 
@@ -128,13 +128,13 @@ export default async function ProductPage({ params }: PageProps) {
 
             {/* Tier table */}
             <div className="mt-8">
-              <h3 className="text-sm font-semibold mb-2">Wholesale price tiers</h3>
+              <h3 className="text-sm font-semibold mb-2">Harga grosir bertingkat</h3>
               <div className="card overflow-hidden">
                 <table className="w-full text-sm">
                   <thead className="bg-[color:var(--color-cloud-100)] text-[color:var(--color-muted)]">
                     <tr>
-                      <th className="text-left font-medium py-2.5 px-4">Quantity</th>
-                      <th className="text-right font-medium py-2.5 px-4">Unit price</th>
+                      <th className="text-left font-medium py-2.5 px-4">Jumlah</th>
+                      <th className="text-right font-medium py-2.5 px-4">Harga per pcs</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[color:var(--color-line)]">
@@ -158,7 +158,7 @@ export default async function ProductPage({ params }: PageProps) {
                     ))}
                     {product.resellerPrice && (
                       <tr className="bg-[color:var(--color-cloud-50)]">
-                        <td className="py-2.5 px-4">Approved reseller price</td>
+                        <td className="py-2.5 px-4">Harga reseller (disetujui)</td>
                         <td className="py-2.5 px-4 text-right font-semibold text-[color:var(--color-navy-900)]">
                           {formatRupiah(product.resellerPrice)}
                         </td>
@@ -168,7 +168,7 @@ export default async function ProductPage({ params }: PageProps) {
                 </table>
               </div>
               <p className="mt-2 text-xs text-[color:var(--color-muted)]">
-                Tier price applies automatically once minimum quantity is reached.
+                Harga grosir otomatis berlaku saat jumlah minimum tercapai.
               </p>
             </div>
 
@@ -180,12 +180,12 @@ export default async function ProductPage({ params }: PageProps) {
                 </div>
               ))}
               <div>
-                <dt className="text-[color:var(--color-muted)] text-xs">Weight</dt>
+                <dt className="text-[color:var(--color-muted)] text-xs">Berat</dt>
                 <dd className="font-semibold mt-0.5">{product.weightGram} g</dd>
               </div>
               <div>
-                <dt className="text-[color:var(--color-muted)] text-xs">Stock</dt>
-                <dd className="font-semibold mt-0.5">{product.stock} pcs available</dd>
+                <dt className="text-[color:var(--color-muted)] text-xs">Stok</dt>
+                <dd className="font-semibold mt-0.5">{product.stock} pcs tersedia</dd>
               </div>
             </div>
           </div>
@@ -193,7 +193,7 @@ export default async function ProductPage({ params }: PageProps) {
 
         {related.length > 0 && (
           <div className="mt-16">
-            <h2 className="text-2xl font-bold tracking-tight">You may also like</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Anda mungkin juga suka</h2>
             <div className="mt-6">
               <ProductGrid products={related} />
             </div>

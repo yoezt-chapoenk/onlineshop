@@ -7,24 +7,24 @@ import {
 } from "@/lib/constants";
 
 const SHOP_LINKS = [
-  { label: "Eyeglasses", href: "/collections/eyeglasses" },
-  { label: "Sunglasses", href: "/collections/sunglasses" },
-  { label: "Blue Light Glasses", href: "/collections/blue-light" },
-  { label: "Accessories", href: "/collections/accessories" },
-  { label: "All Products", href: "/shop" },
+  { label: "Kacamata Optik", href: "/collections/eyeglasses" },
+  { label: "Kacamata Hitam", href: "/collections/sunglasses" },
+  { label: "Kacamata Blue Light", href: "/collections/blue-light" },
+  { label: "Aksesoris", href: "/collections/accessories" },
+  { label: "Semua Produk", href: "/shop" },
 ];
 
 const COMPANY_LINKS = [
-  { label: "About Us", href: "/about" },
-  { label: "Become a Reseller", href: "/wholesale" },
-  { label: "Contact", href: "/contact" },
+  { label: "Tentang Kami", href: "/about" },
+  { label: "Jadi Reseller", href: "/wholesale" },
+  { label: "Kontak", href: "/contact" },
 ];
 
 const POLICY_LINKS = [
-  { label: "Privacy Policy", href: "/legal/privacy" },
-  { label: "Terms of Service", href: "/legal/terms" },
-  { label: "Return Policy", href: "/legal/returns" },
-  { label: "Shipping Policy", href: "/legal/shipping" },
+  { label: "Kebijakan Privasi", href: "/legal/privacy" },
+  { label: "Syarat & Ketentuan", href: "/legal/terms" },
+  { label: "Kebijakan Pengembalian", href: "/legal/returns" },
+  { label: "Kebijakan Pengiriman", href: "/legal/shipping" },
 ];
 
 export default function Footer() {
@@ -37,8 +37,8 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1">
             <div className="text-xl font-bold tracking-tight">{SITE_NAME}</div>
             <p className="mt-3 text-sm text-white/70 leading-relaxed">
-              Premium and wholesale eyewear in Indonesia. Retail and reseller
-              pricing, fast shipping, dedicated support.
+              Kacamata premium dan grosir di Indonesia. Harga retail dan reseller,
+              pengiriman cepat, layanan pelanggan responsif.
             </p>
             <div className="mt-5 space-y-1.5 text-sm text-white/80">
               <div>{STORE_ADDRESS}</div>
@@ -57,7 +57,7 @@ export default function Footer() {
 
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-wider text-white/90">
-              Shop
+              Belanja
             </h4>
             <ul className="mt-4 space-y-2 text-sm text-white/75">
               {SHOP_LINKS.map((l) => (
@@ -71,7 +71,7 @@ export default function Footer() {
           </div>
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-wider text-white/90">
-              Company
+              Perusahaan
             </h4>
             <ul className="mt-4 space-y-2 text-sm text-white/75">
               {COMPANY_LINKS.map((l) => (
@@ -85,7 +85,7 @@ export default function Footer() {
           </div>
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-wider text-white/90">
-              Customer
+              Pelanggan
             </h4>
             <ul className="mt-4 space-y-2 text-sm text-white/75">
               {POLICY_LINKS.map((l) => (
@@ -100,7 +100,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 sm:gap-6 sm:items-center justify-between text-xs text-white/60">
-          <div>© {year} {SITE_NAME}. All rights reserved.</div>
+          <div>© {year} {SITE_NAME}. Hak cipta dilindungi.</div>
           <div className="flex flex-wrap gap-x-4 gap-y-1">
             <span>Pembayaran aman via Bank Transfer, VA, QRIS</span>
             <span aria-hidden>·</span>

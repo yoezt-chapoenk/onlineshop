@@ -4,19 +4,19 @@ import { ArrowRight, Award, Globe2, Users } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 
 export const metadata: Metadata = {
-  title: "About Us",
+  title: "Tentang Kami",
   description:
-    "Juragan Grosir is an Indonesian eyewear company crafting premium frames at fair prices for retail customers and wholesale partners.",
+    "Juragan Grosir adalah perusahaan kacamata Indonesia yang membuat frame premium dengan harga adil untuk pelanggan retail dan mitra grosir.",
 };
 
 export default function AboutPage() {
   return (
     <div>
       <PageHeader
-        eyebrow="Our Story"
-        title="Premium eyewear, made accessible."
-        description="Juragan Grosir was founded with a simple belief — high-quality eyewear shouldn't be a luxury. Today we serve thousands of retail customers and wholesale partners across Indonesia."
-        breadcrumbs={[{ label: "About Us" }]}
+        eyebrow="Cerita Kami"
+        title="Kacamata premium, terjangkau untuk semua."
+        description="Juragan Grosir berdiri dengan keyakinan sederhana — kacamata berkualitas bukan barang mewah. Kini kami melayani ribuan pelanggan retail dan mitra grosir di seluruh Indonesia."
+        breadcrumbs={[{ label: "Tentang Kami" }]}
       />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
@@ -24,18 +24,18 @@ export default function AboutPage() {
           {[
             {
               icon: Users,
-              title: "10,000+ customers",
-              desc: "Trusted by retail customers and resellers in every Indonesian province.",
+              title: "10.000+ pelanggan",
+              desc: "Dipercaya pelanggan retail dan reseller di seluruh provinsi Indonesia.",
             },
             {
               icon: Award,
-              title: "Premium materials",
-              desc: "Italian acetate, beta-titanium, and TR-90 — sourced from established suppliers.",
+              title: "Material premium",
+              desc: "Asetat Italia, beta-titanium, dan TR-90 — dari supplier terpercaya.",
             },
             {
               icon: Globe2,
-              title: "Nationwide shipping",
-              desc: "Live RajaOngkir shipping rates across JNE, J&T, SiCepat, and more.",
+              title: "Pengiriman nasional",
+              desc: "Tarif RajaOngkir realtime untuk JNE, J&T, SiCepat, dan lainnya.",
             },
           ].map(({ icon: Icon, title, desc }) => (
             <div key={title} className="card p-6">
@@ -53,50 +53,50 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              How we work
+              Cara kerja kami
             </h2>
             <div className="mt-5 space-y-4 text-[color:var(--color-muted)] leading-relaxed text-[15px]">
               <p>
-                We design every Juragan Grosir frame in-house, then partner with
-                established eyewear factories to manufacture each piece to spec.
-                Every batch is QC&apos;d at our Jakarta warehouse before it
-                reaches a customer.
+                Setiap frame Juragan Grosir kami desain in-house, lalu bermitra
+                dengan pabrik kacamata terpercaya untuk diproduksi sesuai
+                spesifikasi. Setiap batch melewati QC di gudang Jakarta
+                sebelum sampai ke pelanggan.
               </p>
               <p>
-                Because we ship direct, we can keep retail prices fair and offer
-                meaningful discounts at wholesale tiers. That same philosophy
-                drives our reseller program — clear pricing, real margins, and
-                stock you can count on.
+                Karena kami kirim langsung tanpa perantara, harga retail tetap
+                adil dan diskon grosir bertingkat benar-benar berarti. Filosofi
+                yang sama menjiwai program reseller kami — harga transparan,
+                margin nyata, dan stok yang konsisten.
               </p>
               <p>
-                We&apos;re a small team based in Jakarta, but we move fast. Most
-                orders ship within 24 hours, and our WhatsApp support team
-                responds within minutes during business hours.
+                Tim kecil kami berbasis di Jakarta, tetapi gerak cepat. Sebagian
+                besar pesanan dikirim dalam 24 jam, dan tim WhatsApp kami
+                merespons dalam hitungan menit di jam kerja.
               </p>
             </div>
             <Link
               href="/wholesale"
               className="btn btn-primary mt-7 inline-flex"
             >
-              Become a Reseller <ArrowRight className="h-4 w-4" />
+              Jadi Reseller <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
           <div className="card p-7 bg-[color:var(--color-cloud-100)]">
-            <h3 className="text-lg font-semibold">Our values</h3>
+            <h3 className="text-lg font-semibold">Nilai-nilai kami</h3>
             <ul className="mt-4 space-y-4">
               {[
                 {
-                  title: "Honest pricing",
-                  desc: "No marketplace markup, no hidden fees. The same retail price online and on every reseller's shelf.",
+                  title: "Harga jujur",
+                  desc: "Tanpa markup marketplace, tanpa biaya tersembunyi. Harga retail sama online maupun di rak setiap reseller.",
                 },
                 {
-                  title: "Quality before everything",
-                  desc: "Every frame survives a 1,000-flex hinge test, drop test, and 24h UV-exposure check before shipping.",
+                  title: "Kualitas di atas segalanya",
+                  desc: "Setiap frame lulus tes engsel 1.000 lipatan, uji jatuh, dan 24 jam paparan UV sebelum dikirim.",
                 },
                 {
-                  title: "Service that scales with you",
-                  desc: "From a first-time customer to a 1,000-piece reseller order — same day support, same care.",
+                  title: "Layanan yang tumbuh bersama Anda",
+                  desc: "Dari pelanggan pertama hingga pesanan reseller 1.000 pcs — dukungan dan perhatian yang sama.",
                 },
               ].map((v) => (
                 <li key={v.title} className="border-l-2 border-[color:var(--color-navy-900)] pl-4">

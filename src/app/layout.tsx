@@ -16,13 +16,14 @@ export const metadata: Metadata = {
     template: `%s — ${SITE_NAME}`,
   },
   description:
-    "Juragan Grosir is Indonesia's home for premium and wholesale eyewear. Shop fashion glasses, sunglasses, and blue-light frames with retail and reseller pricing.",
+    "Juragan Grosir adalah toko kacamata premium dan grosir di Indonesia. Belanja kacamata fashion, kacamata hitam, dan blue-light dengan harga retail dan reseller.",
   openGraph: {
     title: `${SITE_NAME} — ${SITE_TAGLINE}`,
     description:
-      "Premium and wholesale eyewear in Indonesia. Retail and reseller pricing, fast shipping, dedicated support.",
+      "Kacamata premium dan grosir di Indonesia. Harga retail dan reseller, pengiriman cepat, layanan pelanggan responsif.",
     type: "website",
     siteName: SITE_NAME,
+    locale: "id_ID",
   },
   icons: {
     icon: "/favicon.svg",
@@ -39,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="id" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-white text-[color:var(--color-ink)]">
         {children}
       </body>

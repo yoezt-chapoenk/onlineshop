@@ -20,28 +20,28 @@ export default function WholesaleCTA() {
       <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-10 p-8 sm:p-12 lg:p-14 items-center">
         <div>
           <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
-            Wholesale & Reseller Program
+            Program Grosir & Reseller
           </span>
           <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
-            Buy more, save more — and grow your eyewear business with us.
+            Beli lebih banyak, hemat lebih banyak — dan kembangkan bisnis kacamata Anda bersama kami.
           </h2>
           <p className="mt-4 text-white/75 max-w-md">
-            Tiered pricing kicks in from just 6 pieces. Approved resellers
-            unlock exclusive pricing across the entire catalog, with priority
-            stock and dedicated account support.
+            Harga grosir berlaku mulai 6 pcs. Reseller yang disetujui
+            mendapatkan harga eksklusif untuk seluruh katalog, dengan prioritas
+            stok dan dukungan akun khusus.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               href="/wholesale"
               className="btn !bg-white !text-[color:var(--color-navy-900)] !border-white hover:!bg-white/90"
             >
-              Become a Reseller <ArrowRight className="h-4 w-4" />
+              Jadi Reseller <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/shop"
               className="btn !border-white/40 !text-white hover:!bg-white/10"
             >
-              See Wholesale Pricing
+              Lihat Harga Grosir
             </Link>
           </div>
         </div>
@@ -49,18 +49,18 @@ export default function WholesaleCTA() {
           {[
             {
               icon: Tags,
-              title: "Tiered pricing from 6 pcs",
-              desc: "Two transparent wholesale tiers on every product.",
+              title: "Harga bertingkat mulai 6 pcs",
+              desc: "Dua tingkat harga grosir transparan di setiap produk.",
             },
             {
               icon: BadgeCheck,
-              title: "Reseller-only pricing",
-              desc: "Approved accounts unlock exclusive lower pricing.",
+              title: "Harga khusus reseller",
+              desc: "Akun reseller yang disetujui mendapat harga eksklusif.",
             },
             {
               icon: Users,
-              title: "Priority stock & support",
-              desc: "Dedicated WhatsApp line for resellers and bulk buyers.",
+              title: "Prioritas stok & dukungan",
+              desc: "Jalur WhatsApp khusus untuk reseller dan pembeli grosir.",
             },
           ].map(({ icon: Icon, title, desc }) => (
             <li

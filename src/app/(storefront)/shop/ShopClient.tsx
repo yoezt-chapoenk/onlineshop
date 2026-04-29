@@ -13,11 +13,11 @@ interface Props {
 }
 
 const SORT_OPTIONS = [
-  { value: "newest", label: "Newest" },
-  { value: "best", label: "Best selling" },
-  { value: "price-low", label: "Lowest price" },
-  { value: "price-high", label: "Highest price" },
-  { value: "popular", label: "Most popular" },
+  { value: "newest", label: "Terbaru" },
+  { value: "best", label: "Paling laris" },
+  { value: "price-low", label: "Harga termurah" },
+  { value: "price-high", label: "Harga tertinggi" },
+  { value: "popular", label: "Paling populer" },
 ] as const;
 
 type SortValue = (typeof SORT_OPTIONS)[number]["value"];
@@ -137,15 +137,15 @@ export default function ShopClient({
       onRemove: () => setSelectedStyles(selectedStyles.filter((x) => x !== s)),
     })),
     ...(wholesaleOnly
-      ? [{ label: "Wholesale available", onRemove: () => setWholesaleOnly(false) }]
+      ? [{ label: "Tersedia grosir", onRemove: () => setWholesaleOnly(false) }]
       : []),
     ...(inStockOnly
-      ? [{ label: "In stock only", onRemove: () => setInStockOnly(false) }]
+      ? [{ label: "Hanya stok ada", onRemove: () => setInStockOnly(false) }]
       : []),
     ...(maxPrice < PRICE_MAX
       ? [
           {
-            label: `Up to ${rupiah(maxPrice)}`,
+            label: `Sampai ${rupiah(maxPrice)}`,
             onRemove: () => setMaxPrice(PRICE_MAX),
           },
         ]
@@ -156,18 +156,18 @@ export default function ShopClient({
     <div className="space-y-7">
       <div>
         <label className="label" htmlFor={`${idPrefix}-search`}>
-          Search
+          Cari
         </label>
         <input
           id={`${idPrefix}-search`}
           className="input"
-          placeholder="e.g. aviator, blue light"
+          placeholder="contoh: aviator, blue light"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      <FilterSection title="Category">
+      <FilterSection title="Kategori">
         <ul className="space-y-2">
           {categories.map((c) => (
             <li key={c.slug}>
@@ -191,6 +191,7 @@ export default function ShopClient({
       </FilterSection>
 
       <FilterSection title="Gender">
+        {/* Gender label is universal in fashion in Indonesia */}
         <div className="flex flex-wrap gap-2">
           {GENDERS.map((g) => (
             <ChipButton
@@ -203,7 +204,7 @@ export default function ShopClient({
         </div>
       </FilterSection>
 
-      <FilterSection title="Style">
+      <FilterSection title="Gaya">
         <div className="flex flex-wrap gap-2">
           {STYLES.map((s) => (
             <ChipButton
@@ -216,7 +217,7 @@ export default function ShopClient({
         </div>
       </FilterSection>
 
-      <FilterSection title="Max price">
+      <FilterSection title="Harga maksimal">
         <div className="text-xs text-[color:var(--color-muted)] mb-2">
           {rupiah(PRICE_MIN)} —{" "}
           <span className="font-semibold text-[color:var(--color-ink)]">
@@ -234,7 +235,7 @@ export default function ShopClient({
         />
       </FilterSection>
 
-      <FilterSection title="Availability">
+      <FilterSection title="Ketersediaan">
         <div className="space-y-2.5">
           <label className="flex items-center gap-2 text-sm cursor-pointer">
             <input
@@ -243,7 +244,7 @@ export default function ShopClient({
               onChange={(e) => setWholesaleOnly(e.target.checked)}
               className="h-4 w-4 accent-[color:var(--color-navy-900)] cursor-pointer"
             />
-            Wholesale available
+            Tersedia grosir
           </label>
           <label className="flex items-center gap-2 text-sm cursor-pointer">
             <input
@@ -252,7 +253,7 @@ export default function ShopClient({
               onChange={(e) => setInStockOnly(e.target.checked)}
               className="h-4 w-4 accent-[color:var(--color-navy-900)] cursor-pointer"
             />
-            In stock only
+            Hanya stok tersedia
           </label>
         </div>
       </FilterSection>
@@ -262,7 +263,7 @@ export default function ShopClient({
         onClick={clearAll}
         className="btn btn-outline w-full !py-2 text-sm"
       >
-        Clear all filters
+        Hapus semua filter
       </button>
     </div>
   );
@@ -270,10 +271,10 @@ export default function ShopClient({
   return (
     <div>
       <PageHeader
-        eyebrow="Shop"
-        title="All Products"
-        description="Browse our complete eyewear catalog. Use the filters to find your perfect frame."
-        breadcrumbs={[{ label: "Shop" }]}
+        eyebrow="Belanja"
+        title="Semua Produk"
+        description="Telusuri seluruh katalog kacamata kami. Gunakan filter untuk menemukan frame favorit Anda."
+        breadcrumbs={[{ label: "Belanja" }]}
       />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
@@ -293,7 +294,7 @@ export default function ShopClient({
                   className="lg:hidden btn btn-outline !py-2 !px-3 text-xs"
                 >
                   <SlidersHorizontal className="h-3.5 w-3.5" />
-                  Filters
+                  Filter
                   {activeFilters.length > 0 && (
                     <span className="ml-1 inline-flex items-center justify-center min-w-5 h-5 rounded-full bg-[color:var(--color-navy-900)] text-white text-[10px] font-semibold px-1.5">
                       {activeFilters.length}
@@ -301,11 +302,11 @@ export default function ShopClient({
                   )}
                 </button>
                 <div className="text-sm text-[color:var(--color-muted)]">
-                  Showing{" "}
+                  Menampilkan{" "}
                   <span className="font-semibold text-[color:var(--color-ink)]">
                     {filtered.length}
                   </span>{" "}
-                  of {allProducts.length} products
+                  dari {allProducts.length} produk
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -313,7 +314,7 @@ export default function ShopClient({
                   htmlFor="sort"
                   className="text-sm text-[color:var(--color-muted)]"
                 >
-                  Sort by
+                  Urutkan
                 </label>
                 <select
                   id="sort"
@@ -349,7 +350,7 @@ export default function ShopClient({
                   onClick={clearAll}
                   className="text-xs text-[color:var(--color-muted)] hover:text-[color:var(--color-navy-900)] underline underline-offset-2"
                 >
-                  Clear all
+                  Hapus semua
                 </button>
               </div>
             )}
@@ -372,11 +373,11 @@ export default function ShopClient({
           />
           <div className="absolute inset-y-0 left-0 w-[88%] max-w-sm bg-white shadow-2xl flex flex-col">
             <div className="flex items-center justify-between px-5 py-4 border-b border-[color:var(--color-line)]">
-              <h2 className="text-base font-semibold">Filters</h2>
+              <h2 className="text-base font-semibold">Filter</h2>
               <button
                 type="button"
                 onClick={() => setMobileFiltersOpen(false)}
-                aria-label="Close filters"
+                aria-label="Tutup filter"
                 className="h-8 w-8 inline-flex items-center justify-center rounded-full hover:bg-[color:var(--color-cloud-100)]"
               >
                 <X className="h-4 w-4" />
@@ -391,7 +392,7 @@ export default function ShopClient({
                 onClick={() => setMobileFiltersOpen(false)}
                 className="btn btn-primary w-full"
               >
-                Show {filtered.length} products
+                Tampilkan {filtered.length} produk
               </button>
             </div>
           </div>

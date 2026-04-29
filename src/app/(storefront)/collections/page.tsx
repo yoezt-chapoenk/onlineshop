@@ -6,9 +6,9 @@ import GlassesArt from "@/components/products/GlassesArt";
 import { getCategories, getProducts } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Collections",
+  title: "Koleksi",
   description:
-    "Browse Juragan Grosir eyewear collections — Eyeglasses, Sunglasses, Blue Light, and Accessories.",
+    "Telusuri koleksi kacamata Juragan Grosir — Kacamata Optik, Kacamata Hitam, Blue Light, dan Aksesoris.",
 };
 
 export default async function CollectionsPage() {
@@ -22,10 +22,10 @@ export default async function CollectionsPage() {
   return (
     <div>
       <PageHeader
-        eyebrow="Collections"
-        title="Shop By Category"
-        description="From everyday eyeglasses to fashion sunglasses and screen-time blue-light frames — find the right collection for you."
-        breadcrumbs={[{ label: "Collections" }]}
+        eyebrow="Koleksi"
+        title="Belanja per Kategori"
+        description="Dari kacamata harian, kacamata hitam fesyen, hingga frame blue light untuk layar — temukan koleksi yang tepat untuk Anda."
+        breadcrumbs={[{ label: "Koleksi" }]}
       />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
@@ -46,10 +46,10 @@ export default async function CollectionsPage() {
                     {c.description}
                   </p>
                   <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--color-navy-900)]">
-                    Shop {c.name} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    Belanja {c.name} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                   </span>
                   <div className="mt-3 text-xs text-[color:var(--color-muted)]">
-                    {c.productCount} products
+                    {c.productCount} produk
                   </div>
                 </div>
                 {sampleProduct && (

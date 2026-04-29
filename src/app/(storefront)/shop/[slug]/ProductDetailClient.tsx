@@ -7,6 +7,7 @@ import type { Product } from "@/lib/types";
 import { calculatePrice } from "@/lib/pricing";
 import { formatRupiah } from "@/lib/format";
 import { useCart } from "@/components/cart/CartProvider";
+import { useSession } from "@/components/auth/SessionProvider";
 import { whatsappLink, SITE_URL } from "@/lib/constants";
 
 interface Props {
@@ -15,10 +16,11 @@ interface Props {
 
 export default function ProductDetailClient({ product }: Props) {
   const { addItem } = useCart();
+  const { isReseller } = useSession();
   const [quantity, setQuantity] = useState(1);
   const [feedback, setFeedback] = useState<string | null>(null);
 
-  const pricing = calculatePrice(product, quantity, false);
+  const pricing = calculatePrice(product, quantity, isReseller);
 
   const showSale =
     product.promotionalPrice && product.promotionalPrice < product.retailPrice;
@@ -29,7 +31,7 @@ export default function ProductDetailClient({ product }: Props) {
 
   function handleAdd() {
     addItem(product, quantity);
-    setFeedback(`${quantity} × ${product.name} added to cart.`);
+    setFeedback(`${quantity} × ${product.name} ditambahkan ke keranjang.`);
     window.setTimeout(() => setFeedback(null), 2400);
   }
 
@@ -39,7 +41,7 @@ export default function ProductDetailClient({ product }: Props) {
         <div className="text-3xl sm:text-4xl font-bold text-[color:var(--color-navy-900)]">
           {formatRupiah(pricing.unitPrice)}
         </div>
-        <div className="text-sm text-[color:var(--color-muted)]">/ pc</div>
+        <div className="text-sm text-[color:var(--color-muted)]">/ pcs</div>
         {showSale && pricing.appliedType === "promo" && (
           <div className="text-sm text-[color:var(--color-muted)] line-through">
             {formatRupiah(product.retailPrice)}
@@ -65,7 +67,7 @@ export default function ProductDetailClient({ product }: Props) {
         <div className="inline-flex items-center rounded-lg border border-[color:var(--color-line)] overflow-hidden">
           <button
             type="button"
-            aria-label="Decrease quantity"
+            aria-label="Kurangi jumlah"
             className="h-10 w-10 flex items-center justify-center hover:bg-[color:var(--color-cloud-100)]"
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
           >
@@ -86,7 +88,7 @@ export default function ProductDetailClient({ product }: Props) {
           />
           <button
             type="button"
-            aria-label="Increase quantity"
+            aria-label="Tambah jumlah"
             className="h-10 w-10 flex items-center justify-center hover:bg-[color:var(--color-cloud-100)]"
             onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
           >
@@ -100,7 +102,7 @@ export default function ProductDetailClient({ product }: Props) {
           disabled={product.stock === 0}
           className="btn btn-primary"
         >
-          <ShoppingCart className="h-4 w-4" /> Add to Cart
+          <ShoppingCart className="h-4 w-4" /> Tambah ke Keranjang
         </button>
 
         <a
@@ -109,7 +111,7 @@ export default function ProductDetailClient({ product }: Props) {
           rel="noopener noreferrer"
           className="btn btn-outline"
         >
-          <MessageCircle className="h-4 w-4" /> Ask on WhatsApp
+          <MessageCircle className="h-4 w-4" /> Tanya via WhatsApp
         </a>
       </div>
 

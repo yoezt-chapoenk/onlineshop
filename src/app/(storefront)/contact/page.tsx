@@ -10,34 +10,34 @@ import {
 } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Kontak",
   description:
-    "Get in touch with Juragan Grosir — WhatsApp support, email, or in-person at our Jakarta warehouse.",
+    "Hubungi Juragan Grosir — dukungan WhatsApp, email, atau langsung di gudang Jakarta kami.",
 };
 
 export default function ContactPage() {
   return (
     <div>
       <PageHeader
-        eyebrow="Contact"
-        title="We're here to help."
-        description="Reach our team via WhatsApp for the fastest response, or send us a message and we'll get back within one business day."
-        breadcrumbs={[{ label: "Contact" }]}
+        eyebrow="Kontak"
+        title="Kami siap membantu."
+        description="Hubungi tim kami via WhatsApp untuk respons tercepat, atau kirim pesan dan kami akan membalas dalam satu hari kerja."
+        breadcrumbs={[{ label: "Kontak" }]}
       />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
         <div>
-          <h2 className="text-xl font-bold tracking-tight">Get in touch</h2>
+          <h2 className="text-xl font-bold tracking-tight">Hubungi kami</h2>
           <ul className="mt-6 space-y-4">
             <li className="card p-5 flex items-start gap-4">
               <div className="h-11 w-11 rounded-xl bg-[#25D366]/10 text-[#1a8b4a] flex items-center justify-center shrink-0">
                 <MessageCircle className="h-5 w-5" />
               </div>
               <div className="flex-1">
-                <div className="text-sm font-semibold">WhatsApp support</div>
+                <div className="text-sm font-semibold">Dukungan WhatsApp</div>
                 <p className="text-xs text-[color:var(--color-muted)] mt-0.5">
-                  Fastest way to reach us. Average reply time 5 min during
-                  business hours (9am–6pm WIB).
+                  Cara tercepat menghubungi kami. Rata-rata balas 5 menit
+                  pada jam kerja (09.00–18.00 WIB).
                 </p>
                 <a
                   href={whatsappLink("Halo Juragan Grosir, saya butuh bantuan tentang…")}
@@ -45,7 +45,7 @@ export default function ContactPage() {
                   rel="noopener noreferrer"
                   className="mt-3 inline-flex btn !bg-[#25D366] !text-white !border-[#25D366] !py-2 !px-3 text-xs"
                 >
-                  Chat with us
+                  Chat dengan kami
                 </a>
               </div>
             </li>
@@ -54,7 +54,7 @@ export default function ContactPage() {
                 <Phone className="h-5 w-5" />
               </div>
               <div className="flex-1">
-                <div className="text-sm font-semibold">Phone</div>
+                <div className="text-sm font-semibold">Telepon</div>
                 <a
                   href={`tel:${STORE_PHONE.replace(/\s+/g, "")}`}
                   className="text-sm text-[color:var(--color-navy-900)] hover:underline"
@@ -82,12 +82,12 @@ export default function ContactPage() {
                 <MapPin className="h-5 w-5" />
               </div>
               <div className="flex-1">
-                <div className="text-sm font-semibold">Warehouse & office</div>
+                <div className="text-sm font-semibold">Gudang & kantor</div>
                 <p className="text-sm text-[color:var(--color-muted)] mt-0.5">
                   {STORE_ADDRESS}
                 </p>
                 <p className="text-xs text-[color:var(--color-muted)] mt-1">
-                  Open Mon–Sat, 9am–6pm WIB. Visits by appointment.
+                  Buka Sen–Sab, 09.00–18.00 WIB. Kunjungan dengan janji temu.
                 </p>
               </div>
             </li>

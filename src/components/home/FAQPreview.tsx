@@ -3,24 +3,24 @@ import { ArrowRight } from "lucide-react";
 
 const FAQS = [
   {
-    q: "How does wholesale pricing work?",
-    a: "Tiered pricing automatically applies once you reach the minimum quantity (typically 6 pcs). Tier 2 unlocks at 12+ pcs. Approved resellers always see reseller pricing across the catalog.",
+    q: "Bagaimana cara kerja harga grosir?",
+    a: "Harga bertingkat otomatis berlaku setelah Anda mencapai minimum quantity (umumnya 6 pcs). Tingkat 2 berlaku mulai 12 pcs. Reseller yang disetujui selalu mendapat harga reseller di seluruh katalog.",
   },
   {
-    q: "How is shipping calculated?",
-    a: "We integrate RajaOngkir/Komerce to calculate live courier rates based on your destination and total order weight. You choose the courier and service before payment.",
+    q: "Bagaimana ongkos kirim dihitung?",
+    a: "Kami integrasi dengan RajaOngkir/Komerce untuk menghitung tarif kurir secara real-time berdasarkan tujuan dan total berat pesanan. Anda memilih kurir dan layanan sebelum pembayaran.",
   },
   {
-    q: "Which payment methods do you accept?",
-    a: "Bank Transfer, Virtual Account, QRIS, and other channels available via our Komerce payment provider. All payments are processed securely on-website.",
+    q: "Metode pembayaran apa saja yang tersedia?",
+    a: "Bank Transfer, Virtual Account, QRIS, dan saluran lain melalui penyedia pembayaran Komerce kami. Seluruh pembayaran diproses langsung di website dengan aman.",
   },
   {
-    q: "Do you ship across Indonesia?",
-    a: "Yes — we ship to all Indonesian provinces using JNE, J&T, SiCepat, and other major couriers. Tracking numbers are sent automatically once your order is shipped.",
+    q: "Apakah pengiriman menjangkau seluruh Indonesia?",
+    a: "Ya — kami mengirim ke seluruh provinsi di Indonesia menggunakan JNE, J&T, SiCepat, dan kurir lainnya. Nomor resi otomatis dikirim setelah pesanan dikirim.",
   },
   {
-    q: "Can I become a reseller?",
-    a: "Absolutely. Submit the Become a Reseller form with your selling channels and estimated monthly volume. Our team reviews applications within 1–2 business days.",
+    q: "Bagaimana cara menjadi reseller?",
+    a: "Tentu bisa. Isi form Jadi Reseller dengan saluran penjualan dan estimasi volume bulanan Anda. Tim kami akan meninjau dalam 1–2 hari kerja.",
   },
 ];
 
@@ -29,19 +29,18 @@ export default function FAQPreview() {
     <section>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div>
-          <span className="eyebrow">Frequently Asked</span>
+          <span className="eyebrow">Pertanyaan Umum</span>
           <h2 className="mt-4 text-2xl sm:text-3xl font-bold tracking-tight">
-            Quick answers to common questions
+            Jawaban singkat untuk pertanyaan populer
           </h2>
           <p className="mt-4 text-sm text-[color:var(--color-muted)]">
-            Have a different question? Reach our team via WhatsApp or the
-            contact form.
+            Punya pertanyaan lain? Hubungi tim kami via WhatsApp atau form kontak.
           </p>
           <Link
             href="/contact"
             className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--color-navy-900)] hover:underline"
           >
-            Contact support <ArrowRight className="h-4 w-4" />
+            Hubungi customer service <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
         <div className="lg:col-span-2">

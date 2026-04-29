@@ -13,13 +13,13 @@ export default function CategoryGrid({ categories, products }: Props) {
     <section>
       <div className="flex items-end justify-between gap-4">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          Shop By Category
+          Belanja per Kategori
         </h2>
         <Link
           href="/collections"
           className="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--color-navy-900)] hover:underline"
         >
-          View All Categories <ArrowRight className="h-4 w-4" />
+          Lihat Semua Kategori <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
       <div className="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
@@ -37,7 +37,7 @@ export default function CategoryGrid({ categories, products }: Props) {
                     {c.name}
                   </h3>
                   <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[color:var(--color-navy-900)]">
-                    View Collection <ArrowRight className="h-3 w-3" />
+                    Lihat Koleksi <ArrowRight className="h-3 w-3" />
                   </span>
                 </div>
               </div>

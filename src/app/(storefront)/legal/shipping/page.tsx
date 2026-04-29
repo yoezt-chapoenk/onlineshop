@@ -2,39 +2,39 @@ import type { Metadata } from "next";
 import LegalPage from "@/components/legal/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Shipping Policy",
+  title: "Kebijakan Pengiriman",
 };
 
 export default function ShippingPolicyPage() {
   return (
     <LegalPage
-      title="Shipping Policy"
-      description="How we ship Juragan Grosir orders across Indonesia, including processing times and courier options."
-      breadcrumbLabel="Shipping Policy"
+      title="Kebijakan Pengiriman"
+      description="Cara kami mengirim pesanan Juragan Grosir ke seluruh Indonesia, termasuk waktu pemrosesan dan pilihan kurir."
+      breadcrumbLabel="Kebijakan Pengiriman"
       sections={[
         {
-          heading: "Processing time",
+          heading: "Waktu pemrosesan",
           body: [
-            "Orders placed before 2pm WIB on business days are processed and dispatched the same day. Orders placed after 2pm WIB ship the next business day.",
+            "Pesanan yang masuk sebelum pukul 14.00 WIB pada hari kerja akan diproses dan dikirim pada hari yang sama. Pesanan setelah pukul 14.00 WIB akan dikirim pada hari kerja berikutnya.",
           ],
         },
         {
-          heading: "Couriers & rates",
+          heading: "Kurir & tarif",
           body: [
-            "Live shipping rates are calculated at checkout via RajaOngkir / Komerce, based on your destination and the total order weight. Available couriers include JNE, J&T, SiCepat, and Anteraja.",
-            "Customers may select their preferred courier and service tier at checkout.",
+            "Tarif pengiriman dihitung secara realtime saat checkout via RajaOngkir / Komerce, berdasarkan tujuan dan total berat pesanan. Kurir yang tersedia: JNE, J&T, SiCepat, dan Anteraja.",
+            "Pelanggan dapat memilih kurir dan layanan favorit pada saat checkout.",
           ],
         },
         {
-          heading: "Tracking",
+          heading: "Pelacakan",
           body: [
-            "Tracking numbers are sent automatically to your email and WhatsApp once your order is dispatched. You can also track your order from your account page.",
+            "Nomor resi otomatis dikirim ke email dan WhatsApp Anda saat pesanan dikirim. Anda juga bisa melacak pesanan dari halaman akun Anda.",
           ],
         },
         {
-          heading: "Lost or damaged shipments",
+          heading: "Pengiriman hilang atau rusak",
           body: [
-            "If your shipment is lost in transit or arrives damaged, please contact us within 7 days of the expected delivery date. We will work with the courier to resolve the issue and ship a replacement when applicable.",
+            "Jika paket hilang dalam perjalanan atau tiba dalam keadaan rusak, mohon hubungi kami dalam 7 hari sejak perkiraan tanggal pengiriman. Kami akan berkoordinasi dengan kurir untuk menyelesaikan masalah dan mengirim pengganti jika diperlukan.",
           ],
         },
       ]}

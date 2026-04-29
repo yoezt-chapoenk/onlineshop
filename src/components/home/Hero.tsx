@@ -8,21 +8,21 @@ export default function Hero() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-10 lg:gap-12 py-14 sm:py-20 lg:py-24">
           <div className="max-w-xl">
-            <span className="eyebrow">Premium Eyewear</span>
+            <span className="eyebrow">Kacamata Premium</span>
             <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[color:var(--color-ink)] leading-[1.05]">
-              Fashion Meets <br className="hidden sm:block" />
-              Function
+              Gaya Bertemu <br className="hidden sm:block" />
+              Fungsi
             </h1>
             <p className="mt-5 text-base sm:text-lg text-[color:var(--color-muted)] max-w-md leading-relaxed">
-              Timeless design. Superior quality. Glasses that elevate your look
-              and fit your lifestyle.
+              Desain abadi. Kualitas terbaik. Kacamata yang menyempurnakan
+              penampilan Anda dan cocok untuk gaya hidup harian.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/shop" className="btn btn-primary">
-                Shop Now <ArrowRight className="h-4 w-4" />
+                Belanja Sekarang <ArrowRight className="h-4 w-4" />
               </Link>
               <Link href="/collections" className="btn btn-outline">
-                Explore Collections
+                Jelajahi Koleksi
               </Link>
             </div>
           </div>

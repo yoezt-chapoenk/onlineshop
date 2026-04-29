@@ -3,23 +3,23 @@ import { Award, ShieldCheck, Truck, Headphones } from "lucide-react";
 const ITEMS = [
   {
     icon: Award,
-    title: "Premium Quality",
-    desc: "High-grade materials and meticulous craftsmanship.",
+    title: "Kualitas Premium",
+    desc: "Material berkualitas tinggi dan pengerjaan yang teliti.",
   },
   {
     icon: ShieldCheck,
-    title: "100% Authentic",
-    desc: "Guaranteed original products you can trust.",
+    title: "100% Original",
+    desc: "Produk asli yang dijamin keasliannya.",
   },
   {
     icon: Truck,
-    title: "Fast Shipping",
-    desc: "Quick and secure delivery across Indonesia.",
+    title: "Pengiriman Cepat",
+    desc: "Pengiriman aman dan cepat ke seluruh Indonesia.",
   },
   {
     icon: Headphones,
-    title: "Dedicated Support",
-    desc: "Friendly support team ready to assist you.",
+    title: "Layanan Khusus",
+    desc: "Tim layanan pelanggan siap membantu Anda.",
   },
 ];
 

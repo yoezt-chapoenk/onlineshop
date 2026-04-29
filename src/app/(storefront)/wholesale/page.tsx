@@ -4,31 +4,31 @@ import PageHeader from "@/components/ui/PageHeader";
 import ResellerForm from "./ResellerForm";
 
 export const metadata: Metadata = {
-  title: "Become a Reseller",
+  title: "Jadi Reseller",
   description:
-    "Apply to become an approved Juragan Grosir reseller — unlock exclusive pricing, priority stock, and dedicated support.",
+    "Daftarkan diri menjadi reseller resmi Juragan Grosir — nikmati harga khusus, prioritas stok, dan dukungan khusus.",
 };
 
 const PERKS = [
   {
     icon: Tags,
-    title: "Exclusive reseller pricing",
-    desc: "Unlock our lowest pricing across the entire catalog after approval.",
+    title: "Harga reseller eksklusif",
+    desc: "Dapatkan harga terendah kami di seluruh katalog setelah disetujui.",
   },
   {
     icon: BadgeCheck,
-    title: "Priority new arrivals",
-    desc: "Get early access to new collections before they hit the public catalog.",
+    title: "Prioritas produk baru",
+    desc: "Akses lebih awal ke koleksi baru sebelum dirilis ke publik.",
   },
   {
     icon: Truck,
-    title: "Bulk-friendly shipping",
-    desc: "Optimized packaging and consolidated shipments for resellers.",
+    title: "Pengiriman ramah grosir",
+    desc: "Pengemasan optimal dan konsolidasi pengiriman untuk reseller.",
   },
   {
     icon: Users,
-    title: "Dedicated reseller line",
-    desc: "Direct WhatsApp line for stock, restock, and order questions.",
+    title: "Jalur khusus reseller",
+    desc: "Jalur WhatsApp khusus untuk pertanyaan stok, restock, dan pesanan.",
   },
 ];
 
@@ -36,15 +36,15 @@ export default function WholesalePage() {
   return (
     <div>
       <PageHeader
-        eyebrow="Wholesale & Reseller"
-        title="Grow your eyewear business with us."
-        description="Tiered wholesale pricing kicks in from 6 pieces. Approved resellers unlock our exclusive lowest pricing across the catalog."
-        breadcrumbs={[{ label: "Wholesale" }]}
+        eyebrow="Grosir & Reseller"
+        title="Kembangkan bisnis kacamata Anda bersama kami."
+        description="Harga grosir bertingkat berlaku mulai 6 pcs. Reseller yang disetujui mendapat harga terendah kami di seluruh katalog."
+        breadcrumbs={[{ label: "Grosir" }]}
       />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-1 lg:grid-cols-[1fr_minmax(0,460px)] gap-10 lg:gap-14">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Why partner with us</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Kenapa bermitra dengan kami</h2>
           <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
             {PERKS.map(({ icon: Icon, title, desc }) => (
               <li
@@ -65,23 +65,23 @@ export default function WholesalePage() {
           </ul>
 
           <div className="mt-10 card p-6">
-            <h3 className="text-base font-semibold">How it works</h3>
+            <h3 className="text-base font-semibold">Cara kerjanya</h3>
             <ol className="mt-4 space-y-4">
               {[
                 {
                   step: "01",
-                  title: "Submit the application",
-                  desc: "Tell us about your business and selling channels — takes about 2 minutes.",
+                  title: "Kirim aplikasi",
+                  desc: "Ceritakan tentang bisnis dan kanal jualan Anda — hanya ±2 menit.",
                 },
                 {
                   step: "02",
-                  title: "We review within 1–2 business days",
-                  desc: "Our team checks your details and may contact you for a quick verification call.",
+                  title: "Kami review dalam 1–2 hari kerja",
+                  desc: "Tim kami akan memeriksa detail dan mungkin menghubungi untuk verifikasi singkat.",
                 },
                 {
                   step: "03",
-                  title: "Get approved & start ordering",
-                  desc: "Reseller pricing is automatically applied to your account on every order.",
+                  title: "Disetujui & mulai memesan",
+                  desc: "Harga reseller otomatis berlaku di setiap pesanan dari akun Anda.",
                 },
               ].map((s) => (
                 <li key={s.step} className="flex gap-4">
@@ -98,7 +98,7 @@ export default function WholesalePage() {
               ))}
             </ol>
             <div className="mt-6 text-xs text-[color:var(--color-muted)] flex items-center gap-1">
-              Questions? <ArrowRight className="h-3 w-3" /> Reach our team via the form or WhatsApp.
+              Ada pertanyaan? <ArrowRight className="h-3 w-3" /> Hubungi tim kami via form atau WhatsApp.
             </div>
           </div>
         </div>

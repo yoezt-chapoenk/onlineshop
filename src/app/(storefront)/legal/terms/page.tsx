@@ -2,45 +2,45 @@ import type { Metadata } from "next";
 import LegalPage from "@/components/legal/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Terms of Service",
+  title: "Syarat & Ketentuan",
 };
 
 export default function TermsPage() {
   return (
     <LegalPage
-      title="Terms of Service"
-      description="The terms and conditions that govern your use of the Juragan Grosir website and services."
-      breadcrumbLabel="Terms of Service"
+      title="Syarat & Ketentuan"
+      description="Syarat dan ketentuan yang mengatur penggunaan situs dan layanan Juragan Grosir."
+      breadcrumbLabel="Syarat & Ketentuan"
       sections={[
         {
-          heading: "1. Acceptance of terms",
+          heading: "1. Penerimaan ketentuan",
           body: [
-            "By accessing or using the Juragan Grosir website, you agree to be bound by these Terms of Service. If you do not agree, please do not use the site.",
+            "Dengan mengakses atau menggunakan situs Juragan Grosir, Anda setuju untuk terikat pada Syarat & Ketentuan ini. Jika tidak setuju, mohon tidak menggunakan situs ini.",
           ],
         },
         {
-          heading: "2. Account registration",
+          heading: "2. Pendaftaran akun",
           body: [
-            "You are responsible for maintaining the confidentiality of your account credentials. We reserve the right to suspend accounts that violate these terms or engage in fraudulent activity.",
+            "Anda bertanggung jawab menjaga kerahasiaan kredensial akun Anda. Kami berhak menangguhkan akun yang melanggar ketentuan ini atau melakukan aktivitas penipuan.",
           ],
         },
         {
-          heading: "3. Pricing & orders",
+          heading: "3. Harga & pesanan",
           body: [
-            "Retail pricing applies by default. Wholesale tier pricing applies automatically when minimum quantities are reached. Reseller pricing requires an approved reseller account.",
-            "Order amounts are recalculated server-side before payment is created. We reserve the right to cancel orders with pricing errors before payment confirmation.",
+            "Harga retail berlaku secara default. Harga grosir bertingkat berlaku otomatis saat jumlah minimum tercapai. Harga reseller hanya untuk akun reseller yang sudah disetujui.",
+            "Total pesanan dihitung ulang di sisi server sebelum pembayaran dibuat. Kami berhak membatalkan pesanan dengan kesalahan harga sebelum konfirmasi pembayaran.",
           ],
         },
         {
-          heading: "4. Intellectual property",
+          heading: "4. Hak kekayaan intelektual",
           body: [
-            "All content on this site — including product photography, illustrations, and brand assets — is the property of Juragan Grosir or its licensors.",
+            "Seluruh konten di situs ini — termasuk fotografi produk, ilustrasi, dan aset merek — adalah milik Juragan Grosir atau pemberi lisensinya.",
           ],
         },
         {
-          heading: "5. Limitation of liability",
+          heading: "5. Batasan tanggung jawab",
           body: [
-            "Juragan Grosir is not liable for indirect, incidental, or consequential damages arising from the use of our products or services.",
+            "Juragan Grosir tidak bertanggung jawab atas kerugian tidak langsung, insidental, atau konsekuensial yang timbul dari penggunaan produk atau layanan kami.",
           ],
         },
       ]}

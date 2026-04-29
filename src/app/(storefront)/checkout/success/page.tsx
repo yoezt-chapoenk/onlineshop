@@ -42,20 +42,20 @@ function SuccessInner() {
           <CheckCircle2 className="h-8 w-8" />
         </div>
         <h1 className="mt-5 text-2xl sm:text-3xl font-bold tracking-tight">
-          Thank you — your order is confirmed!
+          Terima kasih — pesanan Anda dikonfirmasi!
         </h1>
         <p className="mt-2 text-sm text-[color:var(--color-muted)]">
-          Order number{" "}
+          Nomor pesanan{" "}
           <span className="font-semibold text-[color:var(--color-ink)]">
             {orderNumber}
           </span>
-          . We&apos;ve emailed you the payment instructions.
+          . Instruksi pembayaran sudah kami kirim ke email Anda.
         </p>
 
         {order && (
           <dl className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-5 text-left">
             <div>
-              <dt className="text-xs text-[color:var(--color-muted)]">Items</dt>
+              <dt className="text-xs text-[color:var(--color-muted)]">Item</dt>
               <dd className="text-sm font-semibold mt-0.5">{order.itemCount}</dd>
             </div>
             <div>
@@ -63,7 +63,7 @@ function SuccessInner() {
               <dd className="text-sm font-semibold mt-0.5">{formatRupiah(order.subtotal)}</dd>
             </div>
             <div>
-              <dt className="text-xs text-[color:var(--color-muted)]">Shipping</dt>
+              <dt className="text-xs text-[color:var(--color-muted)]">Pengiriman</dt>
               <dd className="text-sm font-semibold mt-0.5">
                 {order.shipping}
                 <span className="ml-1 font-normal text-[color:var(--color-muted)]">
@@ -82,7 +82,7 @@ function SuccessInner() {
 
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           <Link href="/shop" className="btn btn-primary">
-            Continue shopping <ArrowRight className="h-4 w-4" />
+            Lanjut belanja <ArrowRight className="h-4 w-4" />
           </Link>
           <a
             href={whatsappLink(
@@ -92,7 +92,7 @@ function SuccessInner() {
             rel="noopener noreferrer"
             className="btn btn-outline"
           >
-            <MessageCircle className="h-4 w-4" /> WhatsApp support
+            <MessageCircle className="h-4 w-4" /> Dukungan WhatsApp
           </a>
         </div>
       </div>

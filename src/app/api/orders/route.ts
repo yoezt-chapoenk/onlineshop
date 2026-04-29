@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getAdminClient } from "@/lib/supabase/admin";
+import { getCurrentUser } from "@/lib/supabase/server";
 import { calculatePrice } from "@/lib/pricing";
 import { products as seedProducts } from "@/lib/products";
 import type { Product } from "@/lib/types";
@@ -185,6 +186,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unknown shipping option" }, { status: 400 });
   }
 
+  // Determine reseller status from the authenticated session, never
+  // from the client request body. Only approved reseller/wholesale
+  // accounts get reseller pricing.
+  const { profile } = await getCurrentUser();
+  const isReseller =
+    (profile?.role === "reseller" || profile?.role === "wholesale") &&
+    profile?.reseller_status === "approved";
+
   let resolved: Map<string, ResolvedProduct>;
   try {
     resolved = await resolveProducts(items.map((i) => i.productId));
@@ -205,12 +214,29 @@ export async function POST(request: Request) {
     );
   }
 
+  // Aggregate quantities by productId before validating stock and
+  // computing pricing. Without this step, a malicious client could
+  // POST [{productId: X, qty: 50}, {productId: X, qty: 50}] against
+  // a product with stock=60: each line individually passes the check,
+  // but together they oversell. Aggregating also ensures tiered
+  // pricing reflects the true total quantity per product.
+  const aggregated = new Map<string, { productId: string; quantity: number }>();
+  for (const line of items) {
+    const existing = aggregated.get(line.productId);
+    if (existing) {
+      existing.quantity += line.quantity;
+    } else {
+      aggregated.set(line.productId, { productId: line.productId, quantity: line.quantity });
+    }
+  }
+  const dedupedItems = Array.from(aggregated.values());
+
   // Server-side stock validation. The /cart and /shop/[slug] pages
   // already cap quantity at product.stock, but those limits run in the
   // browser and can be trivially bypassed by hitting this endpoint
-  // directly. Reject any line whose quantity exceeds available stock
-  // before we reserve an order number or write rows.
-  const overstocked = items
+  // directly. Reject any product whose aggregated quantity exceeds
+  // available stock before we reserve an order number or write rows.
+  const overstocked = dedupedItems
     .map((line) => ({ line, product: resolved.get(line.productId)! }))
     .filter(({ line, product }) => line.quantity > product.stock);
   if (overstocked.length > 0) {
@@ -232,7 +258,7 @@ export async function POST(request: Request) {
   let subtotal = 0;
   let itemCount = 0;
   let weightGram = 0;
-  const lineItems = items.map((line) => {
+  const lineItems = dedupedItems.map((line) => {
     const product = resolved.get(line.productId)!;
     const pricing = calculatePrice(
       {
@@ -242,7 +268,7 @@ export async function POST(request: Request) {
         priceTiers: product.priceTiers,
       },
       line.quantity,
-      false,
+      isReseller,
     );
     subtotal += pricing.subtotal;
     itemCount += line.quantity;
