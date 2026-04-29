@@ -148,6 +148,52 @@ begin
 end;
 $$;
 
+-- Atomic stock decrement used by POST /api/orders to close the
+-- Time-of-Check → Time-of-Use race between stock validation and the
+-- final `insert into order_items`. Each UPDATE guards itself with
+-- `stock >= quantity`, so two concurrent orders for the same variant
+-- cannot both succeed past available stock. Any shortfall raises and
+-- aborts the whole call, letting the JS caller roll back the order.
+create or replace function public.decrement_stock_atomic(p_items jsonb)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  item     jsonb;
+  affected int;
+  v_qty    int;
+  v_vid    uuid;
+  v_pid    uuid;
+begin
+  for item in select * from jsonb_array_elements(p_items) loop
+    v_qty := (item->>'quantity')::int;
+    v_vid := nullif(item->>'variant_id','')::uuid;
+    v_pid := nullif(item->>'product_id','')::uuid;
+    if v_vid is not null then
+      update public.product_variants
+         set stock = stock - v_qty
+       where id = v_vid and stock >= v_qty;
+      get diagnostics affected = row_count;
+      if affected = 0 then
+        raise exception 'insufficient stock for variant %', v_vid
+          using errcode = 'P0001';
+      end if;
+    elsif v_pid is not null then
+      update public.products
+         set stock = stock - v_qty
+       where id = v_pid and stock >= v_qty;
+      get diagnostics affected = row_count;
+      if affected = 0 then
+        raise exception 'insufficient stock for product %', v_pid
+          using errcode = 'P0001';
+      end if;
+    end if;
+  end loop;
+end;
+$$;
+
 -- Atomic tier replacement used by /api/admin/products PATCH so that
 -- a delete-then-insert pair never strands a product with no tiers
 -- when the insert fails (constraint violation, network error, etc).

@@ -487,6 +487,31 @@ export async function POST(request: Request) {
     );
   }
 
+  // Atomically decrement stock now that the order is persisted.
+  // The earlier per-line stock check (around line 322) only rules
+  // out obvious overselling at the time of the request; between that
+  // check and the inserts above, another concurrent order could have
+  // depleted the same product/variant. The RPC re-checks each row
+  // under its own UPDATE (`stock >= quantity`) and raises if any
+  // item no longer has enough, which lets us roll the order back
+  // instead of silently overselling.
+  const { error: decErr } = await supabase.rpc("decrement_stock_atomic", {
+    p_items: lineItems.map(({ product, variant, line }) => ({
+      product_id: variant ? null : product.rowId ?? null,
+      variant_id: variant?.id ?? null,
+      quantity: line.quantity,
+    })),
+  });
+  if (decErr) {
+    // Roll back order + items (items cascade on order delete).
+    await supabase.from("order_items").delete().eq("order_id", orderRow.id);
+    await supabase.from("orders").delete().eq("id", orderRow.id);
+    const msg = decErr.message.includes("insufficient stock")
+      ? "Stok tidak mencukupi, silakan coba lagi."
+      : `stock decrement failed: ${decErr.message}`;
+    return NextResponse.json({ error: msg }, { status: 409 });
+  }
+
   return NextResponse.json({
     orderNumber,
     subtotal,

@@ -34,23 +34,43 @@ export async function PATCH(
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   // On approval, ensure the user has a row with reseller role + status.
+  //
+  // The application was submitted on the public /wholesale form weeks
+  // or months ago, so contact_name/phone in the application may be
+  // stale vs the user's current /account/profile edits. Don't
+  // clobber those: only update role + reseller_status for an existing
+  // user, and only backfill full_name/phone when we're creating a
+  // fresh row for a pre-auth applicant who hasn't registered yet.
   if (parsed.data.status === "approved" && app) {
     const a = app as { email: string; contact_name: string; phone: string };
-    const { error: upsertErr } = await ctx.supabase
+    const { data: existing } = await ctx.supabase
       .from("users")
-      .upsert(
-        {
-          email: a.email,
-          full_name: a.contact_name,
-          phone: a.phone,
+      .select("id")
+      .eq("email", a.email)
+      .maybeSingle<{ id: string }>();
+    if (existing) {
+      const { error: updateErr } = await ctx.supabase
+        .from("users")
+        .update({
           role: "reseller",
           reseller_status: "approved",
           updated_at: new Date().toISOString(),
-        },
-        { onConflict: "email" },
-      );
-    if (upsertErr) {
-      return NextResponse.json({ error: upsertErr.message }, { status: 500 });
+        })
+        .eq("email", a.email);
+      if (updateErr) {
+        return NextResponse.json({ error: updateErr.message }, { status: 500 });
+      }
+    } else {
+      const { error: insertErr } = await ctx.supabase.from("users").insert({
+        email: a.email,
+        full_name: a.contact_name,
+        phone: a.phone,
+        role: "reseller",
+        reseller_status: "approved",
+      });
+      if (insertErr) {
+        return NextResponse.json({ error: insertErr.message }, { status: 500 });
+      }
     }
   }
   if (parsed.data.status === "rejected" && app) {
