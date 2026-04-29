@@ -77,10 +77,21 @@ create table if not exists public.products (
   frame_color         text not null check (frame_color in ('black','gold','silver','tortoise','navy','rose','olive')),
   lens_color          text check (lens_color in ('clear','smoke','green','amber','blue','mirror')),
   specs               jsonb not null default '[]'::jsonb,
+  image_urls          text[] not null default '{}',
   created_at          timestamptz not null default now()
 );
+-- Append the column on existing clusters that pre-date this migration.
+alter table public.products
+  add column if not exists image_urls text[] not null default '{}';
 create index if not exists products_category_idx on public.products (category_slug);
 create index if not exists products_featured_idx on public.products (is_featured);
+
+-- Storage bucket for product images. Public read so storefront <img>
+-- tags work; writes are gated by the service-role key (admin API
+-- uploads only). Bucket creation is idempotent.
+insert into storage.buckets (id, name, public)
+values ('product-images', 'product-images', true)
+on conflict (id) do update set public = true;
 
 create table if not exists public.product_price_tiers (
   id          bigserial primary key,

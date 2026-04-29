@@ -72,9 +72,19 @@ export default function ProductCard({ product, className }: Props) {
 
       <Link
         href={`/shop/${product.slug}`}
-        className="block bg-[color:var(--color-cloud-100)] aspect-[4/3] flex items-center justify-center p-4"
+        className="block bg-[color:var(--color-cloud-100)] aspect-[4/3] flex items-center justify-center overflow-hidden p-4"
       >
-        <GlassesArt product={product} size={180} />
+        {product.imageUrls && product.imageUrls.length > 0 ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={product.imageUrls[0]}
+            alt={product.name}
+            loading="lazy"
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <GlassesArt product={product} size={180} />
+        )}
       </Link>
 
       <div className="flex-1 flex flex-col p-4 sm:p-5 gap-3">

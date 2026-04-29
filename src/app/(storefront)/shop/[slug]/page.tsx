@@ -84,18 +84,42 @@ export default async function ProductPage({ params }: PageProps) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
           <div>
-            <div className="rounded-2xl bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] aspect-square flex items-center justify-center p-10">
-              <GlassesArt product={product} size={360} />
+            <div className="rounded-2xl bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] aspect-square flex items-center justify-center overflow-hidden p-10">
+              {product.imageUrls && product.imageUrls.length > 0 ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={product.imageUrls[0]}
+                  alt={product.name}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <GlassesArt product={product} size={360} />
+              )}
             </div>
             <div className="mt-4 grid grid-cols-4 gap-3">
-              {[0, 1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="rounded-xl bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] aspect-square flex items-center justify-center p-3"
-                >
-                  <GlassesArt product={product} size={70} />
-                </div>
-              ))}
+              {product.imageUrls && product.imageUrls.length > 1
+                ? product.imageUrls.slice(0, 4).map((url, i) => (
+                    <div
+                      key={url + i}
+                      className="rounded-xl bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] aspect-square overflow-hidden"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={url}
+                        alt={`${product.name} ${i + 1}`}
+                        loading="lazy"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ))
+                : [0, 1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className="rounded-xl bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] aspect-square flex items-center justify-center p-3"
+                    >
+                      <GlassesArt product={product} size={70} />
+                    </div>
+                  ))}
             </div>
           </div>
 

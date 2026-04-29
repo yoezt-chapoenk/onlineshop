@@ -81,16 +81,25 @@ export default function CartPage() {
                   <tr key={item.lineId}>
                     <td className="py-4 px-5">
                       <div className="flex items-center gap-4">
-                        <div className="h-20 w-20 shrink-0 rounded-lg bg-[color:var(--color-cloud-100)] flex items-center justify-center">
-                          <GlassesArt
-                            product={{
-                              frame,
-                              frameColor: item.frameColor,
-                              lensColor: item.lensColor,
-                              category: item.category,
-                            }}
-                            size={64}
-                          />
+                        <div className="h-20 w-20 shrink-0 rounded-lg bg-[color:var(--color-cloud-100)] flex items-center justify-center overflow-hidden">
+                          {item.imageUrl ? (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img
+                              src={item.imageUrl}
+                              alt={item.name}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <GlassesArt
+                              product={{
+                                frame,
+                                frameColor: item.frameColor,
+                                lensColor: item.lensColor,
+                                category: item.category,
+                              }}
+                              size={64}
+                            />
+                          )}
                         </div>
                         <div className="min-w-0">
                           <Link

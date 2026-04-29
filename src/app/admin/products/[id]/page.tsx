@@ -32,6 +32,7 @@ interface ProductRow {
   frame_color: string;
   lens_color: string | null;
   specs: { label: string; value: string }[];
+  image_urls: string[] | null;
   product_price_tiers: { min_qty: number; max_qty: number | null; unit_price: number; label: string }[];
   product_variants: {
     id: string;
@@ -98,6 +99,7 @@ export default async function EditProductPage({
     frame_color: p.frame_color,
     lens_color: p.lens_color,
     specs: p.specs ?? [],
+    image_urls: p.image_urls ?? [],
     price_tiers: (p.product_price_tiers ?? []).sort((a, b) => a.min_qty - b.min_qty),
     variants: (p.product_variants ?? [])
       .sort((a, b) => a.sort_order - b.sort_order)

@@ -57,6 +57,13 @@ export interface Product {
   lensColor?: "clear" | "smoke" | "green" | "amber" | "blue" | "mirror";
   specs: { label: string; value: string }[];
   variants: ProductVariant[];
+  /**
+   * Optional uploaded product photos (Supabase Storage URLs). When
+   * empty, storefront falls back to the procedural `GlassesArt` SVG.
+   * The first entry is used for cards / OG images; the rest populate
+   * the detail-page gallery.
+   */
+  imageUrls: string[];
 }
 
 export interface CartItem {
@@ -93,6 +100,8 @@ export interface CartItem {
   frameColor: Product["frameColor"];
   lensColor?: Product["lensColor"];
   category: Product["category"];
+  /** Primary uploaded photo URL, if any. Cart falls back to GlassesArt when absent. */
+  imageUrl?: string;
 }
 
 export interface Category {

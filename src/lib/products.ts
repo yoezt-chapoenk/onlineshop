@@ -46,6 +46,7 @@ export const products: Product[] = [
       { label: "Temple", value: "145 mm" },
     ],
     variants: [],
+    imageUrls: [],
   },
   {
     id: "p-round-gold",
@@ -82,6 +83,7 @@ export const products: Product[] = [
       { label: "Temple", value: "145 mm" },
     ],
     variants: [],
+    imageUrls: [],
   },
   {
     id: "p-aviator-elite",
@@ -118,6 +120,7 @@ export const products: Product[] = [
       { label: "Temple", value: "140 mm" },
     ],
     variants: [],
+    imageUrls: [],
   },
   {
     id: "p-tortoise-brown",
@@ -155,6 +158,7 @@ export const products: Product[] = [
       { label: "Temple", value: "145 mm" },
     ],
     variants: [],
+    imageUrls: [],
   },
   {
     id: "p-bluelight-pro",
@@ -192,6 +196,7 @@ export const products: Product[] = [
       { label: "Temple", value: "145 mm" },
     ],
     variants: [],
+    imageUrls: [],
   },
   {
     id: "p-cateye-rose",
@@ -227,6 +232,7 @@ export const products: Product[] = [
       { label: "Temple", value: "140 mm" },
     ],
     variants: [],
+    imageUrls: [],
   },
   {
     id: "p-sport-runner",
@@ -263,6 +269,7 @@ export const products: Product[] = [
       { label: "Temple", value: "135 mm" },
     ],
     variants: [],
+    imageUrls: [],
   },
   {
     id: "p-mirror-silver",
@@ -299,6 +306,7 @@ export const products: Product[] = [
       { label: "Temple", value: "140 mm" },
     ],
     variants: [],
+    imageUrls: [],
   },
   {
     id: "p-kid-buddy",
@@ -335,6 +343,7 @@ export const products: Product[] = [
       { label: "Temple", value: "120 mm" },
     ],
     variants: [],
+    imageUrls: [],
   },
   {
     id: "p-premium-titanium",
@@ -371,6 +380,7 @@ export const products: Product[] = [
       { label: "Temple", value: "145 mm" },
     ],
     variants: [],
+    imageUrls: [],
   },
   {
     id: "p-case-leather",
@@ -405,6 +415,7 @@ export const products: Product[] = [
       { label: "Includes", value: "Microfiber cleaning cloth" },
     ],
     variants: [],
+    imageUrls: [],
   },
   {
     id: "p-cleaning-kit",
@@ -438,6 +449,7 @@ export const products: Product[] = [
       { label: "Coatings", value: "Safe for AR, BL, and mirror lenses" },
     ],
     variants: [],
+    imageUrls: [],
   },
 ];
 

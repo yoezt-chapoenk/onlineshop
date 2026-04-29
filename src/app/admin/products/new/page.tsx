@@ -30,6 +30,7 @@ const EMPTY: ProductFormValues = {
   frame_color: "black",
   lens_color: null,
   specs: [],
+  image_urls: [],
   price_tiers: [],
   variants: [],
 };

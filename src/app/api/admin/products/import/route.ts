@@ -214,6 +214,7 @@ export async function POST(request: Request) {
       rating: Math.min(5, Math.max(0, parseFloatVal(raw.rating))),
       review_count: parseInteger(raw.review_count),
       colors: splitList(raw.colors),
+      image_urls: splitList(raw.image_urls).filter((u) => /^https?:\/\//i.test(u)),
       frame_color: String(raw.frame_color ?? "black")
         .trim()
         .toLowerCase(),

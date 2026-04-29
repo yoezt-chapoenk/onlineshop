@@ -30,6 +30,7 @@ export interface ProductFormValues {
   frame_color: string;
   lens_color: string | null;
   specs: { label: string; value: string }[];
+  image_urls: string[];
   price_tiers: { min_qty: number; max_qty: number | null; unit_price: number; label: string }[];
   variants: {
     id?: string;
@@ -88,6 +89,52 @@ export default function ProductForm({ initial, categories, mode }: Props) {
 
   function addSpec() {
     update("specs", [...v.specs, { label: "", value: "" }]);
+  }
+
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  async function handleImageUpload(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    setUploadError(null);
+    const uploaded: string[] = [];
+    try {
+      for (const file of Array.from(files)) {
+        const fd = new FormData();
+        fd.append("file", file);
+        const res = await fetch("/api/admin/products/upload-image", {
+          method: "POST",
+          body: fd,
+        });
+        const body = await res.json().catch(() => null);
+        if (!res.ok || !body?.url) {
+          setUploadError(body?.error ?? `Upload gagal (${res.status})`);
+          break;
+        }
+        uploaded.push(body.url as string);
+      }
+      if (uploaded.length > 0) {
+        update("image_urls", [...v.image_urls, ...uploaded]);
+      }
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function moveImage(idx: number, dir: -1 | 1) {
+    const next = [...v.image_urls];
+    const target = idx + dir;
+    if (target < 0 || target >= next.length) return;
+    [next[idx], next[target]] = [next[target], next[idx]];
+    update("image_urls", next);
+  }
+
+  function removeImage(idx: number) {
+    update(
+      "image_urls",
+      v.image_urls.filter((_, i) => i !== idx),
+    );
   }
 
   function addVariant() {
@@ -310,6 +357,90 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                 >
                   Remove
                 </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-bold uppercase tracking-[0.18em]">Gambar Produk</h2>
+            <p className="text-xs text-[color:var(--color-navy-400)] mt-0.5">
+              Gambar pertama dipakai di kartu &amp; OG image. Maks 5MB per
+              file. Format JPG/PNG/WEBP/GIF.
+            </p>
+          </div>
+          <label className="btn btn-outline text-xs cursor-pointer">
+            {uploading ? "Mengunggah…" : "+ Tambah gambar"}
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              multiple
+              className="hidden"
+              disabled={uploading}
+              onChange={(e) => {
+                handleImageUpload(e.target.files);
+                e.target.value = "";
+              }}
+            />
+          </label>
+        </div>
+        {uploadError && (
+          <p className="text-xs text-[color:var(--color-error)]">{uploadError}</p>
+        )}
+        {v.image_urls.length === 0 ? (
+          <p className="text-sm text-[color:var(--color-navy-400)]">
+            Belum ada gambar. Storefront akan menampilkan ilustrasi SVG bawaan.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {v.image_urls.map((url, i) => (
+              <div
+                key={url + i}
+                className="relative rounded-xl overflow-hidden border border-[color:var(--color-cloud-200)] bg-[color:var(--color-cloud-50)]"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={url}
+                  alt={`Gambar ${i + 1}`}
+                  className="w-full aspect-square object-cover"
+                />
+                {i === 0 && (
+                  <span className="absolute top-1 left-1 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[color:var(--color-navy-900)] text-white">
+                    Utama
+                  </span>
+                )}
+                <div className="absolute bottom-0 inset-x-0 flex items-center justify-between bg-black/60 text-white text-xs px-1.5 py-1">
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      className="px-1 disabled:opacity-40"
+                      onClick={() => moveImage(i, -1)}
+                      disabled={i === 0}
+                      title="Move up"
+                    >
+                      ←
+                    </button>
+                    <button
+                      type="button"
+                      className="px-1 disabled:opacity-40"
+                      onClick={() => moveImage(i, 1)}
+                      disabled={i === v.image_urls.length - 1}
+                      title="Move down"
+                    >
+                      →
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    className="hover:underline"
+                    onClick={() => removeImage(i)}
+                  >
+                    Hapus
+                  </button>
+                </div>
               </div>
             ))}
           </div>

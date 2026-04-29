@@ -46,6 +46,7 @@ interface ProductRow {
   frame_color: Product["frameColor"];
   lens_color: NonNullable<Product["lensColor"]> | null;
   specs: Product["specs"];
+  image_urls: string[] | null;
   product_price_tiers?: PriceTierRow[];
   product_variants?: VariantRow[];
 }
@@ -126,6 +127,7 @@ function rowToProduct(row: ProductRow): Product {
     lensColor: row.lens_color ?? undefined,
     specs: row.specs ?? [],
     variants,
+    imageUrls: row.image_urls ?? [],
   };
 }
 
@@ -135,7 +137,7 @@ const PRODUCT_SELECT = `
   retail_price, promotional_price, reseller_price,
   min_wholesale_qty, stock, weight_gram,
   is_featured, is_best_seller, is_new_arrival,
-  rating, review_count, colors, frame_color, lens_color, specs,
+  rating, review_count, colors, frame_color, lens_color, specs, image_urls,
   product_price_tiers ( min_qty, max_qty, unit_price, label ),
   product_variants ( id, sku, color, variant_type, size, stock, price_override, sort_order )
 `;

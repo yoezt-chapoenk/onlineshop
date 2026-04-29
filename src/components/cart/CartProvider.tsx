@@ -114,6 +114,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           frameColor: product.frameColor,
           lensColor: product.lensColor,
           category: product.category,
+          imageUrl: product.imageUrls?.[0],
         };
         return [...current, newItem];
       });

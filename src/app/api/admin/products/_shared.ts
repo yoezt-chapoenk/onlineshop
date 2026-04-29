@@ -28,6 +28,7 @@ export const ProductSchema = z.object({
     .enum(["clear", "smoke", "green", "amber", "blue", "mirror"])
     .nullable(),
   specs: z.array(z.object({ label: z.string(), value: z.string() })),
+  image_urls: z.array(z.string().url()).default([]),
   price_tiers: z.array(
     z.object({
       min_qty: z.number().int().positive(),

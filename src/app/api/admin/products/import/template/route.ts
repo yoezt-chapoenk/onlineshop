@@ -28,6 +28,7 @@ const HEADERS = [
   "colors",
   "frame_color",
   "lens_color",
+  "image_urls",
 ];
 
 const EXAMPLE = [
@@ -55,6 +56,7 @@ const EXAMPLE = [
   "Hitam|Coklat",
   "black",
   "clear",
+  "https://example.com/uploads/jg-classic-black-1.jpg|https://example.com/uploads/jg-classic-black-2.jpg",
 ];
 
 function csvEscape(value: string): string {
