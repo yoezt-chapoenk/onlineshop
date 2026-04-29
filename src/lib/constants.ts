@@ -1,6 +1,13 @@
 export const SITE_NAME = "Juragan Grosir";
 export const SITE_TAGLINE = "Kacamata Premium dan Grosir";
-export const SITE_URL = "https://juragangrosir.example.com";
+// Read from NEXT_PUBLIC_SITE_URL so production sitemap, robots.txt,
+// metadataBase OG-image URLs, and WhatsApp product share links all
+// point to the real domain. Falls back to the example placeholder
+// only for local dev when the env var is unset. Trailing slash is
+// stripped to keep `${SITE_URL}/path` joins clean.
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://juragangrosir.example.com"
+).replace(/\/$/, "");
 
 // Customer support — used by the floating WhatsApp button and contact CTAs.
 // In production this should come from admin site_settings.

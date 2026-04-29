@@ -87,6 +87,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           );
         }
         const unit = variant?.priceOverride ?? product.retailPrice;
+        // Use `!= null` (not truthy) so a legitimate priceOverride of 0
+        // still clears promo/reseller/tier pricing — otherwise the cart
+        // would call calculatePrice with the parent product's reseller
+        // price still populated and display the wrong number while the
+        // server (which uses != null) correctly charges 0.
+        const hasOverride = variant?.priceOverride != null;
         const newItem: CartItem = {
           lineId: id,
           productId: product.id,
@@ -101,13 +107,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           sku: variant?.sku ?? product.sku,
           quantity: Math.min(quantity, maxStock),
           retailPrice: unit,
-          promotionalPrice: variant?.priceOverride
-            ? undefined
-            : product.promotionalPrice,
-          resellerPrice: variant?.priceOverride
-            ? undefined
-            : product.resellerPrice,
-          priceTiers: variant?.priceOverride ? [] : product.priceTiers,
+          promotionalPrice: hasOverride ? undefined : product.promotionalPrice,
+          resellerPrice: hasOverride ? undefined : product.resellerPrice,
+          priceTiers: hasOverride ? [] : product.priceTiers,
           weightGram: product.weightGram,
           frame: product.frame,
           stock: maxStock,
