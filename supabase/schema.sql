@@ -267,12 +267,17 @@ create policy "Public read price tiers" on public.product_price_tiers   for sele
 -- Authenticated users can read their own profile row. Without this,
 -- RLS on public.users silently returns empty, so getCurrentUser() never
 -- finds a profile and reseller pricing can never be granted.
+--
+-- We intentionally do NOT add an UPDATE policy: the anon key is public
+-- (NEXT_PUBLIC_SUPABASE_ANON_KEY), so a per-row UPDATE policy would let
+-- any authenticated user hit the REST API directly and set their own
+-- role/reseller_status to escalate into reseller pricing. All legitimate
+-- profile writes go through the service-role admin client instead
+-- (see src/app/(storefront)/account/profile/actions.ts and friends).
 drop policy if exists "Users can read own row"   on public.users;
 drop policy if exists "Users can update own row" on public.users;
 create policy "Users can read own row"
   on public.users for select using (auth.uid() = id);
-create policy "Users can update own row"
-  on public.users for update using (auth.uid() = id) with check (auth.uid() = id);
 
 -- Customers / orders / items / form submissions: NO public access.
 -- The Next.js API routes use the service-role key, which bypasses RLS,
