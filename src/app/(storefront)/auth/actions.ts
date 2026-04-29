@@ -86,23 +86,48 @@ export async function registerAction(
   });
   if (error) return { error: error.message };
 
-  // Best-effort: insert/upsert the public.users row so the app can read
+  // Best-effort: write the public.users row so the app can read
   // role/full_name without relying on the auth-trigger to have run yet.
+  //
+  // The reseller-application approval path can create a pre-auth
+  // users row (keyed by email, random uuid) for an applicant who hasn't
+  // registered yet. If we naively upserted by id here, PostgREST would
+  // INSERT and fail on the email unique constraint, silently leaving
+  // the auth user without a profile — and the existing row would keep
+  // a random uuid that never matches `auth.uid()`, so `getCurrentUser()`
+  // would never find the profile and reseller pricing would never apply.
+  //
+  // Strategy: look up by email first. If a row exists (i.e. reseller
+  // approval already ran), UPDATE its id to the new auth user id while
+  // preserving role + reseller_status. Otherwise INSERT a fresh
+  // customer row keyed by the auth user id.
   const admin = getAdminClient();
   if (admin && data.user) {
-    await admin
+    const { data: existing } = await admin
       .from("users")
-      .upsert(
-        {
+      .select("id, role, reseller_status")
+      .eq("email", parsed.data.email)
+      .maybeSingle<{ id: string; role: string; reseller_status: string }>();
+    if (existing) {
+      await admin
+        .from("users")
+        .update({
           id: data.user.id,
-          email: parsed.data.email,
           full_name: parsed.data.full_name,
           phone: parsed.data.phone || null,
-          role: "customer",
-          reseller_status: "none",
-        },
-        { onConflict: "id" },
-      );
+          updated_at: new Date().toISOString(),
+        })
+        .eq("email", parsed.data.email);
+    } else {
+      await admin.from("users").insert({
+        id: data.user.id,
+        email: parsed.data.email,
+        full_name: parsed.data.full_name,
+        phone: parsed.data.phone || null,
+        role: "customer",
+        reseller_status: "none",
+      });
+    }
   }
 
   // If Supabase project requires email confirmation the session is
