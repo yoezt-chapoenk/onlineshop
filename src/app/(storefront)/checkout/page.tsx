@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight, ShieldCheck, X, Copy, Check, QrCode, CreditCard, Building2 } from "lucide-react";
 import clsx from "clsx";
 import PageHeader from "@/components/ui/PageHeader";
 import { useCart } from "@/components/cart/CartProvider";
@@ -20,17 +20,27 @@ const PAYMENT_METHODS = [
     id: "qris",
     label: "QRIS",
     desc: "Scan untuk bayar pakai e-wallet atau m-banking.",
+    icon: QrCode,
   },
-  {
-    id: "va",
-    label: "Virtual Account",
-    desc: "BCA, Mandiri, BRI, BNI, Permata.",
-  },
+  // Virtual Account — dinonaktifkan sementara
+  // {
+  //   id: "va",
+  //   label: "Virtual Account",
+  //   desc: "BCA, Mandiri, BRI, BNI, Permata.",
+  //   icon: CreditCard,
+  // },
   {
     id: "transfer",
     label: "Transfer Bank",
     desc: "Transfer manual dengan konfirmasi.",
+    icon: Building2,
   },
+];
+
+/** Bank account info for manual transfer */
+const BANK_ACCOUNTS = [
+  { bank: "BCA", number: "1234567890", name: "Juragan Grosir" },
+  { bank: "BRI", number: "0987654321", name: "Juragan Grosir" },
 ];
 
 export default function CheckoutPage() {
@@ -65,6 +75,14 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Payment modal
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [orderResult, setOrderResult] = useState<{
+    orderNumber: string;
+    total: number;
+    paymentMethod: string;
+  } | null>(null);
 
   useEffect(
     () => () => {
@@ -199,6 +217,7 @@ export default function CheckoutPage() {
       if (!res.ok || !body.orderNumber) {
         throw new Error(body.error ?? `Request failed (${res.status})`);
       }
+      // Store order data for success page
       try {
         sessionStorage.setItem(
           "jg.lastOrder",
@@ -218,13 +237,24 @@ export default function CheckoutPage() {
           }),
         );
       } catch {}
-      clear();
-      router.push(`/checkout/success?order=${body.orderNumber}`);
+      // Show payment modal instead of immediate redirect
+      setOrderResult({
+        orderNumber: body.orderNumber,
+        total: body.total ?? grandTotal,
+        paymentMethod: body.paymentMethod ?? paymentId,
+      });
+      setShowPaymentModal(true);
+      setSubmitting(false);
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") return;
       setError(err instanceof Error ? err.message : "Failed to place order");
       setSubmitting(false);
     }
+  }
+
+  function handlePaymentConfirm() {
+    clear();
+    router.push(`/checkout/success?order=${orderResult?.orderNumber}`);
   }
 
   return (
@@ -478,6 +508,182 @@ export default function CheckoutPage() {
           </div>
         </aside>
       </form>
+
+      {/* Payment instruction modal */}
+      {showPaymentModal && orderResult && (
+        <PaymentModal
+          orderNumber={orderResult.orderNumber}
+          total={orderResult.total}
+          paymentMethod={orderResult.paymentMethod}
+          onConfirm={handlePaymentConfirm}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────── */
+/* Payment Modal                                                     */
+/* ────────────────────────────────────────────────────────────────── */
+
+function PaymentModal({
+  orderNumber,
+  total,
+  paymentMethod,
+  onConfirm,
+}: {
+  orderNumber: string;
+  total: number;
+  paymentMethod: string;
+  onConfirm: () => void;
+}) {
+  const [copied, setCopied] = useState<string | null>(null);
+
+  function copyText(text: string, id: string) {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(id);
+      setTimeout(() => setCopied(null), 2000);
+    });
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+
+      {/* Modal */}
+      <div
+        className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+        style={{ animation: "fadeIn 0.3s ease-out" }}
+      >
+        {/* Header */}
+        <div className="bg-[color:var(--color-navy-900)] text-white px-6 py-5">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-bold">Instruksi Pembayaran</h3>
+          </div>
+          <p className="mt-1 text-sm text-white/70">
+            Pesanan #{orderNumber}
+          </p>
+        </div>
+
+        <div className="px-6 py-5 space-y-5">
+          {/* Total */}
+          <div className="text-center py-3 rounded-xl bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)]">
+            <div className="text-xs text-[color:var(--color-muted)] uppercase tracking-wider">Total Pembayaran</div>
+            <div className="text-2xl font-bold text-[color:var(--color-navy-900)] mt-1">
+              {formatRupiah(total)}
+            </div>
+            <button
+              type="button"
+              onClick={() => copyText(String(total), "total")}
+              className="mt-1.5 inline-flex items-center gap-1 text-xs text-[color:var(--color-navy-900)] hover:underline"
+            >
+              {copied === "total" ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              {copied === "total" ? "Tersalin" : "Salin nominal"}
+            </button>
+          </div>
+
+          {/* Payment instructions based on method */}
+          {paymentMethod === "qris" && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <QrCode className="h-4 w-4 text-[color:var(--color-navy-900)]" />
+                Pembayaran QRIS
+              </div>
+              <div className="rounded-xl border border-[color:var(--color-line)] p-4 flex flex-col items-center gap-3">
+                <div className="h-40 w-40 bg-[color:var(--color-cloud-100)] rounded-lg flex items-center justify-center border-2 border-dashed border-[color:var(--color-line)]">
+                  <QrCode className="h-16 w-16 text-[color:var(--color-muted)]" />
+                </div>
+                <p className="text-xs text-[color:var(--color-muted)] text-center">
+                  Scan QR code di atas dengan e-wallet atau m-banking Anda.
+                  QR code berlaku selama 24 jam.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {paymentMethod === "va" && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <CreditCard className="h-4 w-4 text-[color:var(--color-navy-900)]" />
+                Virtual Account
+              </div>
+              <div className="space-y-2">
+                {[
+                  { bank: "BCA", va: "8810" + orderNumber.replace(/\D/g, "").slice(0, 11) },
+                  { bank: "Mandiri", va: "8920" + orderNumber.replace(/\D/g, "").slice(0, 11) },
+                ].map((item) => (
+                  <div key={item.bank} className="rounded-xl border border-[color:var(--color-line)] p-3 flex items-center justify-between">
+                    <div>
+                      <div className="text-xs text-[color:var(--color-muted)]">{item.bank}</div>
+                      <div className="font-mono font-semibold tracking-wider">{item.va}</div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => copyText(item.va, item.bank)}
+                      className="btn btn-outline !px-3 !py-1.5 text-xs"
+                    >
+                      {copied === item.bank ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                      {copied === item.bank ? "Tersalin" : "Salin"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-[color:var(--color-muted)]">
+                Transfer sesuai nominal persis ke VA di atas. Pembayaran otomatis diverifikasi dalam 1–5 menit.
+              </p>
+            </div>
+          )}
+
+          {paymentMethod === "transfer" && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <Building2 className="h-4 w-4 text-[color:var(--color-navy-900)]" />
+                Transfer Bank
+              </div>
+              <div className="space-y-2">
+                {BANK_ACCOUNTS.map((acc) => (
+                  <div key={acc.bank} className="rounded-xl border border-[color:var(--color-line)] p-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-xs text-[color:var(--color-muted)]">{acc.bank}</div>
+                        <div className="font-mono font-semibold tracking-wider">{acc.number}</div>
+                        <div className="text-xs text-[color:var(--color-muted)] mt-0.5">a.n. {acc.name}</div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => copyText(acc.number, acc.bank)}
+                        className="btn btn-outline !px-3 !py-1.5 text-xs"
+                      >
+                        {copied === acc.bank ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                        {copied === acc.bank ? "Tersalin" : "Salin"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-[color:var(--color-muted)]">
+                Transfer <strong>sesuai nominal persis</strong> agar verifikasi otomatis.
+                Konfirmasi pembayaran diproses dalam 1×24 jam kerja.
+              </p>
+            </div>
+          )}
+
+          {/* Confirm button */}
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="btn btn-primary w-full"
+          >
+            Sudah Bayar <ArrowRight className="h-4 w-4" />
+          </button>
+
+          <p className="text-[10px] text-center text-[color:var(--color-muted)]">
+            Klik &quot;Sudah Bayar&quot; setelah Anda melakukan pembayaran.
+            Anda juga bisa melihat instruksi ini di halaman detail pesanan.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

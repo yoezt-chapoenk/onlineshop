@@ -8,6 +8,7 @@ import { calculatePrice } from "@/lib/pricing";
 import { formatRupiah } from "@/lib/format";
 import { useCart } from "@/components/cart/CartProvider";
 import { useSession } from "@/components/auth/SessionProvider";
+import GlassesArt from "@/components/products/GlassesArt";
 
 interface Props {
   product: Product;
@@ -51,9 +52,14 @@ export default function ProductDetailClient({ product }: Props) {
   const [selected, setSelected] = useState<Partial<Record<Axis, string>>>({});
   const [quantity, setQuantity] = useState(1);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string | null>(
+  const [selectedColorHex, setSelectedColorHex] = useState<string | null>(
     product.colors.length > 0 ? product.colors[0] : null,
   );
+
+  // Map the selected hex to a frameColor for GlassesArt rendering
+  const activeFrameColor = selectedColorHex
+    ? hexToFrameColor(selectedColorHex)
+    : product.frameColor;
 
   // Find the single variant matching the current axis selection.
   const matchedVariant: ProductVariant | undefined = useMemo(() => {
@@ -116,7 +122,13 @@ export default function ProductDetailClient({ product }: Props) {
 
   function handleAdd() {
     if (!canAdd) return;
-    addItem(product, effectiveQty, matchedVariant);
+    // Override the product's frameColor with the user's color selection
+    const productWithColor = {
+      ...product,
+      frameColor: activeFrameColor,
+    };
+    addItem(productWithColor, effectiveQty, matchedVariant);
+    const colorLabel = selectedColorHex ? colorName(selectedColorHex) : null;
     const label = matchedVariant
       ? `${product.name} (${[
           matchedVariant.color,
@@ -125,7 +137,9 @@ export default function ProductDetailClient({ product }: Props) {
         ]
           .filter(Boolean)
           .join(" · ")})`
-      : product.name;
+      : colorLabel
+        ? `${product.name} — ${colorLabel}`
+        : product.name;
     setFeedback(`${effectiveQty} × ${label} ditambahkan ke keranjang.`);
     window.setTimeout(() => setFeedback(null), 2400);
   }
@@ -215,28 +229,39 @@ export default function ProductDetailClient({ product }: Props) {
         <div className="space-y-2">
           <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--color-muted)]">
             Warna
-            {selectedColor && (
+            {selectedColorHex && (
               <span className="ml-2 normal-case tracking-normal text-[color:var(--color-ink)]">
-                {colorName(selectedColor)}
+                {colorName(selectedColorHex)}
               </span>
             )}
           </div>
-          <div className="flex flex-wrap gap-2.5">
-            {product.colors.map((hex) => (
-              <button
-                key={hex}
-                type="button"
-                title={colorName(hex)}
-                onClick={() => setSelectedColor(hex)}
-                className={clsx(
-                  "h-8 w-8 rounded-full border-2 transition-all",
-                  selectedColor === hex
-                    ? "border-[color:var(--color-navy-900)] ring-2 ring-[color:var(--color-navy-900)]/30 scale-110"
-                    : "border-[color:var(--color-line)] hover:border-[color:var(--color-navy-400)] hover:scale-105",
-                )}
-                style={{ backgroundColor: hex }}
-              />
-            ))}
+          <div className="flex items-center gap-4">
+            <div className="flex flex-wrap gap-2.5">
+              {product.colors.map((hex) => (
+                <button
+                  key={hex}
+                  type="button"
+                  title={colorName(hex)}
+                  onClick={() => setSelectedColorHex(hex)}
+                  className={clsx(
+                    "h-8 w-8 rounded-full border-2 transition-all",
+                    selectedColorHex === hex
+                      ? "border-[color:var(--color-navy-900)] ring-2 ring-[color:var(--color-navy-900)]/30 scale-110"
+                      : "border-[color:var(--color-line)] hover:border-[color:var(--color-navy-400)] hover:scale-105",
+                  )}
+                  style={{ backgroundColor: hex }}
+                />
+              ))}
+            </div>
+            {/* Live color preview */}
+            {!product.imageUrls?.length && (
+              <div className="h-16 w-24 rounded-lg bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] flex items-center justify-center overflow-hidden">
+                <GlassesArt
+                  product={{ ...product, frameColor: activeFrameColor }}
+                  size={40}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -349,4 +374,22 @@ const COLOR_NAMES: Record<string, string> = {
 
 function colorName(hex: string): string {
   return COLOR_NAMES[hex.toLowerCase()] ?? hex;
+}
+
+/** Map hex color to the closest GlassesArt frameColor. */
+const HEX_TO_FRAME: Record<string, Product["frameColor"]> = {
+  "#000000": "black",
+  "#01083c": "navy",
+  "#060c3f": "black",
+  "#1a225a": "navy",
+  "#2a3470": "olive",
+  "#2a6df0": "navy",
+  "#7cabff": "rose",
+  "#aab2cf": "silver",
+  "#495489": "olive",
+  "#ffffff": "silver",
+};
+
+function hexToFrameColor(hex: string): Product["frameColor"] {
+  return HEX_TO_FRAME[hex.toLowerCase()] ?? "black";
 }
