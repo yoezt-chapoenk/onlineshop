@@ -267,7 +267,7 @@ export default function ProductDetailClient({ product }: Props) {
       )}
 
       {/* Action Buttons */}
-      <div className="space-y-3">
+      <div className="space-y-3 w-fit">
         <div className="flex flex-wrap items-center gap-3">
           <div className="inline-flex items-center rounded-lg border border-[color:var(--color-line)] overflow-hidden">
             <button
