@@ -266,65 +266,57 @@ export default function ProductDetailClient({ product }: Props) {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="inline-flex items-center rounded-lg border border-[color:var(--color-line)] overflow-hidden">
-          <button
-            type="button"
-            aria-label="Kurangi jumlah"
-            className="h-10 w-10 flex items-center justify-center hover:bg-[color:var(--color-cloud-100)]"
-            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-          >
-            <Minus className="h-4 w-4" />
-          </button>
-          <input
-            type="number"
-            min={1}
-            max={activeStock || 1}
-            value={quantity}
-            onChange={(e) => {
-              const v = Number(e.target.value);
-              if (Number.isFinite(v)) {
-                setQuantity(
-                  Math.max(1, Math.min(activeStock || 1, Math.floor(v))),
-                );
+      {/* Action Buttons */}
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="inline-flex items-center rounded-lg border border-[color:var(--color-line)] overflow-hidden">
+            <button
+              type="button"
+              aria-label="Kurangi jumlah"
+              className="h-10 w-10 flex items-center justify-center hover:bg-[color:var(--color-cloud-100)]"
+              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+            >
+              <Minus className="h-4 w-4" />
+            </button>
+            <input
+              type="number"
+              min={1}
+              max={activeStock || 1}
+              value={quantity}
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                if (Number.isFinite(v)) {
+                  setQuantity(
+                    Math.max(1, Math.min(activeStock || 1, Math.floor(v))),
+                  );
+                }
+              }}
+              className="h-10 w-14 text-center text-sm font-semibold border-x border-[color:var(--color-line)] focus:outline-none"
+            />
+            <button
+              type="button"
+              aria-label="Tambah jumlah"
+              className="h-10 w-10 flex items-center justify-center hover:bg-[color:var(--color-cloud-100)]"
+              onClick={() =>
+                setQuantity((q) => Math.min(activeStock || 1, q + 1))
               }
-            }}
-            className="h-10 w-14 text-center text-sm font-semibold border-x border-[color:var(--color-line)] focus:outline-none"
-          />
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
+
           <button
             type="button"
-            aria-label="Tambah jumlah"
-            className="h-10 w-10 flex items-center justify-center hover:bg-[color:var(--color-cloud-100)]"
-            onClick={() =>
-              setQuantity((q) => Math.min(activeStock || 1, q + 1))
-            }
+            onClick={handleAdd}
+            disabled={!canAdd}
+            className="btn btn-primary"
           >
-            <Plus className="h-4 w-4" />
+            <ShoppingCart className="h-4 w-4" /> Tambah ke Keranjang
           </button>
         </div>
 
-        <button
-          type="button"
-          onClick={handleAdd}
-          disabled={!canAdd}
-          className="btn btn-primary"
-        >
-          <ShoppingCart className="h-4 w-4" /> Tambah ke Keranjang
-        </button>
-      </div>
-
-      <div
-        className={clsx(
-          "text-sm font-medium transition-opacity",
-          feedback ? "opacity-100 text-[color:var(--color-success)]" : "opacity-0",
-        )}
-        aria-live="polite"
-      >
-        {feedback ?? "."}
-      </div>
-
-      {/* Marketplace buttons */}
-      <div className="grid grid-cols-2 gap-3">
+        {/* Marketplace buttons */}
+        <div className="grid grid-cols-2 gap-3">
         <a
           href="https://shopee.co.id/juragangrosir"
           target="_blank"
@@ -347,6 +339,17 @@ export default function ProductDetailClient({ product }: Props) {
           </svg>
           TikTok
         </a>
+      </div>
+
+        <div
+          className={clsx(
+            "text-sm font-medium transition-all duration-300 overflow-hidden",
+            feedback ? "h-6 opacity-100 text-[color:var(--color-success)]" : "h-0 opacity-0",
+          )}
+          aria-live="polite"
+        >
+          {feedback}
+        </div>
       </div>
     </div>
   );
