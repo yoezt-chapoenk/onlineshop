@@ -22,7 +22,6 @@ export const NAV_LINKS = [
   { label: "Belanja", href: "/shop" },
   { label: "Koleksi", href: "/collections" },
   { label: "Tentang Kami", href: "/about" },
-  { label: "Grosir", href: "/wholesale" },
   { label: "Kontak", href: "/contact" },
 ] as const;
 
