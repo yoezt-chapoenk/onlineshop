@@ -286,30 +286,6 @@ export default function ProductDetailClient({ product }: Props) {
         >
           <ShoppingCart className="h-4 w-4" /> Tambah ke Keranjang
         </button>
-
-        <a
-          href="https://shopee.co.id/juragangrosir"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn btn-outline"
-        >
-          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C9.243 2 7 4.243 7 7h2c0-1.654 1.346-3 3-3s3 1.346 3 3h2c0-2.757-2.243-5-5-5zm-7.5 6A1.5 1.5 0 003 9.5v10A2.5 2.5 0 005.5 22h13a2.5 2.5 0 002.5-2.5v-10A1.5 1.5 0 0019.5 8h-15zM12 17c-2.21 0-4-1.79-4-4h1.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5H16c0 2.21-1.79 4-4 4z"/>
-          </svg>
-          Shopee
-        </a>
-
-        <a
-          href="https://www.tiktok.com/@juragangrosir"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn btn-outline"
-        >
-          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.46V13a8.28 8.28 0 005.58 2.17v-3.48a4.85 4.85 0 01-3.77-1.77V6.69h3.77z"/>
-          </svg>
-          TikTok
-        </a>
       </div>
 
       <div
@@ -320,6 +296,32 @@ export default function ProductDetailClient({ product }: Props) {
         aria-live="polite"
       >
         {feedback ?? "."}
+      </div>
+
+      {/* Marketplace buttons */}
+      <div className="grid grid-cols-2 gap-3">
+        <a
+          href="https://shopee.co.id/juragangrosir"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn btn-outline justify-center"
+        >
+          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C9.243 2 7 4.243 7 7h2c0-1.654 1.346-3 3-3s3 1.346 3 3h2c0-2.757-2.243-5-5-5zm-7.5 6A1.5 1.5 0 003 9.5v10A2.5 2.5 0 005.5 22h13a2.5 2.5 0 002.5-2.5v-10A1.5 1.5 0 0019.5 8h-15zM12 17c-2.21 0-4-1.79-4-4h1.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5H16c0 2.21-1.79 4-4 4z"/>
+          </svg>
+          Shopee
+        </a>
+        <a
+          href="https://www.tiktok.com/@juragangrosir"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn btn-outline justify-center"
+        >
+          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.46V13a8.28 8.28 0 005.58 2.17v-3.48a4.85 4.85 0 01-3.77-1.77V6.69h3.77z"/>
+          </svg>
+          TikTok
+        </a>
       </div>
     </div>
   );
