@@ -11,9 +11,9 @@ export const SITE_URL = (
 
 // Customer support — used by the floating WhatsApp button and contact CTAs.
 // In production this should come from admin site_settings.
-export const WHATSAPP_NUMBER = "6281234567890";
+export const WHATSAPP_NUMBER = "6282251220020";
 export const SUPPORT_EMAIL = "support@juragangrosir.id";
-export const STORE_PHONE = "+62 812 3456 7890";
+export const STORE_PHONE = "+62 822 5122 0020";
 export const STORE_ADDRESS = "Dusun Krajan 1, RT 002/008 Jombang, Kec. Jombang, Kab. Jember, Jawa Timur 68168";
 export const STORE_ORIGIN_POSTAL_CODE = "68168";
 
