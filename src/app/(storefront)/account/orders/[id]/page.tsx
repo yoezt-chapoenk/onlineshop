@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ExternalLink } from "lucide-react";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { formatRupiah } from "@/lib/format";
@@ -144,10 +145,21 @@ export default async function AccountOrderDetailPage({
             {data.shipping_courier} · {data.shipping_service}
           </p>
           {data.tracking_number && (
-            <p className="mt-2">
-              <span className="text-[color:var(--color-muted)]">{t.account.trackingNumber}: </span>
-              <span className="font-mono">{data.tracking_number}</span>
-            </p>
+            <div className="mt-3">
+              <p>
+                <span className="text-[color:var(--color-muted)]">{t.account.trackingNumber}: </span>
+                <span className="font-mono">{data.tracking_number}</span>
+              </p>
+              <a
+                href={`https://biteship.com/id/track?waybill=${data.tracking_number}&courier=${data.tracking_courier || data.shipping_courier}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline !px-3 !py-1.5 text-xs mt-2 inline-flex items-center gap-1.5"
+              >
+                Lacak Pengiriman
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
           )}
         </section>
         <section className="card p-6 text-sm">
