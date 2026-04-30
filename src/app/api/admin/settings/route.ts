@@ -5,6 +5,12 @@ import { adminClientOrError } from "@/lib/admin/api";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const BankSchema = z.object({
+  bank: z.string().min(1),
+  number: z.string().min(1),
+  name: z.string().min(1),
+});
+
 const Schema = z.object({
   store_name: z.string().min(1),
   store_logo_url: z.string().nullable().optional(),
@@ -13,6 +19,8 @@ const Schema = z.object({
   store_address: z.string().nullable().optional(),
   biteship_api_key: z.string().nullable().optional(),
   origin_postal_code: z.string().nullable().optional(),
+  payment_banks: z.array(BankSchema).optional(),
+  payment_qris_url: z.string().nullable().optional(),
   pixel_meta_id: z.string().nullable().optional(),
   pixel_tiktok_id: z.string().nullable().optional(),
   pixel_google_id: z.string().nullable().optional(),
@@ -39,9 +47,14 @@ export async function PATCH(request: Request) {
   const parsed = Schema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   // Convert empty strings to null so the DB stores NULL for unset fields.
-  const patch: Record<string, string | null> = {};
+  const patch: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(parsed.data)) {
-    patch[k] = v === "" || v === undefined ? null : v;
+    if (k === "payment_banks") {
+      // JSONB — pass the array directly
+      patch[k] = v ?? [];
+    } else {
+      patch[k] = v === "" || v === undefined ? null : v;
+    }
   }
   // store_name has NOT NULL, so keep it as a string.
   patch.store_name = parsed.data.store_name;

@@ -1,5 +1,5 @@
 import { getAdminClient } from "@/lib/supabase/admin";
-import SettingsForm, { type Settings } from "./SettingsForm";
+import SettingsForm, { type Settings, type BankAccount } from "./SettingsForm";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +11,8 @@ const EMPTY: Settings = {
   store_address: "",
   biteship_api_key: "",
   origin_postal_code: "68168",
+  payment_banks: [],
+  payment_qris_url: "",
   pixel_meta_id: "",
   pixel_tiktok_id: "",
   pixel_google_id: "",
@@ -33,8 +35,14 @@ export default async function AdminSettingsPage() {
       const row = data as Record<string, unknown>;
       const next = { ...EMPTY };
       for (const k of Object.keys(EMPTY) as (keyof Settings)[]) {
-        const val = row[k];
-        next[k] = (typeof val === "string" ? val : "") as Settings[typeof k];
+        if (k === "payment_banks") {
+          // JSONB field — parse array
+          const raw = row[k];
+          next[k] = Array.isArray(raw) ? (raw as BankAccount[]) : [];
+        } else {
+          const val = row[k];
+          next[k] = (typeof val === "string" ? val : "") as never;
+        }
       }
       settings = next;
     }

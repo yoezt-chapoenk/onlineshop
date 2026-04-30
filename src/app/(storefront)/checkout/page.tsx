@@ -37,11 +37,10 @@ const PAYMENT_METHODS = [
   },
 ];
 
-/** Bank account info for manual transfer */
-const BANK_ACCOUNTS = [
-  { bank: "BCA", number: "1234567890", name: "Juragan Grosir" },
-  { bank: "BRI", number: "0987654321", name: "Juragan Grosir" },
-];
+interface PaymentConfig {
+  banks: { bank: string; number: string; name: string }[];
+  qrisUrl: string | null;
+}
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -70,6 +69,15 @@ export default function CheckoutPage() {
 
   // Payment
   const [paymentId, setPaymentId] = useState<string>(PAYMENT_METHODS[0].id);
+
+  // Dynamic payment config from admin settings
+  const [paymentConfig, setPaymentConfig] = useState<PaymentConfig>({ banks: [], qrisUrl: null });
+  useEffect(() => {
+    fetch("/api/payment-config")
+      .then((r) => r.json())
+      .then((d: PaymentConfig) => setPaymentConfig(d))
+      .catch(() => {});
+  }, []);
 
   // Submit
   const [submitting, setSubmitting] = useState(false);
@@ -515,6 +523,8 @@ export default function CheckoutPage() {
           orderNumber={orderResult.orderNumber}
           total={orderResult.total}
           paymentMethod={orderResult.paymentMethod}
+          banks={paymentConfig.banks}
+          qrisUrl={paymentConfig.qrisUrl}
           onConfirm={handlePaymentConfirm}
         />
       )}
@@ -530,11 +540,15 @@ function PaymentModal({
   orderNumber,
   total,
   paymentMethod,
+  banks,
+  qrisUrl,
   onConfirm,
 }: {
   orderNumber: string;
   total: number;
   paymentMethod: string;
+  banks: { bank: string; number: string; name: string }[];
+  qrisUrl: string | null;
   onConfirm: () => void;
 }) {
   const [copied, setCopied] = useState<string | null>(null);
@@ -553,11 +567,11 @@ function PaymentModal({
 
       {/* Modal */}
       <div
-        className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
         style={{ animation: "fadeIn 0.3s ease-out" }}
       >
         {/* Header */}
-        <div className="bg-[color:var(--color-navy-900)] text-white px-6 py-5">
+        <div className="bg-[color:var(--color-navy-900)] text-white px-6 py-5 sticky top-0 z-10">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold">Instruksi Pembayaran</h3>
           </div>
@@ -583,7 +597,7 @@ function PaymentModal({
             </button>
           </div>
 
-          {/* Payment instructions based on method */}
+          {/* QRIS — dynamic image from admin settings */}
           {paymentMethod === "qris" && (
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-semibold">
@@ -591,9 +605,18 @@ function PaymentModal({
                 Pembayaran QRIS
               </div>
               <div className="rounded-xl border border-[color:var(--color-line)] p-4 flex flex-col items-center gap-3">
-                <div className="h-40 w-40 bg-[color:var(--color-cloud-100)] rounded-lg flex items-center justify-center border-2 border-dashed border-[color:var(--color-line)]">
-                  <QrCode className="h-16 w-16 text-[color:var(--color-muted)]" />
-                </div>
+                {qrisUrl ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={qrisUrl}
+                    alt="QRIS"
+                    className="h-48 w-48 object-contain rounded-lg"
+                  />
+                ) : (
+                  <div className="h-40 w-40 bg-[color:var(--color-cloud-100)] rounded-lg flex items-center justify-center border-2 border-dashed border-[color:var(--color-line)]">
+                    <QrCode className="h-16 w-16 text-[color:var(--color-muted)]" />
+                  </div>
+                )}
                 <p className="text-xs text-[color:var(--color-muted)] text-center">
                   Scan QR code di atas dengan e-wallet atau m-banking Anda.
                   QR code berlaku selama 24 jam.
@@ -602,66 +625,40 @@ function PaymentModal({
             </div>
           )}
 
-          {paymentMethod === "va" && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-semibold">
-                <CreditCard className="h-4 w-4 text-[color:var(--color-navy-900)]" />
-                Virtual Account
-              </div>
-              <div className="space-y-2">
-                {[
-                  { bank: "BCA", va: "8810" + orderNumber.replace(/\D/g, "").slice(0, 11) },
-                  { bank: "Mandiri", va: "8920" + orderNumber.replace(/\D/g, "").slice(0, 11) },
-                ].map((item) => (
-                  <div key={item.bank} className="rounded-xl border border-[color:var(--color-line)] p-3 flex items-center justify-between">
-                    <div>
-                      <div className="text-xs text-[color:var(--color-muted)]">{item.bank}</div>
-                      <div className="font-mono font-semibold tracking-wider">{item.va}</div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => copyText(item.va, item.bank)}
-                      className="btn btn-outline !px-3 !py-1.5 text-xs"
-                    >
-                      {copied === item.bank ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                      {copied === item.bank ? "Tersalin" : "Salin"}
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-[color:var(--color-muted)]">
-                Transfer sesuai nominal persis ke VA di atas. Pembayaran otomatis diverifikasi dalam 1–5 menit.
-              </p>
-            </div>
-          )}
-
+          {/* Transfer Bank — dynamic bank list from admin settings */}
           {paymentMethod === "transfer" && (
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Building2 className="h-4 w-4 text-[color:var(--color-navy-900)]" />
                 Transfer Bank
               </div>
-              <div className="space-y-2">
-                {BANK_ACCOUNTS.map((acc) => (
-                  <div key={acc.bank} className="rounded-xl border border-[color:var(--color-line)] p-3">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-xs text-[color:var(--color-muted)]">{acc.bank}</div>
-                        <div className="font-mono font-semibold tracking-wider">{acc.number}</div>
-                        <div className="text-xs text-[color:var(--color-muted)] mt-0.5">a.n. {acc.name}</div>
+              {banks.length > 0 ? (
+                <div className="space-y-2">
+                  {banks.map((acc, i) => (
+                    <div key={`${acc.bank}-${i}`} className="rounded-xl border border-[color:var(--color-line)] p-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-xs text-[color:var(--color-muted)]">{acc.bank}</div>
+                          <div className="font-mono font-semibold tracking-wider">{acc.number}</div>
+                          <div className="text-xs text-[color:var(--color-muted)] mt-0.5">a.n. {acc.name}</div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => copyText(acc.number, `bank-${i}`)}
+                          className="btn btn-outline !px-3 !py-1.5 text-xs"
+                        >
+                          {copied === `bank-${i}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                          {copied === `bank-${i}` ? "Tersalin" : "Salin"}
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => copyText(acc.number, acc.bank)}
-                        className="btn btn-outline !px-3 !py-1.5 text-xs"
-                      >
-                        {copied === acc.bank ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                        {copied === acc.bank ? "Tersalin" : "Salin"}
-                      </button>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-[color:var(--color-muted)] py-4 text-center border border-dashed border-[color:var(--color-line)] rounded-xl">
+                  Rekening bank belum dikonfigurasi. Hubungi admin.
+                </p>
+              )}
               <p className="text-xs text-[color:var(--color-muted)]">
                 Transfer <strong>sesuai nominal persis</strong> agar verifikasi otomatis.
                 Konfirmasi pembayaran diproses dalam 1×24 jam kerja.

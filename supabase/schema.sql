@@ -356,6 +356,8 @@ create table if not exists public.site_settings (
   default_origin_pinpoint     text,
   biteship_api_key            text,
   origin_postal_code          text default '68168',
+  payment_banks               jsonb not null default '[]'::jsonb,
+  payment_qris_url            text,
   pixel_meta_id               text,
   pixel_tiktok_id             text,
   pixel_google_id             text,
