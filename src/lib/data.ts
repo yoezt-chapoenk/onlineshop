@@ -122,7 +122,6 @@ function rowToProduct(row: ProductRow): Product {
     isNewArrival: row.is_new_arrival,
     rating: Number(row.rating),
     reviewCount: row.review_count,
-    colors: row.colors ?? [],
     frameColor: row.frame_color,
     lensColor: row.lens_color ?? undefined,
     specs: row.specs ?? [],
@@ -137,9 +136,9 @@ const PRODUCT_SELECT = `
   retail_price, promotional_price, reseller_price,
   min_wholesale_qty, stock, weight_gram,
   is_featured, is_best_seller, is_new_arrival,
-  rating, review_count, colors, frame_color, lens_color, specs, image_urls,
+  rating, review_count, frame_color, lens_color, specs, image_urls,
   product_price_tiers ( min_qty, max_qty, unit_price, label ),
-  product_variants ( id, sku, color, variant_type, size, stock, price_override, sort_order )
+  product_variants ( id, sku, color, variant_type, size, stock, price_override, image_url, sort_order )
 `;
 
 export async function getProducts(): Promise<Product[]> {
