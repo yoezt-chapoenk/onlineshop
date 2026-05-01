@@ -25,10 +25,16 @@ const HEADERS = [
   "is_new_arrival",
   "rating",
   "review_count",
-  "colors",
   "frame_color",
   "lens_color",
   "image_urls",
+  "variant_skus",
+  "variant_colors",
+  "variant_types",
+  "variant_sizes",
+  "variant_stocks",
+  "variant_prices",
+  "variant_images",
 ];
 
 const EXAMPLE = [
@@ -53,10 +59,16 @@ const EXAMPLE = [
   "false",
   "4.7",
   "128",
-  "Hitam|Coklat",
   "black",
   "clear",
   "https://example.com/uploads/jg-classic-black-1.jpg|https://example.com/uploads/jg-classic-black-2.jpg",
+  "JG-CLB-001-B|JG-CLB-001-G",
+  "Hitam|Emas",
+  "|",
+  "|",
+  "10|15",
+  "|",
+  "https://example.com/uploads/jg-classic-black-1.jpg|",
 ];
 
 function csvEscape(value: string): string {

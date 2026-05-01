@@ -26,7 +26,6 @@ export interface ProductFormValues {
   is_new_arrival: boolean;
   rating: number;
   review_count: number;
-  colors: string[];
   frame_color: string;
   lens_color: string | null;
   specs: { label: string; value: string }[];
@@ -40,6 +39,7 @@ export interface ProductFormValues {
     size: string | null;
     stock: number;
     price_override: number | null;
+    image_url: string | null;
     sort_order: number;
   }[];
 }
@@ -147,6 +147,7 @@ export default function ProductForm({ initial, categories, mode }: Props) {
         size: "",
         stock: 0,
         price_override: null,
+        image_url: "",
         sort_order: v.variants.length,
       },
     ]);
@@ -288,10 +289,6 @@ export default function ProductForm({ initial, categories, mode }: Props) {
             <option value="">— none —</option>
             {LENS_COLORS.map((c) => <option key={c}>{c}</option>)}
           </select>
-        </label>
-        <label className="block md:col-span-3">
-          <span className="label">Color swatches (comma-separated hex)</span>
-          <input className="input mt-1" value={v.colors.join(", ")} onChange={(e) => update("colors", e.target.value.split(",").map((s) => s.trim()).filter(Boolean))} placeholder="#01083C, #4f8eff" />
         </label>
       </section>
 
@@ -587,20 +584,35 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                     }}
                   />
                 </label>
-                <button
-                  type="button"
-                  className="col-span-1 text-xs text-[color:var(--color-error)] hover:underline pb-2.5"
-                  onClick={() =>
-                    update(
-                      "variants",
-                      v.variants
-                        .filter((_, j) => j !== i)
-                        .map((x, idx) => ({ ...x, sort_order: idx })),
-                    )
-                  }
-                >
-                  Remove
-                </button>
+                <div className="col-span-12 flex gap-2">
+                  <label className="flex-1 block">
+                    <span className="label">Image URL</span>
+                    <input
+                      className="input mt-1 text-xs"
+                      placeholder="https://..."
+                      value={vr.image_url ?? ""}
+                      onChange={(e) => {
+                        const next = [...v.variants];
+                        next[i] = { ...next[i], image_url: e.target.value || null };
+                        update("variants", next);
+                      }}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className="text-xs text-[color:var(--color-error)] hover:underline self-end pb-2.5 shrink-0"
+                    onClick={() =>
+                      update(
+                        "variants",
+                        v.variants
+                          .filter((_, j) => j !== i)
+                          .map((x, idx) => ({ ...x, sort_order: idx })),
+                      )
+                    }
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             ))}
           </div>

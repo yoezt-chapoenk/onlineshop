@@ -108,6 +108,7 @@ export default function ShippingRates({
   // Fetch rates when postal code or items change
   useEffect(() => {
     if (postalCode && items.length > 0) {
+      // eslint-disable-next-line
       fetchRates();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

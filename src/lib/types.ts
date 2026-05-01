@@ -25,6 +25,7 @@ export interface ProductVariant {
   size?: string;
   stock: number;
   priceOverride?: number;
+  imageUrl?: string;
   sortOrder: number;
 }
 
@@ -52,7 +53,6 @@ export interface Product {
   isNewArrival: boolean;
   rating: number;
   reviewCount: number;
-  colors: string[]; // hex
   frameColor: "black" | "gold" | "silver" | "tortoise" | "navy" | "rose" | "olive";
   lensColor?: "clear" | "smoke" | "green" | "amber" | "blue" | "mirror";
   specs: { label: string; value: string }[];

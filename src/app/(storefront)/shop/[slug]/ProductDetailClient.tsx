@@ -1,7 +1,7 @@
 "use client";
 
-import { Minus, Plus, ShoppingCart, ExternalLink } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Minus, Plus, ShoppingCart, Star } from "lucide-react";
+import { useMemo, useState, useEffect } from "react";
 import clsx from "clsx";
 import type { Product, ProductVariant } from "@/lib/types";
 import { calculatePrice } from "@/lib/pricing";
@@ -52,16 +52,10 @@ export default function ProductDetailClient({ product }: Props) {
   const [selected, setSelected] = useState<Partial<Record<Axis, string>>>({});
   const [quantity, setQuantity] = useState(1);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [selectedColorHex, setSelectedColorHex] = useState<string | null>(
-    product.colors.length > 0 ? product.colors[0] : null,
+  const [activeImage, setActiveImage] = useState<string | null>(
+    product.imageUrls.length > 0 ? product.imageUrls[0] : null
   );
 
-  // Map the selected hex to a frameColor for GlassesArt rendering
-  const activeFrameColor = selectedColorHex
-    ? hexToFrameColor(selectedColorHex)
-    : product.frameColor;
-
-  // Find the single variant matching the current axis selection.
   const matchedVariant: ProductVariant | undefined = useMemo(() => {
     if (!hasVariants) return undefined;
     const match = variants.filter((v) =>
@@ -69,6 +63,20 @@ export default function ProductDetailClient({ product }: Props) {
     );
     return match.length === 1 ? match[0] : undefined;
   }, [variants, axes, selected, hasVariants]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (matchedVariant && matchedVariant.imageUrl) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveImage(matchedVariant.imageUrl);
+    } else if (product.imageUrls.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveImage(product.imageUrls[0]);
+    } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveImage(null);
+    }
+  }, [matchedVariant, product.imageUrls]);
 
   const allSelected = axes.every((a) => Boolean(selected[a]));
   const activeStock = hasVariants
@@ -122,13 +130,12 @@ export default function ProductDetailClient({ product }: Props) {
 
   function handleAdd() {
     if (!canAdd) return;
-    // Override the product's frameColor with the user's color selection
+    // Override the product's frameColor if needed, but since we removed hex swatches,
+    // we just use the default.
     const productWithColor = {
       ...product,
-      frameColor: activeFrameColor,
     };
     addItem(productWithColor, effectiveQty, matchedVariant);
-    const colorLabel = selectedColorHex ? colorName(selectedColorHex) : null;
     const label = matchedVariant
       ? `${product.name} (${[
           matchedVariant.color,
@@ -137,16 +144,87 @@ export default function ProductDetailClient({ product }: Props) {
         ]
           .filter(Boolean)
           .join(" · ")})`
-      : colorLabel
-        ? `${product.name} — ${colorLabel}`
-        : product.name;
+      : product.name;
     setFeedback(`${effectiveQty} × ${label} ditambahkan ke keranjang.`);
     window.setTimeout(() => setFeedback(null), 2400);
   }
 
   return (
-    <div className="mt-6 space-y-5">
-      <div className="flex items-baseline gap-3 flex-wrap">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
+      <div>
+        <div className="rounded-2xl bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] aspect-square flex items-center justify-center overflow-hidden p-10">
+          {activeImage ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={activeImage}
+              alt={product.name}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <GlassesArt product={product} size={360} />
+          )}
+        </div>
+        <div className="mt-4 grid grid-cols-4 gap-3">
+          {product.imageUrls && product.imageUrls.length > 1
+            ? product.imageUrls.slice(0, 4).map((url, i) => (
+                <button
+                  key={url + i}
+                  type="button"
+                  onClick={() => setActiveImage(url)}
+                  className={clsx(
+                    "rounded-xl bg-[color:var(--color-cloud-100)] border aspect-square overflow-hidden transition-all",
+                    activeImage === url
+                      ? "border-[color:var(--color-navy-900)] ring-2 ring-[color:var(--color-navy-900)]/20"
+                      : "border-[color:var(--color-line)] hover:border-[color:var(--color-navy-400)]"
+                  )}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={url}
+                    alt={`${product.name} ${i + 1}`}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+              ))
+            : [0, 1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="rounded-xl bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] aspect-square flex items-center justify-center p-3"
+                >
+                  <GlassesArt product={product} size={70} />
+                </div>
+              ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col">
+        <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--color-navy-900)]">
+          {product.categoryLabel} · SKU {product.sku}
+        </div>
+        <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight">
+          {product.name}
+        </h1>
+        <div className="mt-2 flex items-center gap-2 text-sm">
+          <div className="flex items-center text-[color:var(--color-navy-900)]">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={`h-4 w-4 ${i < Math.round(product.rating) ? "fill-current" : ""}`}
+              />
+            ))}
+          </div>
+          <span className="text-[color:var(--color-muted)]">
+            {product.rating.toFixed(1)} ({product.reviewCount} ulasan)
+          </span>
+        </div>
+
+        <p className="mt-5 text-[color:var(--color-muted)] leading-relaxed">
+          {product.description}
+        </p>
+
+        <div className="mt-6 space-y-5">
+          <div className="flex items-baseline gap-3 flex-wrap">
         <div className="text-3xl sm:text-4xl font-bold text-[color:var(--color-navy-900)]">
           {formatRupiah(pricing.unitPrice)}
         </div>
@@ -352,6 +430,82 @@ export default function ProductDetailClient({ product }: Props) {
         </div>
       </div>
     </div>
+        
+    {/* Tier table */}
+        <div className="mt-8">
+          <h3 className="text-sm font-semibold mb-2">Harga grosir bertingkat</h3>
+          <div className="card overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-[color:var(--color-cloud-100)] text-[color:var(--color-muted)]">
+                <tr>
+                  <th className="text-left font-medium py-2.5 px-4">Jumlah</th>
+                  <th className="text-right font-medium py-2.5 px-4">Harga per pcs</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[color:var(--color-line)]">
+                {(() => {
+                  const firstTierMin = product.priceTiers[0]?.minQty;
+                  const retailRange =
+                    firstTierMin && firstTierMin > 1
+                      ? `1–${firstTierMin - 1} pcs`
+                      : firstTierMin === 1
+                        ? "Harga retail"
+                        : "1+ pcs";
+                  return (
+                    <tr>
+                      <td className="py-2.5 px-4">{retailRange}</td>
+                      <td className="py-2.5 px-4 text-right font-semibold">
+                        {formatRupiah(product.retailPrice)}
+                      </td>
+                    </tr>
+                  );
+                })()}
+                {product.priceTiers.map((t) => (
+                  <tr key={t.minQty}>
+                    <td className="py-2.5 px-4">
+                      {t.maxQty
+                        ? `${t.minQty}–${t.maxQty} pcs`
+                        : `${t.minQty}+ pcs`}
+                    </td>
+                    <td className="py-2.5 px-4 text-right font-semibold text-[color:var(--color-navy-900)]">
+                      {formatRupiah(t.unitPrice)}
+                    </td>
+                  </tr>
+                ))}
+                {product.resellerPrice && (
+                  <tr className="bg-[color:var(--color-cloud-50)]">
+                    <td className="py-2.5 px-4">Harga reseller (disetujui)</td>
+                    <td className="py-2.5 px-4 text-right font-semibold text-[color:var(--color-navy-900)]">
+                      {formatRupiah(product.resellerPrice)}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-2 text-xs text-[color:var(--color-muted)]">
+            Harga grosir otomatis berlaku saat jumlah minimum tercapai.
+          </p>
+        </div>
+
+        <div className="mt-8 grid grid-cols-2 gap-4 text-sm">
+          {product.specs.map((s) => (
+            <div key={s.label}>
+              <dt className="text-[color:var(--color-muted)] text-xs">{s.label}</dt>
+              <dd className="font-semibold mt-0.5">{s.value}</dd>
+            </div>
+          ))}
+          <div>
+            <dt className="text-[color:var(--color-muted)] text-xs">Berat</dt>
+            <dd className="font-semibold mt-0.5">{product.weightGram} g</dd>
+          </div>
+          <div>
+            <dt className="text-[color:var(--color-muted)] text-xs">Stok</dt>
+            <dd className="font-semibold mt-0.5">{product.stock} pcs tersedia</dd>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -361,38 +515,3 @@ function variantValue(v: ProductVariant, axis: Axis): string | undefined {
   return v.size;
 }
 
-/** Map common hex colors to human-readable Indonesian names. */
-const COLOR_NAMES: Record<string, string> = {
-  "#000000": "Hitam",
-  "#ffffff": "Putih",
-  "#01083c": "Navy Gelap",
-  "#1a225a": "Navy",
-  "#2a3470": "Biru Tua",
-  "#2a6df0": "Biru",
-  "#7cabff": "Biru Muda",
-  "#aab2cf": "Abu-Abu",
-  "#495489": "Slate",
-  "#060c3f": "Midnight",
-};
-
-function colorName(hex: string): string {
-  return COLOR_NAMES[hex.toLowerCase()] ?? hex;
-}
-
-/** Map hex color to the closest GlassesArt frameColor. */
-const HEX_TO_FRAME: Record<string, Product["frameColor"]> = {
-  "#000000": "black",
-  "#01083c": "navy",
-  "#060c3f": "black",
-  "#1a225a": "navy",
-  "#2a3470": "olive",
-  "#2a6df0": "navy",
-  "#7cabff": "rose",
-  "#aab2cf": "silver",
-  "#495489": "olive",
-  "#ffffff": "silver",
-};
-
-function hexToFrameColor(hex: string): Product["frameColor"] {
-  return HEX_TO_FRAME[hex.toLowerCase()] ?? "black";
-}

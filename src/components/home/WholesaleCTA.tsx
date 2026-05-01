@@ -23,7 +23,7 @@ export default function WholesaleCTA() {
             Program Grosir & Reseller
           </span>
           <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
-            Beli lebih banyak, hemat lebih banyak — dan kembangkan bisnis kacamata Anda bersama kami.
+            Beli lebih banyak, hemat lebih banyak — Kembangkan bisnis Anda bersama kami.
           </h2>
           <p className="mt-4 text-white/75 max-w-md">
             Harga grosir berlaku mulai 6 pcs. Reseller yang disetujui

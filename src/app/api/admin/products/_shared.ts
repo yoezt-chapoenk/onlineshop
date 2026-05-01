@@ -22,7 +22,6 @@ export const ProductSchema = z.object({
   is_new_arrival: z.boolean(),
   rating: z.number().min(0).max(5),
   review_count: z.number().int().nonnegative(),
-  colors: z.array(z.string()),
   frame_color: z.enum(["black", "gold", "silver", "tortoise", "navy", "rose", "olive"]),
   lens_color: z
     .enum(["clear", "smoke", "green", "amber", "blue", "mirror"])
@@ -47,6 +46,7 @@ export const ProductSchema = z.object({
         size: z.string().nullable().optional(),
         stock: z.number().int().nonnegative(),
         price_override: z.number().int().nonnegative().nullable().optional(),
+        image_url: z.string().url().nullable().optional(),
         sort_order: z.number().int().nonnegative().optional(),
       }),
     )

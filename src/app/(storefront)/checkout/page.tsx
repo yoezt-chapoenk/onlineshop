@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ShieldCheck, X, Copy, Check, QrCode, CreditCard, Building2 } from "lucide-react";
+import { ArrowRight, ShieldCheck, Copy, Check, QrCode, Building2 } from "lucide-react";
 import clsx from "clsx";
 import PageHeader from "@/components/ui/PageHeader";
 import { useCart } from "@/components/cart/CartProvider";

@@ -60,6 +60,7 @@ export async function PATCH(
       size: v.size ?? null,
       stock: v.stock,
       price_override: v.price_override ?? null,
+      image_url: v.image_url ?? null,
       sort_order: v.sort_order ?? idx,
     })),
   });

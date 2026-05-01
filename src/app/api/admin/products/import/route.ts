@@ -59,6 +59,12 @@ function splitList(value: string | undefined): string[] {
     .filter(Boolean);
 }
 
+function splitPipeList(value: string | undefined): string[] {
+  if (value === undefined || value === null) return [];
+  if (String(value).trim() === "") return [];
+  return String(value).split("|").map((s) => s.trim());
+}
+
 async function rowsFromFile(
   file: File,
 ): Promise<{ rows: RawRow[]; error?: string }> {
@@ -213,7 +219,6 @@ export async function POST(request: Request) {
       is_new_arrival: parseBool(raw.is_new_arrival),
       rating: Math.min(5, Math.max(0, parseFloatVal(raw.rating))),
       review_count: parseInteger(raw.review_count),
-      colors: splitList(raw.colors),
       image_urls: splitList(raw.image_urls).filter((u) => /^https?:\/\//i.test(u)),
       frame_color: String(raw.frame_color ?? "black")
         .trim()
@@ -223,7 +228,27 @@ export async function POST(request: Request) {
         : null,
       specs: [],
       price_tiers: [],
-      variants: [],
+      variants: (() => {
+        const vSkus = splitPipeList(raw.variant_skus);
+        if (vSkus.length === 0) return [];
+        const vColors = splitPipeList(raw.variant_colors);
+        const vTypes = splitPipeList(raw.variant_types);
+        const vSizes = splitPipeList(raw.variant_sizes);
+        const vStocks = splitPipeList(raw.variant_stocks);
+        const vPrices = splitPipeList(raw.variant_prices);
+        const vImages = splitPipeList(raw.variant_images);
+        
+        return vSkus.map((vSku, idx) => ({
+          sku: vSku,
+          color: vColors[idx] || null,
+          variant_type: vTypes[idx] || null,
+          size: vSizes[idx] || null,
+          stock: parseInteger(vStocks[idx]),
+          price_override: parseOptionalInt(vPrices[idx]),
+          image_url: vImages[idx] || null,
+          sort_order: idx,
+        }));
+      })(),
     };
 
     const parsed = ProductSchema.safeParse(candidate);
@@ -265,6 +290,31 @@ export async function POST(request: Request) {
       slugToId.set(slug, ins.id);
       skuToId.set(sku, ins.id);
       inserted += 1;
+    }
+    
+    const finalId = targetId ?? slugToId.get(slug);
+    if (finalId) {
+      const { error: varErr } = await ctx.supabase.rpc("replace_product_variants", {
+        p_product_id: finalId,
+        p_variants: parsed.data.variants.map((v, idx) => ({
+          id: v.id ?? null,
+          sku: v.sku,
+          color: v.color ?? null,
+          variant_type: v.variant_type ?? null,
+          size: v.size ?? null,
+          stock: v.stock,
+          price_override: v.price_override ?? null,
+          image_url: v.image_url ?? null,
+          sort_order: v.sort_order ?? idx,
+        })),
+      });
+      if (varErr) {
+        failed.push({
+          row: rowNumber,
+          sku,
+          reason: `Variants import failed: ${varErr.message}`,
+        });
+      }
     }
   }
 

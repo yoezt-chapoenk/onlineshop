@@ -116,6 +116,7 @@ create table if not exists public.product_variants (
   size            text,
   stock           int  not null default 0,
   price_override  int,
+  image_url       text,
   sort_order      int  not null default 0,
   created_at      timestamptz not null default now(),
   unique (product_id, sku)
@@ -140,7 +141,7 @@ begin
   delete from public.product_variants where product_id = p_product_id;
   if p_variants is not null and jsonb_typeof(p_variants) = 'array' and jsonb_array_length(p_variants) > 0 then
     insert into public.product_variants (
-      id, product_id, sku, color, variant_type, size, stock, price_override, sort_order
+      id, product_id, sku, color, variant_type, size, stock, price_override, image_url, sort_order
     )
     select
       coalesce(nullif(v->>'id','')::uuid, gen_random_uuid()),
@@ -151,6 +152,7 @@ begin
       nullif(v->>'size',''),
       coalesce((v->>'stock')::int, 0),
       nullif(v->>'price_override','')::int,
+      nullif(v->>'image_url',''),
       coalesce((v->>'sort_order')::int, 0)
     from jsonb_array_elements(p_variants) as v;
   end if;
