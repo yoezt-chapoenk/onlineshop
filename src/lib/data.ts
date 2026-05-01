@@ -66,6 +66,7 @@ interface VariantRow {
   size: string | null;
   stock: number;
   price_override: number | null;
+  image_url: string | null;
   sort_order: number;
 }
 
@@ -94,6 +95,7 @@ function rowToProduct(row: ProductRow): Product {
       size: v.size ?? undefined,
       stock: v.stock,
       priceOverride: v.price_override ?? undefined,
+      imageUrl: v.image_url ?? undefined,
       sortOrder: v.sort_order,
     }))
     .sort((a, b) => a.sortOrder - b.sortOrder);
