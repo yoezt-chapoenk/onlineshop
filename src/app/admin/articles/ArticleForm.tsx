@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { parseMarkdown } from "@/lib/markdown";
+import { Eye, PenLine } from "lucide-react";
 
 interface ArticleFormValues {
   id?: string;
@@ -33,6 +35,9 @@ export default function ArticleForm({ initial, mode }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSlugDirty, setIsSlugDirty] = useState(false);
+  const [tab, setTab] = useState<"write" | "preview">("write");
+
+  const previewHtml = useMemo(() => parseMarkdown(v.content || ""), [v.content]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -59,7 +64,7 @@ export default function ArticleForm({ initial, mode }: Props) {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-6 max-w-4xl">
+    <form onSubmit={submit} className="space-y-6 max-w-5xl">
       <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 space-y-4">
         <label className="block">
           <span className="label">Judul Artikel</span>
@@ -79,7 +84,7 @@ export default function ArticleForm({ initial, mode }: Props) {
             }}
           />
         </label>
-        
+
         <label className="block">
           <span className="label">Slug (URL)</span>
           <input
@@ -104,19 +109,68 @@ export default function ArticleForm({ initial, mode }: Props) {
           />
         </label>
 
-        <label className="block">
-          <span className="label">Konten (Mendukung Markdown)</span>
-          <textarea
-            className="input mt-1 font-mono text-sm"
-            rows={15}
-            required
-            value={v.content}
-            onChange={(e) => setV((c) => ({ ...c, content: e.target.value }))}
-            placeholder="# Judul Utama\n\nTulis konten artikel Anda di sini..."
-          />
-        </label>
+        {/* --- Markdown Editor with Live Preview --- */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="label">Konten</span>
+            <div className="flex items-center gap-1 rounded-lg border border-[color:var(--color-cloud-200)] p-0.5 bg-[color:var(--color-cloud-100)]">
+              <button
+                type="button"
+                onClick={() => setTab("write")}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+                  tab === "write"
+                    ? "bg-white text-[color:var(--color-navy-900)] shadow-sm"
+                    : "text-[color:var(--color-navy-400)] hover:text-[color:var(--color-navy-900)]"
+                }`}
+              >
+                <PenLine className="h-3 w-3" />
+                Tulis
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab("preview")}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+                  tab === "preview"
+                    ? "bg-white text-[color:var(--color-navy-900)] shadow-sm"
+                    : "text-[color:var(--color-navy-400)] hover:text-[color:var(--color-navy-900)]"
+                }`}
+              >
+                <Eye className="h-3 w-3" />
+                Preview
+              </button>
+            </div>
+          </div>
 
-        <label className="flex items-center gap-2 mt-4 cursor-pointer">
+          {tab === "write" ? (
+            <textarea
+              className="input font-mono text-sm w-full"
+              rows={18}
+              required
+              value={v.content}
+              onChange={(e) => setV((c) => ({ ...c, content: e.target.value }))}
+              placeholder={"# Judul Utama\n\nTulis konten artikel Anda di sini...\n\n## Sub Judul\n\nParagraf konten..."}
+            />
+          ) : (
+            <div className="rounded-xl border border-[color:var(--color-cloud-200)] bg-white p-5 min-h-[18rem] overflow-auto">
+              {v.content.trim() ? (
+                <div
+                  className="article-body"
+                  dangerouslySetInnerHTML={{ __html: previewHtml }}
+                />
+              ) : (
+                <p className="text-sm text-[color:var(--color-muted)] italic">
+                  Belum ada konten untuk di-preview.
+                </p>
+              )}
+            </div>
+          )}
+
+          <p className="mt-1.5 text-xs text-[color:var(--color-navy-400)]">
+            Mendukung sintaks Markdown: **bold**, *italic*, # Heading, - list, `kode`, dll.
+          </p>
+        </div>
+
+        <label className="flex items-center gap-2 mt-2 cursor-pointer">
           <input
             type="checkbox"
             className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"

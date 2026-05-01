@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShoppingBag, UserPlus, ArrowRight } from "lucide-react";
+import { ShoppingBag, UserPlus, ArrowRight, LayoutDashboard } from "lucide-react";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { formatRupiah } from "@/lib/format";
@@ -60,6 +60,34 @@ export default async function AccountOverviewPage() {
       <h1 className="text-2xl font-bold tracking-tight">
         {t.account.welcome(profile?.full_name ?? authUser?.email ?? "")}
       </h1>
+
+      {/* Admin Shortcut Banner */}
+      {role === "admin" && (
+        <section className="rounded-2xl border border-[color:var(--color-navy-200)] bg-[color:var(--color-navy-900)] text-white p-5">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                <LayoutDashboard className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm">Anda login sebagai Admin</p>
+                <p className="text-white/60 text-xs mt-0.5">Kelola toko, produk, pesanan, dan konten dari Dashboard Admin.</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/admin" className="inline-flex items-center gap-1.5 rounded-lg bg-white text-[color:var(--color-navy-900)] px-4 py-2 text-xs font-bold hover:bg-white/90 transition-colors">
+                <LayoutDashboard className="h-3.5 w-3.5" /> Dashboard Admin
+              </Link>
+              <Link href="/admin/orders" className="inline-flex items-center gap-1.5 rounded-lg bg-white/10 text-white px-4 py-2 text-xs font-semibold hover:bg-white/20 transition-colors">
+                Pesanan
+              </Link>
+              <Link href="/admin/products" className="inline-flex items-center gap-1.5 rounded-lg bg-white/10 text-white px-4 py-2 text-xs font-semibold hover:bg-white/20 transition-colors">
+                Produk
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="card p-5">

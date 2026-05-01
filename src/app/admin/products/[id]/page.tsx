@@ -42,6 +42,7 @@ interface ProductRow {
     size: string | null;
     stock: number;
     price_override: number | null;
+    image_url: string | null;
     sort_order: number;
   }[];
 }
@@ -64,7 +65,7 @@ export default async function EditProductPage({
     supabase
       .from("products")
       .select(
-        "*, product_price_tiers(min_qty, max_qty, unit_price, label), product_variants(id, sku, color, variant_type, size, stock, price_override, sort_order)",
+        "*, product_price_tiers(min_qty, max_qty, unit_price, label), product_variants(id, sku, color, variant_type, size, stock, price_override, image_url, sort_order)",
       )
       .eq("id", id)
       .maybeSingle(),
@@ -95,7 +96,6 @@ export default async function EditProductPage({
     is_new_arrival: p.is_new_arrival,
     rating: p.rating,
     review_count: p.review_count,
-    colors: p.colors ?? [],
     frame_color: p.frame_color,
     lens_color: p.lens_color,
     specs: p.specs ?? [],
@@ -111,6 +111,7 @@ export default async function EditProductPage({
         size: v.size,
         stock: v.stock,
         price_override: v.price_override,
+        image_url: v.image_url,
         sort_order: v.sort_order,
       })),
   };
