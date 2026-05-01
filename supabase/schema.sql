@@ -370,6 +370,36 @@ create table if not exists public.site_settings (
 );
 insert into public.site_settings (id) values (1) on conflict (id) do nothing;
 
+-- 5c. Features: Articles, API Keys, Product Reviews ----------------------
+create table if not exists public.articles (
+  id           uuid primary key default gen_random_uuid(),
+  slug         text unique not null,
+  title        text not null,
+  content      text not null,
+  image_url    text,
+  is_published boolean not null default false,
+  created_at   timestamptz not null default now(),
+  updated_at   timestamptz not null default now()
+);
+
+create table if not exists public.api_keys (
+  id         uuid primary key default gen_random_uuid(),
+  key        text unique not null,
+  name       text not null,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.product_reviews (
+  id         uuid primary key default gen_random_uuid(),
+  product_id uuid not null references public.products(id) on delete cascade,
+  user_id    uuid not null references public.users(id) on delete cascade,
+  order_id   uuid not null references public.orders(id) on delete cascade,
+  rating     int not null check (rating >= 1 and rating <= 5),
+  comment    text,
+  created_at timestamptz not null default now(),
+  unique (user_id, product_id, order_id) -- one review per product per order
+);
+
 -- 6. Row Level Security -------------------------------------------------
 alter table public.categories             enable row level security;
 alter table public.products               enable row level security;
@@ -382,6 +412,9 @@ alter table public.reseller_applications  enable row level security;
 alter table public.contact_messages       enable row level security;
 alter table public.users                   enable row level security;
 alter table public.site_settings           enable row level security;
+alter table public.articles                enable row level security;
+alter table public.api_keys                enable row level security;
+alter table public.product_reviews         enable row level security;
 
 -- Public catalog: anon may SELECT.
 drop policy if exists "Public read categories"   on public.categories;
@@ -392,6 +425,12 @@ create policy "Public read categories"  on public.categories            for sele
 create policy "Public read products"    on public.products              for select using (true);
 create policy "Public read price tiers" on public.product_price_tiers   for select using (true);
 create policy "Public read variants"    on public.product_variants      for select using (true);
+
+drop policy if exists "Public read published articles" on public.articles;
+drop policy if exists "Public read product reviews" on public.product_reviews;
+
+create policy "Public read published articles" on public.articles for select using (is_published = true);
+create policy "Public read product reviews" on public.product_reviews for select using (true);
 
 -- Authenticated users can read their own profile row. Without this,
 -- RLS on public.users silently returns empty, so getCurrentUser() never

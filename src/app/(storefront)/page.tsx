@@ -4,7 +4,6 @@ import Hero from "@/components/home/Hero";
 import TrustBadges from "@/components/home/TrustBadges";
 import CategoryGrid from "@/components/home/CategoryGrid";
 import WholesaleCTA from "@/components/home/WholesaleCTA";
-import Testimonials from "@/components/home/Testimonials";
 import FAQPreview from "@/components/home/FAQPreview";
 import ProductGrid from "@/components/products/ProductGrid";
 import { getCategories, getProducts } from "@/lib/data";
@@ -91,10 +90,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-16 sm:mt-20">
-        <Testimonials />
-      </section>
+
 
       {/* FAQ */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-16 sm:mt-20 mb-16">

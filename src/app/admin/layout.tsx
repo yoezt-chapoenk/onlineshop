@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/supabase/server";
 import {
   LayoutDashboard,
   Package,
@@ -9,6 +11,8 @@ import {
   UserPlus,
   MessageSquare,
   Settings,
+  FileText,
+  Key,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -24,14 +28,20 @@ const NAV = [
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/reseller-applications", label: "Resellers", icon: UserPlus },
   { href: "/admin/contact-messages", label: "Messages", icon: MessageSquare },
+  { href: "/admin/articles", label: "Articles", icon: FileText },
+  { href: "/admin/api-keys", label: "API Keys", icon: Key },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { profile } = await getCurrentUser();
+  if (!profile || profile.role !== "admin") {
+    redirect("/login");
+  }
   return (
     <div className="min-h-screen bg-[color:var(--color-cloud-100)]">
       <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] min-h-screen">

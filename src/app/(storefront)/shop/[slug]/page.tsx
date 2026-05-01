@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Script from "next/script";
 import { ChevronRight, Home } from "lucide-react";
 import {
   getAllProductSlugs,
@@ -42,8 +43,41 @@ export default async function ProductPage({ params }: PageProps) {
 
   const related = await getRelatedProducts(product, 4);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "image": product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls : [],
+    "description": product.shortDescription,
+    "sku": product.sku,
+    "brand": {
+      "@type": "Brand",
+      "name": "Juragan Grosir"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `https://juragangrosir.com/shop/${product.slug}`,
+      "priceCurrency": "IDR",
+      "price": product.retailPrice,
+      "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      "itemCondition": "https://schema.org/NewCondition"
+    },
+    ...(product.reviewCount > 0 && {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": product.rating,
+        "reviewCount": product.reviewCount
+      }
+    })
+  };
+
   return (
     <div>
+      <Script
+        id={`product-jsonld-${product.slug}`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="bg-[color:var(--color-cloud-100)] border-b border-[color:var(--color-line)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
           <nav aria-label="Breadcrumb">

@@ -302,47 +302,6 @@ export default function ProductDetailClient({ product }: Props) {
         </div>
       )}
 
-      {/* Color swatches */}
-      {product.colors.length > 0 && (
-        <div className="space-y-2">
-          <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--color-muted)]">
-            Warna
-            {selectedColorHex && (
-              <span className="ml-2 normal-case tracking-normal text-[color:var(--color-ink)]">
-                {colorName(selectedColorHex)}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex flex-wrap gap-2.5">
-              {product.colors.map((hex) => (
-                <button
-                  key={hex}
-                  type="button"
-                  title={colorName(hex)}
-                  onClick={() => setSelectedColorHex(hex)}
-                  className={clsx(
-                    "h-8 w-8 rounded-full border-2 transition-all",
-                    selectedColorHex === hex
-                      ? "border-[color:var(--color-navy-900)] ring-2 ring-[color:var(--color-navy-900)]/30 scale-110"
-                      : "border-[color:var(--color-line)] hover:border-[color:var(--color-navy-400)] hover:scale-105",
-                  )}
-                  style={{ backgroundColor: hex }}
-                />
-              ))}
-            </div>
-            {/* Live color preview */}
-            {!product.imageUrls?.length && (
-              <div className="h-16 w-24 rounded-lg bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] flex items-center justify-center overflow-hidden">
-                <GlassesArt
-                  product={{ ...product, frameColor: activeFrameColor }}
-                  size={40}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Action Buttons */}
       <div className="space-y-3 w-fit">

@@ -66,6 +66,17 @@ export default function ProductForm({ initial, categories, mode }: Props) {
   const [v, setV] = useState<ProductFormValues>(initial);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [isSlugDirty, setIsSlugDirty] = useState(false);
+
+  function slugify(text: string) {
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w\-]+/g, "")
+      .replace(/\-\-+/g, "-");
+  }
 
   function update<K extends keyof ProductFormValues>(key: K, value: ProductFormValues[K]) {
     setV((c) => ({ ...c, [key]: value }));
@@ -194,7 +205,16 @@ export default function ProductForm({ initial, categories, mode }: Props) {
       <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
         <label className="block">
           <span className="label">Name</span>
-          <input className="input mt-1" required value={v.name} onChange={(e) => update("name", e.target.value)} />
+          <input className="input mt-1" required value={v.name} onChange={(e) => {
+            const newName = e.target.value;
+            setV((c) => {
+              const next = { ...c, name: newName };
+              if (mode === "create" && !isSlugDirty) {
+                next.slug = slugify(newName);
+              }
+              return next;
+            });
+          }} />
         </label>
         <label className="block">
           <span className="label">SKU</span>
@@ -202,7 +222,10 @@ export default function ProductForm({ initial, categories, mode }: Props) {
         </label>
         <label className="block">
           <span className="label">Slug</span>
-          <input className="input mt-1" required value={v.slug} onChange={(e) => update("slug", e.target.value)} />
+          <input className="input mt-1" required value={v.slug} onChange={(e) => {
+            setIsSlugDirty(true);
+            update("slug", e.target.value);
+          }} />
         </label>
         <label className="block">
           <span className="label">Category</span>

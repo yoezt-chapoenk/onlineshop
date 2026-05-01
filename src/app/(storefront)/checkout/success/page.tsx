@@ -80,6 +80,30 @@ function SuccessInner() {
           </dl>
         )}
 
+        {order?.payment === "transfer" && (
+          <div className="mt-8 bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] rounded-xl p-5 text-left text-sm space-y-2">
+            <h3 className="font-bold text-[color:var(--color-navy-900)]">Instruksi Pembayaran Manual:</h3>
+            <p className="text-[color:var(--color-muted)]">
+              Harap transfer tepat sebesar <strong className="text-[color:var(--color-ink)]">{formatRupiah(order.grandTotal)}</strong> ke rekening yang tertera pada email tagihan Anda.
+            </p>
+            <p className="text-[color:var(--color-muted)]">
+              Setelah transfer, wajib melakukan konfirmasi dengan mengirimkan bukti transfer melalui WhatsApp agar pesanan segera diproses.
+            </p>
+          </div>
+        )}
+
+        {order?.payment === "qris" && (
+          <div className="mt-8 bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] rounded-xl p-5 text-left text-sm space-y-2">
+            <h3 className="font-bold text-[color:var(--color-navy-900)]">Instruksi Pembayaran QRIS:</h3>
+            <p className="text-[color:var(--color-muted)]">
+              Silakan scan QR Code yang dikirimkan ke email Anda untuk membayar sebesar <strong className="text-[color:var(--color-ink)]">{formatRupiah(order.grandTotal)}</strong>.
+            </p>
+            <p className="text-[color:var(--color-muted)]">
+              Setelah berhasil scan, kirimkan tangkapan layar (screenshot) bukti pembayaran melalui WhatsApp.
+            </p>
+          </div>
+        )}
+
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           <Link href="/shop" className="btn btn-primary">
             Lanjut belanja <ArrowRight className="h-4 w-4" />

@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/supabase/server";
 import { formatRupiah } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import RepeatOrderButton from "./RepeatOrderButton";
+import ReviewForm from "@/components/products/ReviewForm";
 
 const STATUS_LABEL: Record<string, string> = {
   pending: t.orderStatus.pending,
@@ -19,6 +20,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 interface OrderItemRow {
+  product_id: string;
   product_slug: string;
   product_sku: string;
   product_name: string;
@@ -66,12 +68,18 @@ export default async function AccountOrderDetailPage({
   const { data } = await admin
     .from("orders")
     .select(
-      "id, order_number, customer_email, customer_name, customer_phone, shipping_province, shipping_city, shipping_district, shipping_postal_code, shipping_address, shipping_courier, shipping_service, shipping_cost, payment_method, subtotal, total, status, tracking_courier, tracking_number, created_at, order_items(product_slug, product_sku, product_name, variant_id, variant_label, quantity, unit_price, tier_label, subtotal)",
+      "id, order_number, customer_email, customer_name, customer_phone, shipping_province, shipping_city, shipping_district, shipping_postal_code, shipping_address, shipping_courier, shipping_service, shipping_cost, payment_method, subtotal, total, status, tracking_courier, tracking_number, created_at, order_items(product_id, product_slug, product_sku, product_name, variant_id, variant_label, quantity, unit_price, tier_label, subtotal)",
     )
     .eq("id", id)
     .eq("customer_email", authUser.email ?? "")
     .maybeSingle<OrderDetail>();
   if (!data) notFound();
+
+  const { data: reviews } = await admin
+    .from("product_reviews")
+    .select("product_id")
+    .eq("order_id", id);
+  const reviewedProductIds = new Set(reviews?.map((r) => r.product_id) || []);
 
   return (
     <div className="space-y-6">
@@ -127,6 +135,24 @@ export default async function AccountOrderDetailPage({
             ))}
           </tbody>
         </table>
+        
+        {data.status === "fulfilled" && (
+          <div className="mt-8 space-y-4 border-t border-[color:var(--color-line)] pt-6">
+            <h3 className="text-sm font-bold">Ulasan Produk</h3>
+            <p className="text-xs text-[color:var(--color-muted)]">Pesanan ini telah selesai. Anda dapat memberikan ulasan untuk produk yang dibeli.</p>
+            {data.order_items.map((item, idx) => {
+              if (reviewedProductIds.has(item.product_id)) return null;
+              return (
+                <ReviewForm 
+                  key={idx} 
+                  productId={item.product_id} 
+                  orderId={data.id} 
+                  productName={item.product_name} 
+                />
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
