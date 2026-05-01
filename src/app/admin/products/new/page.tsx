@@ -26,7 +26,6 @@ const EMPTY: ProductFormValues = {
   is_new_arrival: false,
   rating: 0,
   review_count: 0,
-  colors: [],
   frame_color: "black",
   lens_color: null,
   specs: [],
