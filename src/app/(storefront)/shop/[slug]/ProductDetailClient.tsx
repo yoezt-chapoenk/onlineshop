@@ -307,7 +307,7 @@ export default function ProductDetailClient({ product }: Props) {
           })}
           {allSelected && matchedVariant ? (
             <div className="text-xs text-[color:var(--color-muted)]">
-              SKU varian {matchedVariant.sku} · Stok {matchedVariant.stock}
+              Stok {matchedVariant.stock} pcs
             </div>
           ) : (
             <div className="text-xs text-[color:var(--color-muted)]">
