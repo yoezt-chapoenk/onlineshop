@@ -64,19 +64,31 @@ export default function ProductDetailClient({ product }: Props) {
     return match.length === 1 ? match[0] : undefined;
   }, [variants, axes, selected, hasVariants]);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (matchedVariant && matchedVariant.imageUrl) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setActiveImage(matchedVariant.imageUrl);
-    } else if (product.imageUrls.length > 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setActiveImage(product.imageUrls[0]);
-    } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setActiveImage(null);
+  // Image to display: prefer the fully-matched variant's image, then
+  // fall back to the first variant that matches the COLOR selection
+  // (so the image updates immediately on color click, even when other
+  // axes like size haven't been chosen yet), then fall back to the
+  // first product image.
+  const imageForSelection = useMemo(() => {
+    // 1. Fully matched variant (all axes chosen)
+    if (matchedVariant?.imageUrl) return matchedVariant.imageUrl;
+
+    // 2. First variant that matches the currently selected color
+    if (selected.color) {
+      const colorVariant = variants.find(
+        (v) => v.color === selected.color && v.imageUrl
+      );
+      if (colorVariant?.imageUrl) return colorVariant.imageUrl;
     }
-  }, [matchedVariant, product.imageUrls]);
+
+    // 3. Fall back to first product image
+    return product.imageUrls.length > 0 ? product.imageUrls[0] : null;
+  }, [matchedVariant, selected.color, variants, product.imageUrls]);
+
+  // Keep activeImage in sync so thumbnail clicks can override selection
+  useEffect(() => {
+    setActiveImage(imageForSelection);
+  }, [imageForSelection]);
 
   const allSelected = axes.every((a) => Boolean(selected[a]));
   const activeStock = hasVariants
@@ -152,16 +164,19 @@ export default function ProductDetailClient({ product }: Props) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
       <div>
-        <div className="rounded-2xl bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] aspect-square flex items-center justify-center overflow-hidden p-10">
+        <div className="rounded-2xl bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] aspect-square overflow-hidden">
           {activeImage ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
+              key={activeImage}
               src={activeImage}
               alt={product.name}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover transition-opacity duration-300"
             />
           ) : (
-            <GlassesArt product={product} size={360} />
+            <div className="h-full w-full flex items-center justify-center p-10">
+              <GlassesArt product={product} size={360} />
+            </div>
           )}
         </div>
         <div className="mt-4 grid grid-cols-4 gap-3">
