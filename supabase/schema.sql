@@ -431,6 +431,7 @@ drop policy if exists "Public read product reviews" on public.product_reviews;
 
 create policy "Public read published articles" on public.articles for select using (is_published = true);
 create policy "Public read product reviews" on public.product_reviews for select using (true);
+-- Note: product_reviews INSERT is done via service-role key (server-side), so no anon INSERT policy needed.
 
 -- Authenticated users can read their own profile row. Without this,
 -- RLS on public.users silently returns empty, so getCurrentUser() never

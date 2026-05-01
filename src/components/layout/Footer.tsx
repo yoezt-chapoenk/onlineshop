@@ -16,6 +16,7 @@ const SHOP_LINKS = [
 
 const COMPANY_LINKS = [
   { label: "Tentang Kami", href: "/about" },
+  { label: "Blog", href: "/blog" },
   { label: "Jadi Reseller", href: "/wholesale" },
   { label: "Kontak", href: "/contact" },
 ];

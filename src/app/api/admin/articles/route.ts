@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getAdminClient } from "@/lib/supabase/admin";
+import { adminClientOrError } from "@/lib/admin/api";
 
 export const dynamic = "force-dynamic";
 
@@ -13,9 +13,9 @@ const ArticleSchema = z.object({
 });
 
 export async function GET() {
-  const supabase = getAdminClient();
-  if (!supabase) return NextResponse.json({ error: "No DB" }, { status: 500 });
-  const { data, error } = await supabase
+  const ctx = adminClientOrError();
+  if (!ctx.ok) return ctx.response;
+  const { data, error } = await ctx.supabase
     .from("articles")
     .select("*")
     .order("created_at", { ascending: false });
@@ -25,8 +25,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const supabase = getAdminClient();
-  if (!supabase) return NextResponse.json({ error: "No DB" }, { status: 500 });
+  const ctx = adminClientOrError();
+  if (!ctx.ok) return ctx.response;
 
   try {
     const body = await req.json();
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: parsed.error.message }, { status: 400 });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await ctx.supabase
       .from("articles")
       .insert({
         slug: parsed.data.slug,

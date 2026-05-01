@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getAdminClient } from "@/lib/supabase/admin";
+import { adminClientOrError } from "@/lib/admin/api";
 
 const ArticleSchema = z.object({
   slug: z.string().min(1),
@@ -12,8 +12,8 @@ const ArticleSchema = z.object({
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = getAdminClient();
-  if (!supabase) return NextResponse.json({ error: "No DB" }, { status: 500 });
+  const ctx = adminClientOrError();
+  if (!ctx.ok) return ctx.response;
 
   try {
     const body = await req.json();
@@ -22,7 +22,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       return NextResponse.json({ error: parsed.error.message }, { status: 400 });
     }
 
-    const { error } = await supabase
+    const { error } = await ctx.supabase
       .from("articles")
       .update({
         slug: parsed.data.slug,
@@ -43,10 +43,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = getAdminClient();
-  if (!supabase) return NextResponse.json({ error: "No DB" }, { status: 500 });
+  const ctx = adminClientOrError();
+  if (!ctx.ok) return ctx.response;
 
-  const { error } = await supabase.from("articles").delete().eq("id", id);
+  const { error } = await ctx.supabase.from("articles").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json({ success: true });
 }

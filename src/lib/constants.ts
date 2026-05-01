@@ -21,6 +21,7 @@ export const NAV_LINKS = [
   { label: "Beranda", href: "/" },
   { label: "Belanja", href: "/shop" },
   { label: "Koleksi", href: "/collections" },
+  { label: "Blog", href: "/blog" },
   { label: "Tentang Kami", href: "/about" },
   { label: "Kontak", href: "/contact" },
 ] as const;

@@ -90,7 +90,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
         )}
 
         <div 
-          className="prose prose-blue max-w-none prose-headings:font-bold prose-a:text-blue-600 hover:prose-a:text-blue-500"
+          className="article-body"
           dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
       </article>
