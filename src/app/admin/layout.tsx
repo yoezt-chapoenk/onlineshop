@@ -14,6 +14,7 @@ import {
   FileText,
   Key,
   BookOpen,
+  Receipt,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -26,6 +27,7 @@ const NAV = [
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/categories", label: "Categories", icon: Tag },
   { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
+  { href: "/admin/payments", label: "Payments", icon: Receipt },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/reseller-applications", label: "Resellers", icon: UserPlus },
   { href: "/admin/contact-messages", label: "Messages", icon: MessageSquare },

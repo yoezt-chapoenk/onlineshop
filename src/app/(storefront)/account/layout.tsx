@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LayoutDashboard, ShoppingBag, UserCircle, UserPlus, LogOut } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, UserCircle, UserPlus, LogOut, Receipt } from "lucide-react";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { logoutAction } from "../auth/actions";
 import { t } from "@/lib/i18n";
@@ -12,6 +12,7 @@ export const metadata = {
 const NAV = [
   { href: "/account", label: t.account.overview, icon: LayoutDashboard, exact: true },
   { href: "/account/orders", label: t.account.orders, icon: ShoppingBag },
+  { href: "/account/payment-confirmation", label: "Konfirmasi Bayar", icon: Receipt },
   { href: "/account/affiliate", label: "Affiliate", icon: UserPlus },
   { href: "/account/profile", label: t.account.profile, icon: UserCircle },
   { href: "/account/become-reseller", label: t.account.becomeReseller, icon: UserPlus },

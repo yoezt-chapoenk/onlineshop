@@ -214,6 +214,16 @@ export default async function AccountOrderDetailPage({
           <p className="mt-3 text-xs text-[color:var(--color-muted)]">
             Pembayaran: {data.payment_method.toUpperCase()}
           </p>
+          {data.status === "pending" && (
+            <div className="mt-4 pt-4 border-t border-[color:var(--color-line)]">
+              <Link href={`/account/payment-confirmation?order=${data.order_number}`} className="btn btn-primary w-full shadow-md hover:-translate-y-0.5 transition-transform">
+                Konfirmasi Pembayaran
+              </Link>
+              <p className="text-xs text-center text-[color:var(--color-muted)] mt-2">
+                Sudah transfer? Silakan unggah bukti di sini.
+              </p>
+            </div>
+          )}
         </section>
       </div>
 

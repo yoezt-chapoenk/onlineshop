@@ -726,3 +726,25 @@ insert into public.products (
 ) on conflict (slug) do nothing;
 insert into public.product_price_tiers (product_id, min_qty, max_qty, unit_price, label) select id, 6, 11, 30000, 'Wholesale tier 1 (6–11 pcs)' from public.products where slug = 'jg-cleaning-kit' on conflict do nothing;
 insert into public.product_price_tiers (product_id, min_qty, max_qty, unit_price, label) select id, 12, null, 26000, 'Wholesale tier 2 (12+ pcs)' from public.products where slug = 'jg-cleaning-kit' on conflict do nothing;
+
+-- 11. Payment Confirmations ---------------------------------------------
+create table if not exists public.payment_confirmations (
+  id uuid primary key default gen_random_uuid(),
+  order_number text not null references public.orders(order_number) on delete cascade,
+  account_name text not null,
+  bank_name text not null,
+  amount int not null,
+  receipt_url text not null,
+  status text not null default 'pending', -- pending, approved, rejected
+  created_at timestamptz not null default now()
+);
+
+create index if not exists payment_confirmations_order_idx on public.payment_confirmations (order_number);
+create index if not exists payment_confirmations_status_idx on public.payment_confirmations (status);
+
+alter table public.payment_confirmations enable row level security;
+drop policy if exists "Customers can insert their own payment confirmations" on public.payment_confirmations;
+drop policy if exists "Customers can read their own payment confirmations" on public.payment_confirmations;
+-- Service role key (used by admin and server actions) bypasses RLS so we don't need policies for that.
+-- No direct client insert because we upload via API. So no insert policy needed.
+
