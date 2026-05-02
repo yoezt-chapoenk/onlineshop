@@ -118,10 +118,10 @@ export default function ProductCard({ product, className }: Props) {
           <Link
             href={`/shop/${product.slug}`}
             className="btn btn-primary w-full !py-2 text-xs"
-            aria-label={`Pilih varian ${product.name}`}
+            aria-label={`Lihat detail ${product.name} untuk menambahkan ke keranjang`}
           >
             <ShoppingCart className="h-3.5 w-3.5" />
-            <span>Pilih Varian</span>
+            <span>Tambah ke Keranjang</span>
           </Link>
         ) : (
           <button
