@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { z } from "zod";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUser } from "@/lib/supabase/server";
@@ -495,6 +496,9 @@ export async function POST(request: Request) {
     );
   }
 
+  const cookieStore = await cookies();
+  const affiliateCode = cookieStore.get("jg_ref")?.value || null;
+
   const { data: orderRow, error: orderErr } = await supabase
     .from("orders")
     .insert({
@@ -518,6 +522,7 @@ export async function POST(request: Request) {
       item_count: itemCount,
       weight_gram: weightGram,
       status: "pending",
+      affiliate_code: affiliateCode,
     })
     .select("id")
     .single();

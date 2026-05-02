@@ -18,6 +18,7 @@ const EMPTY: Settings = {
   pixel_google_id: "",
   seo_default_title: "",
   seo_default_description: "",
+  affiliate_commission_percent: 5.0,
 };
 
 export default async function AdminSettingsPage() {

@@ -35,8 +35,57 @@ export async function PATCH(
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
-    .select()
+    .select("*, items:order_items(*)")
     .maybeSingle();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ order: data });
+  
+  const order = data;
+
+  // Process affiliate commission if status is 'fulfilled'
+  if (parsed.data.status === "fulfilled" && order?.affiliate_code) {
+    // Check if commission already given for this order to prevent duplicate
+    const { data: existingComm } = await ctx.supabase
+      .from("commissions")
+      .select("id")
+      .eq("order_id", id)
+      .maybeSingle();
+
+    if (!existingComm) {
+      // Find affiliate user
+      const { data: affiliate } = await ctx.supabase
+        .from("users")
+        .select("id, balance")
+        .eq("affiliate_code", order.affiliate_code)
+        .maybeSingle();
+
+      if (affiliate) {
+        // Fetch commission rate from settings
+        const { data: settings } = await ctx.supabase
+          .from("site_settings")
+          .select("affiliate_commission_percent")
+          .eq("id", 1)
+          .single();
+        
+        const percent = settings?.affiliate_commission_percent || 5.0;
+        // Total base for commission is subtotal (excluding shipping)
+        const commissionAmount = Math.floor(order.subtotal * (percent / 100));
+
+        // Insert commission record
+        await ctx.supabase.from("commissions").insert({
+          order_id: id,
+          affiliate_id: affiliate.id,
+          amount: commissionAmount,
+          status: "paid"
+        });
+
+        // Update order with commission amount
+        await ctx.supabase.from("orders").update({ commission_amount: commissionAmount }).eq("id", id);
+
+        // Increment user balance
+        await ctx.supabase.from("users").update({ balance: affiliate.balance + commissionAmount }).eq("id", affiliate.id);
+      }
+    }
+  }
+
+  return NextResponse.json({ order });
 }

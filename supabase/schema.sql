@@ -273,6 +273,8 @@ alter table public.orders add column if not exists tracking_courier text;
 alter table public.orders add column if not exists tracking_number  text;
 alter table public.orders add column if not exists admin_note       text;
 alter table public.orders add column if not exists updated_at       timestamptz not null default now();
+alter table public.orders add column if not exists affiliate_code     text;
+alter table public.orders add column if not exists commission_amount  int;
 create index if not exists orders_email_idx on public.orders (customer_email);
 create index if not exists orders_status_idx on public.orders (status);
 create index if not exists orders_created_idx on public.orders (created_at desc);
@@ -344,6 +346,8 @@ create table if not exists public.users (
   updated_at       timestamptz not null default now()
 );
 alter table public.users add column if not exists cart_data jsonb not null default '[]'::jsonb;
+alter table public.users add column if not exists affiliate_code text unique;
+alter table public.users add column if not exists balance int not null default 0;
 create index if not exists users_role_idx on public.users (role);
 create index if not exists users_reseller_status_idx on public.users (reseller_status);
 
@@ -367,6 +371,7 @@ create table if not exists public.site_settings (
   pixel_google_id             text,
   seo_default_title           text,
   seo_default_description     text,
+  affiliate_commission_percent numeric not null default 5.0,
   updated_at                  timestamptz not null default now(),
   constraint site_settings_singleton check (id = 1)
 );
@@ -378,6 +383,7 @@ alter table public.site_settings add column if not exists origin_postal_code    
 alter table public.site_settings add column if not exists payment_banks               jsonb not null default '[]'::jsonb;
 alter table public.site_settings add column if not exists payment_qris_url            text;
 alter table public.site_settings add column if not exists pixel_meta_id               text;
+alter table public.site_settings add column if not exists affiliate_commission_percent numeric not null default 5.0;
 alter table public.site_settings add column if not exists pixel_tiktok_id             text;
 alter table public.site_settings add column if not exists pixel_google_id             text;
 alter table public.site_settings add column if not exists seo_default_title           text;
@@ -388,7 +394,7 @@ alter table public.site_settings add column if not exists default_origin_id     
 alter table public.site_settings add column if not exists default_origin_pinpoint     text;
 
 
--- 5c. Features: Articles, API Keys, Product Reviews ----------------------
+-- 5c. Features: Articles, API Keys, Product Reviews, Affiliate ----------------------
 create table if not exists public.articles (
   id           uuid primary key default gen_random_uuid(),
   slug         text unique not null,
@@ -418,6 +424,28 @@ create table if not exists public.product_reviews (
   unique (user_id, product_id, order_id) -- one review per product per order
 );
 
+create table if not exists public.commissions (
+  id           uuid primary key default gen_random_uuid(),
+  order_id     uuid not null references public.orders(id) on delete cascade,
+  affiliate_id uuid not null references public.users(id) on delete cascade,
+  amount       int not null,
+  status       text not null default 'pending', -- pending, paid, cancelled
+  created_at   timestamptz not null default now()
+);
+create index if not exists commissions_affiliate_idx on public.commissions(affiliate_id);
+
+create table if not exists public.withdrawals (
+  id             uuid primary key default gen_random_uuid(),
+  affiliate_id   uuid not null references public.users(id) on delete cascade,
+  amount         int not null,
+  bank_name      text not null,
+  account_number text not null,
+  account_name   text not null,
+  status         text not null default 'pending', -- pending, completed, rejected
+  created_at     timestamptz not null default now(),
+  updated_at     timestamptz not null default now()
+);
+
 -- 6. Row Level Security -------------------------------------------------
 alter table public.categories             enable row level security;
 alter table public.products               enable row level security;
@@ -433,6 +461,8 @@ alter table public.site_settings           enable row level security;
 alter table public.articles                enable row level security;
 alter table public.api_keys                enable row level security;
 alter table public.product_reviews         enable row level security;
+alter table public.commissions             enable row level security;
+alter table public.withdrawals             enable row level security;
 
 -- Public catalog: anon may SELECT.
 drop policy if exists "Public read categories"   on public.categories;
@@ -465,6 +495,11 @@ drop policy if exists "Users can read own row"   on public.users;
 drop policy if exists "Users can update own row" on public.users;
 create policy "Users can read own row"
   on public.users for select using (auth.uid() = id);
+
+drop policy if exists "Affiliates read own commissions" on public.commissions;
+drop policy if exists "Affiliates read own withdrawals" on public.withdrawals;
+create policy "Affiliates read own commissions" on public.commissions for select using (auth.uid() = affiliate_id);
+create policy "Affiliates read own withdrawals" on public.withdrawals for select using (auth.uid() = affiliate_id);
 
 -- Customers / orders / items / form submissions: NO public access.
 -- The Next.js API routes use the service-role key, which bypasses RLS,

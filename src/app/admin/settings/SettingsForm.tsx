@@ -24,14 +24,17 @@ export interface Settings {
   pixel_google_id: string;
   seo_default_title: string;
   seo_default_description: string;
+  affiliate_commission_percent: number;
 }
 
-const TEXT_FIELDS: { key: keyof Settings; label: string; type?: string; group: string }[] = [
+const TEXT_FIELDS: { key: keyof Settings; label: string; type?: string; group: string; parseAsNumber?: boolean }[] = [
   { key: "store_name", label: "Store name", group: "Store" },
   { key: "store_logo_url", label: "Logo URL", group: "Store" },
   { key: "contact_email", label: "Contact email", type: "email", group: "Store" },
   { key: "whatsapp_number", label: "WhatsApp number", group: "Store" },
   { key: "store_address", label: "Store address", group: "Store" },
+  
+  { key: "affiliate_commission_percent", label: "Affiliate Commission (%)", type: "number", group: "Affiliate", parseAsNumber: true },
 
   { key: "biteship_api_key", label: "Biteship API key", type: "password", group: "Shipping" },
   { key: "origin_postal_code", label: "Origin postal code (kode pos asal)", group: "Shipping" },
@@ -49,8 +52,9 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<number | null>(null);
 
-  function updateText<K extends keyof Settings>(key: K, value: string) {
-    setV((c) => ({ ...c, [key]: value }));
+  function updateText<K extends keyof Settings>(key: K, value: string, parseAsNumber?: boolean) {
+    const val = parseAsNumber ? (value === "" ? 0 : parseFloat(value)) : value;
+    setV((c) => ({ ...c, [key]: val }));
   }
 
   // ── Bank management ──
@@ -112,8 +116,8 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
                   <input
                     className="input mt-1"
                     type={f.type ?? "text"}
-                    value={(v[f.key] as string) ?? ""}
-                    onChange={(e) => updateText(f.key, e.target.value)}
+                    value={(v[f.key] as string|number) ?? ""}
+                    onChange={(e) => updateText(f.key, e.target.value, f.parseAsNumber)}
                   />
                 )}
               </label>
