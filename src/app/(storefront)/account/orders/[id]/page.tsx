@@ -126,7 +126,6 @@ export default async function AccountOrderDetailPage({
                       {item.variant_label}
                     </p>
                   )}
-                  <p className="text-xs text-[color:var(--color-muted)]">SKU {item.product_sku}</p>
                   {item.tier_label && (
                     <p className="text-xs text-[color:var(--color-navy-900)] mt-0.5">
                       {item.tier_label}

@@ -108,14 +108,11 @@ export default function CartPage() {
                           >
                             {item.name}
                           </Link>
-                          {item.variantLabel ? (
-                            <div className="mt-0.5 text-xs text-[color:var(--color-navy-900)]">
+                          {item.variantLabel && (
+                            <p className="text-xs text-[color:var(--color-navy-900)] mt-0.5">
                               {item.variantLabel}
-                            </div>
-                          ) : null}
-                          <div className="mt-0.5 text-xs text-[color:var(--color-muted)]">
-                            SKU {item.sku}
-                          </div>
+                            </p>
+                          )}
                           <div className="mt-1 text-xs text-[color:var(--color-navy-900)] font-medium">
                             {pricing.tierLabel ?? "Harga retail"} ·{" "}
                             {formatRupiah(pricing.unitPrice)}

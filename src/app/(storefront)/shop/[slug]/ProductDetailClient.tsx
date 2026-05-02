@@ -215,7 +215,7 @@ export default function ProductDetailClient({ product }: Props) {
 
       <div className="flex flex-col">
         <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--color-navy-900)]">
-          {product.categoryLabel} · SKU {product.sku}
+          {product.categoryLabel}
         </div>
         <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight">
           {product.name}
