@@ -14,6 +14,7 @@ import AreaSearch from "@/components/checkout/AreaSearch";
 import ShippingRates, {
   type ShippingRate,
 } from "@/components/checkout/ShippingRates";
+import { getSavedAddress } from "./actions";
 
 const PAYMENT_METHODS = [
   {
@@ -61,6 +62,10 @@ export default function CheckoutPage() {
     postalCode: string;
   } | null>(null);
 
+  // Saved Address functionality
+  const [addressMode, setAddressMode] = useState<"saved" | "new" | null>(null);
+  const [savedAddress, setSavedAddress] = useState<any>(null);
+
   // Shipping
   const [selectedRate, setSelectedRate] = useState<ShippingRate | null>(null);
   const shippingRateId = selectedRate
@@ -77,6 +82,24 @@ export default function CheckoutPage() {
       .then((r) => r.json())
       .then((d: PaymentConfig) => setPaymentConfig(d))
       .catch(() => {});
+      
+    // Fetch saved address
+    getSavedAddress().then(addr => {
+      if (addr) {
+        setSavedAddress(addr);
+        setAddressMode("saved");
+        setSelectedArea({
+          id: "saved-area",
+          label: `${addr.district}, ${addr.city}, ${addr.province}`,
+          province: addr.province,
+          city: addr.city,
+          district: addr.district,
+          postalCode: addr.postalCode
+        });
+      } else {
+        setAddressMode("new");
+      }
+    });
   }, []);
 
   // Submit
@@ -180,25 +203,49 @@ export default function CheckoutPage() {
     setSubmitting(true);
     const controller = new AbortController();
     abortRef.current = controller;
+    
+    // Determine customer and address based on addressMode
+    let finalCustomer;
+    let finalAddress;
+
+    if (addressMode === "saved" && savedAddress) {
+      finalCustomer = {
+        fullName: savedAddress.fullName,
+        phone: savedAddress.phone,
+        email: savedAddress.email,
+      };
+      finalAddress = {
+        province: savedAddress.province,
+        city: savedAddress.city,
+        district: savedAddress.district,
+        postalCode: savedAddress.postalCode,
+        address: savedAddress.address,
+        notes: String(data.get("notes") ?? "") || null,
+      };
+    } else {
+      finalCustomer = {
+        fullName: String(data.get("full_name") ?? ""),
+        phone: String(data.get("phone") ?? ""),
+        email: String(data.get("email") ?? ""),
+      };
+      finalAddress = {
+        province: selectedArea.province,
+        city: selectedArea.city,
+        district: selectedArea.district,
+        postalCode: selectedArea.postalCode,
+        address: String(data.get("address") ?? ""),
+        notes: String(data.get("notes") ?? "") || null,
+      };
+    }
+
     try {
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         signal: controller.signal,
         body: JSON.stringify({
-          customer: {
-            fullName: String(data.get("full_name") ?? ""),
-            phone: String(data.get("phone") ?? ""),
-            email: String(data.get("email") ?? ""),
-          },
-          address: {
-            province: selectedArea.province,
-            city: selectedArea.city,
-            district: selectedArea.district,
-            postalCode: selectedArea.postalCode,
-            address: String(data.get("address") ?? ""),
-            notes: String(data.get("notes") ?? "") || null,
-          },
+          customer: finalCustomer,
+          address: finalAddress,
           shipping: {
             courierCode: selectedRate.courierCode,
             courierServiceCode: selectedRate.courierServiceCode,
@@ -281,103 +328,155 @@ export default function CheckoutPage() {
         className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8"
       >
         <div className="space-y-6">
-          {/* Customer Info */}
-          <section className="card p-6">
-            <h2 className="text-base font-semibold">Informasi Pelanggan</h2>
-            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="label" htmlFor="full_name">
-                  Nama lengkap
-                </label>
-                <input
-                  id="full_name"
-                  name="full_name"
-                  required
-                  className="input"
-                />
-              </div>
-              <div>
-                <label className="label" htmlFor="phone">
-                  Nomor HP / WhatsApp
-                </label>
-                <input
-                  id="phone"
-                  name="phone"
-                  required
-                  type="tel"
-                  className="input"
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="label" htmlFor="email">
-                  Email
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  required
-                  type="email"
-                  className="input"
-                />
-              </div>
-            </div>
-          </section>
-
-          {/* Shipping Address */}
-          <section className="card p-6">
-            <h2 className="text-base font-semibold">Alamat Pengiriman</h2>
-            <div className="mt-5 space-y-4">
-              <AreaSearch
-                onSelect={handleAreaSelect}
-                disabled={submitting}
-              />
-              {selectedArea && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 animate-[fadeIn_200ms_ease-out]">
-                  <div>
-                    <span className="label">Provinsi</span>
-                    <div className="input bg-[color:var(--color-cloud-50)] text-[color:var(--color-ink)]">
-                      {selectedArea.province}
-                    </div>
-                  </div>
-                  <div>
-                    <span className="label">Kota / Kabupaten</span>
-                    <div className="input bg-[color:var(--color-cloud-50)] text-[color:var(--color-ink)]">
-                      {selectedArea.city}
-                    </div>
-                  </div>
-                  <div>
-                    <span className="label">Kode Pos</span>
-                    <div className="input bg-[color:var(--color-cloud-50)] text-[color:var(--color-ink)]">
-                      {selectedArea.postalCode}
-                    </div>
+          {/* Saved Address Card OR Manual Input Forms */}
+          {addressMode === "saved" && savedAddress ? (
+            <section className="card p-6 border-2 border-[color:var(--color-navy-900)] bg-[color:var(--color-navy-900)]/[0.02]">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-base font-semibold flex items-center gap-2">
+                    <Check className="h-4 w-4 text-[color:var(--color-success)]" />
+                    Alamat Pengiriman Utama
+                  </h2>
+                  <div className="mt-4 text-sm text-[color:var(--color-ink)] space-y-1">
+                    <p className="font-semibold">{savedAddress.fullName}</p>
+                    <p>{savedAddress.phone} • {savedAddress.email}</p>
+                    <p className="pt-2 text-[color:var(--color-muted)]">
+                      {savedAddress.address}<br />
+                      {savedAddress.district}, {savedAddress.city}, {savedAddress.province} {savedAddress.postalCode}
+                    </p>
                   </div>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setAddressMode("new")}
+                  className="btn btn-outline shrink-0 !px-3 !py-1.5 text-xs"
+                >
+                  Ganti Alamat
+                </button>
+              </div>
+            </section>
+          ) : (
+            <>
+              {savedAddress && (
+                <div className="flex justify-end -mb-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAddressMode("saved");
+                      setSelectedArea({
+                        id: "saved-area",
+                        label: `${savedAddress.district}, ${savedAddress.city}, ${savedAddress.province}`,
+                        province: savedAddress.province,
+                        city: savedAddress.city,
+                        district: savedAddress.district,
+                        postalCode: savedAddress.postalCode
+                      });
+                    }}
+                    className="text-sm text-[color:var(--color-navy-600)] hover:underline font-medium"
+                  >
+                    Batal / Gunakan Alamat Tersimpan
+                  </button>
+                </div>
               )}
-              <div>
-                <label className="label" htmlFor="address">
-                  Alamat lengkap
-                </label>
-                <textarea
-                  id="address"
-                  name="address"
-                  required
-                  className="input min-h-[90px] resize-y"
-                  placeholder="Jl. Contoh No. 123, Komplek …"
-                />
-              </div>
-              <div>
-                <label className="label" htmlFor="notes">
-                  Catatan (opsional)
-                </label>
-                <input
-                  id="notes"
-                  name="notes"
-                  className="input"
-                  placeholder="Titip ke security depan rumah"
-                />
-              </div>
-            </div>
-          </section>
+              {/* Customer Info */}
+              <section className="card p-6">
+                <h2 className="text-base font-semibold">Informasi Pelanggan</h2>
+                <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="label" htmlFor="full_name">
+                      Nama lengkap
+                    </label>
+                    <input
+                      id="full_name"
+                      name="full_name"
+                      required
+                      className="input"
+                    />
+                  </div>
+                  <div>
+                    <label className="label" htmlFor="phone">
+                      Nomor HP / WhatsApp
+                    </label>
+                    <input
+                      id="phone"
+                      name="phone"
+                      required
+                      type="tel"
+                      className="input"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="label" htmlFor="email">
+                      Email
+                    </label>
+                    <input
+                      id="email"
+                      name="email"
+                      required
+                      type="email"
+                      className="input"
+                    />
+                  </div>
+                </div>
+              </section>
+
+              {/* Shipping Address */}
+              <section className="card p-6">
+                <h2 className="text-base font-semibold">Alamat Pengiriman</h2>
+                <div className="mt-5 space-y-4">
+                  <AreaSearch
+                    onSelect={handleAreaSelect}
+                    disabled={submitting}
+                  />
+                  {selectedArea && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 animate-[fadeIn_200ms_ease-out]">
+                      <div>
+                        <span className="label">Provinsi</span>
+                        <div className="input bg-[color:var(--color-cloud-50)] text-[color:var(--color-ink)]">
+                          {selectedArea.province}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="label">Kota / Kabupaten</span>
+                        <div className="input bg-[color:var(--color-cloud-50)] text-[color:var(--color-ink)]">
+                          {selectedArea.city}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="label">Kode Pos</span>
+                        <div className="input bg-[color:var(--color-cloud-50)] text-[color:var(--color-ink)]">
+                          {selectedArea.postalCode}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div>
+                    <label className="label" htmlFor="address">
+                      Alamat lengkap
+                    </label>
+                    <textarea
+                      id="address"
+                      name="address"
+                      required
+                      className="input min-h-[90px] resize-y"
+                      placeholder="Jl. Contoh No. 123, Komplek …"
+                    />
+                  </div>
+                  <div>
+                    <label className="label" htmlFor="notes">
+                      Catatan (opsional)
+                    </label>
+                    <input
+                      id="notes"
+                      name="notes"
+                      className="input"
+                      placeholder="Titip ke security depan rumah"
+                    />
+                  </div>
+                </div>
+              </section>
+            </>
+          )}
 
           {/* Shipping Method — live rates */}
           <section className="card p-6">
