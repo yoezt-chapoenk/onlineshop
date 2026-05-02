@@ -339,9 +339,11 @@ create table if not exists public.users (
   full_name        text not null,
   role             public.user_role not null default 'customer',
   reseller_status  public.reseller_status not null default 'none',
+  cart_data        jsonb not null default '[]'::jsonb,
   created_at       timestamptz not null default now(),
   updated_at       timestamptz not null default now()
 );
+alter table public.users add column if not exists cart_data jsonb not null default '[]'::jsonb;
 create index if not exists users_role_idx on public.users (role);
 create index if not exists users_reseller_status_idx on public.users (reseller_status);
 

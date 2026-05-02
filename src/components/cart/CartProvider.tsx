@@ -41,19 +41,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Hydrate from localStorage on mount. localStorage is not available during
-  // SSR, so we read it once on the client and sync it into React state.
+  // Hydrate from localStorage on mount.
   useEffect(() => {
+    let localItems: CartItem[] = [];
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as CartItem[];
         if (Array.isArray(parsed)) {
+          localItems = parsed;
           // eslint-disable-next-line react-hooks/set-state-in-effect
-          setItems(parsed);
+          setItems(localItems);
         }
       }
-      // Clear legacy v1 entries so the schema mismatch can't confuse callers.
       for (const k of LEGACY_KEYS) {
         if (window.localStorage.getItem(k)) window.localStorage.removeItem(k);
       }
@@ -61,6 +61,43 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       // ignore
     }
     setIsHydrated(true);
+
+    // After hydrating from local, sync with Supabase if logged in
+    async function syncWithCloud(local: CartItem[]) {
+      const { getBrowserSupabase } = await import("@/lib/supabase/browser");
+      const supabase = getBrowserSupabase();
+      if (!supabase) return;
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
+
+      const { data: profile } = await supabase
+        .from("users")
+        .select("cart_data")
+        .eq("id", session.user.id)
+        .single();
+
+      const cloudCart = profile?.cart_data as CartItem[] | null;
+      if (cloudCart && Array.isArray(cloudCart) && cloudCart.length > 0) {
+        // Simple merge: prefer cloud, add local items that don't exist in cloud
+        const merged = [...cloudCart];
+        for (const localItem of local) {
+          if (!merged.find(c => c.lineId === localItem.lineId)) {
+            merged.push(localItem);
+          }
+        }
+        setItems(merged);
+        
+        // If we added local items to cloud cart, we should push it back
+        if (merged.length > cloudCart.length) {
+          await supabase.from("users").update({ cart_data: merged }).eq("id", session.user.id);
+        }
+      } else if (local.length > 0) {
+        // Cloud is empty but local has items -> push to cloud
+        await supabase.from("users").update({ cart_data: local }).eq("id", session.user.id);
+      }
+    }
+    syncWithCloud(localItems);
   }, []);
 
   // Persist on change
@@ -71,6 +108,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // ignore
     }
+
+    // Debounce push to Supabase
+    const timeoutId = setTimeout(async () => {
+      try {
+        const { getBrowserSupabase } = await import("@/lib/supabase/browser");
+        const supabase = getBrowserSupabase();
+        if (!supabase) return;
+        
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          await supabase.from("users").update({ cart_data: items }).eq("id", session.user.id);
+        }
+      } catch {
+        // ignore
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
   }, [items, isHydrated]);
 
   const addItem = useCallback(
