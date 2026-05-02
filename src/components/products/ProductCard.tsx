@@ -72,7 +72,7 @@ export default function ProductCard({ product, className }: Props) {
 
       <Link
         href={`/shop/${product.slug}`}
-        className="block bg-[color:var(--color-cloud-100)] aspect-[4/3] flex items-center justify-center overflow-hidden p-4"
+        className="block bg-white aspect-[4/3] flex items-center justify-center overflow-hidden p-4"
       >
         {product.imageUrls && product.imageUrls.length > 0 ? (
           // eslint-disable-next-line @next/next/no-img-element

@@ -164,7 +164,7 @@ export default function ProductDetailClient({ product }: Props) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
       <div>
-        <div className="rounded-2xl bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] aspect-square overflow-hidden">
+        <div className="rounded-2xl bg-white border border-[color:var(--color-line)] aspect-square overflow-hidden">
           {activeImage ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
@@ -187,7 +187,7 @@ export default function ProductDetailClient({ product }: Props) {
                   type="button"
                   onClick={() => setActiveImage(url)}
                   className={clsx(
-                    "rounded-xl bg-[color:var(--color-cloud-100)] border aspect-square overflow-hidden transition-all",
+                    "rounded-xl bg-white border aspect-square overflow-hidden transition-all",
                     activeImage === url
                       ? "border-[color:var(--color-navy-900)] ring-2 ring-[color:var(--color-navy-900)]/20"
                       : "border-[color:var(--color-line)] hover:border-[color:var(--color-navy-400)]"
@@ -205,7 +205,7 @@ export default function ProductDetailClient({ product }: Props) {
             : [0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="rounded-xl bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] aspect-square flex items-center justify-center p-3"
+                  className="rounded-xl bg-white border border-[color:var(--color-line)] aspect-square flex items-center justify-center p-3"
                 >
                   <GlassesArt product={product} size={70} />
                 </div>
