@@ -18,6 +18,7 @@ const COMPANY_LINKS = [
   { label: "Tentang Kami", href: "/about" },
   { label: "Blog", href: "/blog" },
   { label: "Jadi Reseller", href: "/wholesale" },
+  { label: "Jadi Affiliate", href: "/affiliate" },
   { label: "Kontak", href: "/contact" },
 ];
 
