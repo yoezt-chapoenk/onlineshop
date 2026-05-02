@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Copy, Plus, ArrowRight, CheckCircle2 } from "lucide-react";
 import { generateAffiliateCode, requestWithdrawal } from "./actions";
 import { formatRupiah } from "@/lib/format";
@@ -19,8 +19,13 @@ export default function AffiliateDashboardClient({ profile, commissions, withdra
   const [withdrawError, setWithdrawError] = useState<string | null>(null);
 
   const [copied, setCopied] = useState(false);
+  const [origin, setOrigin] = useState(siteUrl);
 
-  const affiliateLink = profile.affiliate_code ? `${siteUrl}?ref=${profile.affiliate_code}` : "";
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
+
+  const affiliateLink = profile.affiliate_code ? `${origin}?ref=${profile.affiliate_code}` : "";
 
   async function handleGenerate(e: React.FormEvent) {
     e.preventDefault();
