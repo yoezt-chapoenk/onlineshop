@@ -12,6 +12,7 @@ export const metadata = {
 const NAV = [
   { href: "/account", label: t.account.overview, icon: LayoutDashboard, exact: true },
   { href: "/account/orders", label: t.account.orders, icon: ShoppingBag },
+  { href: "/account/affiliate", label: "Affiliate", icon: UserPlus },
   { href: "/account/profile", label: t.account.profile, icon: UserCircle },
   { href: "/account/become-reseller", label: t.account.becomeReseller, icon: UserPlus },
 ];

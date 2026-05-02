@@ -30,6 +30,7 @@ const NAV = [
   { href: "/admin/reseller-applications", label: "Resellers", icon: UserPlus },
   { href: "/admin/contact-messages", label: "Messages", icon: MessageSquare },
   { href: "/admin/articles", label: "Articles", icon: FileText },
+  { href: "/admin/affiliates", label: "Affiliates", icon: Users },
   { href: "/admin/api-keys", label: "API Keys", icon: Key },
   { href: "/admin/api-docs", label: "API Docs", icon: BookOpen },
   { href: "/admin/settings", label: "Settings", icon: Settings },
