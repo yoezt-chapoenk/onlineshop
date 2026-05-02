@@ -12,7 +12,7 @@ import {
 export const metadata: Metadata = {
   title: "Kontak",
   description:
-    "Hubungi Juragan Grosir — dukungan WhatsApp, email, atau langsung di gudang Jakarta kami.",
+    "Hubungi Juragan Grosir — dukungan WhatsApp, email, atau langsung di gudang Jawa Timur kami.",
 };
 
 export default function ContactPage() {

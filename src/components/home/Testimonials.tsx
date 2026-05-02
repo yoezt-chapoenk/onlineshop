@@ -3,7 +3,7 @@ import { Star } from "lucide-react";
 const TESTIMONIALS = [
   {
     name: "Adinda P.",
-    role: "Pelanggan retail · Jakarta",
+    role: "Pelanggan retail · Jawa Timur",
     quote:
       "Kualitasnya jauh di atas harganya. Round Gold sekarang jadi frame harian saya — selalu dipuji di setiap meeting.",
     rating: 5,

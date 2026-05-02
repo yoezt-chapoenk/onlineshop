@@ -4,7 +4,7 @@ import { whatsappLink } from "@/lib/constants";
 
 export default function WhatsAppFloat() {
   const href = whatsappLink(
-    "Halo Juragan Grosir, saya ingin bertanya tentang produk eyewear.",
+    "Halo Juragan Grosir, saya ingin bertanya tentang produknya.",
   );
 
   return (

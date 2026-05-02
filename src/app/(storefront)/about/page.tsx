@@ -59,7 +59,7 @@ export default function AboutPage() {
               <p>
                 Setiap frame Juragan Grosir kami desain in-house, lalu bermitra
                 dengan pabrik kacamata terpercaya untuk diproduksi sesuai
-                spesifikasi. Setiap batch melewati QC di gudang Jakarta
+                spesifikasi. Setiap batch melewati QC di gudang Jawa Timur
                 sebelum sampai ke pelanggan.
               </p>
               <p>
@@ -69,7 +69,7 @@ export default function AboutPage() {
                 margin nyata, dan stok yang konsisten.
               </p>
               <p>
-                Tim kecil kami berbasis di Jakarta, tetapi gerak cepat. Sebagian
+                Tim kecil kami berbasis di Jawa Timur, tetapi gerak cepat. Sebagian
                 besar pesanan dikirim dalam 24 jam, dan tim WhatsApp kami
                 merespons dalam hitungan menit di jam kerja.
               </p>
