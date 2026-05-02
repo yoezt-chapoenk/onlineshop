@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getAdminClient } from "@/lib/supabase/admin";
+import { getServerSupabase } from "@/lib/supabase/server";
 import { formatDateTime } from "@/lib/admin/format";
 import { parseMarkdown } from "@/lib/markdown";
 import Link from "next/link";
@@ -10,7 +10,7 @@ export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const supabase = getAdminClient();
+  const supabase = await getServerSupabase();
   if (!supabase) return { title: "Blog" };
 
   const { data } = await supabase
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const supabase = getAdminClient();
+  const supabase = await getServerSupabase();
   if (!supabase) return <div className="p-8 text-center">Supabase not configured.</div>;
 
   const { data } = await supabase

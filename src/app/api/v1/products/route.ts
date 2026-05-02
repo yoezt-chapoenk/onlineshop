@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Category not found" }, { status: 400 });
     }
 
-    // Upsert product based on slug
+    // Upsert product — image_urls stored directly on product (no fake variants)
     const { data: productData, error } = await supabase
       .from("products")
       .upsert({
@@ -54,10 +54,11 @@ export async function POST(req: Request) {
         category_slug: parsed.data.category_slug,
         category_label: category.name,
         retail_price: parsed.data.retail_price,
-        reseller_price: parsed.data.reseller_price || parsed.data.retail_price,
+        reseller_price: parsed.data.reseller_price ?? parsed.data.retail_price,
         stock: parsed.data.stock,
         weight_gram: parsed.data.weight_gram,
-        // Defaults
+        image_urls: parsed.data.image_urls ?? [],
+        // Defaults for required fields
         gender: "unisex",
         style: "casual",
         frame: "classic",
@@ -75,25 +76,6 @@ export async function POST(req: Request) {
       .single();
 
     if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-
-    if (parsed.data.image_urls && parsed.data.image_urls.length > 0) {
-      // Very basic handling: replace all variants with a single default variant containing the first image,
-      // or map images to multiple variants. For AI simplicity, we just create one variant.
-      await supabase.from("product_variants").delete().eq("product_id", productData.id);
-      
-      const variantsToInsert = parsed.data.image_urls.map((url, i) => ({
-        product_id: productData.id,
-        sku: `${parsed.data.sku}-${i+1}`,
-        color: null,
-        variant_type: null,
-        size: null,
-        stock: parsed.data.stock,
-        price_override: null,
-        image_url: url,
-        sort_order: i,
-      }));
-      await supabase.from("product_variants").insert(variantsToInsert);
-    }
 
     return NextResponse.json({ success: true, id: productData.id });
   } catch (err: any) {

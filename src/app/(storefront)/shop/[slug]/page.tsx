@@ -11,6 +11,9 @@ import {
 import ProductDetailClient from "./ProductDetailClient";
 import ProductGrid from "@/components/products/ProductGrid";
 
+export const revalidate = 3600; // revalidate every hour
+
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }

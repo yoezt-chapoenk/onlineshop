@@ -4,6 +4,17 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ORDER_STATUSES, type OrderStatus } from "@/lib/admin/format";
 
+const STATUS_LABEL_ID: Record<OrderStatus, string> = {
+  pending: "Menunggu Pembayaran",
+  paid: "Sudah Dibayar",
+  processing: "Diproses",
+  packed: "Dikemas",
+  shipped: "Dikirim",
+  fulfilled: "Selesai",
+  cancelled: "Dibatalkan",
+  refunded: "Dikembalikan",
+};
+
 interface Props {
   orderId: string;
   status: OrderStatus;
@@ -71,8 +82,8 @@ export default function OrderActions({
               disabled={pending}
             >
               {ORDER_STATUSES.map((s) => (
-                <option key={s} value={s} className="capitalize">
-                  {s}
+                <option key={s} value={s}>
+                  {STATUS_LABEL_ID[s] ?? s}
                 </option>
               ))}
             </select>

@@ -8,6 +8,9 @@ import FAQPreview from "@/components/home/FAQPreview";
 import ProductGrid from "@/components/products/ProductGrid";
 import { getCategories, getProducts } from "@/lib/data";
 
+export const revalidate = 3600; // revalidate every hour
+
+
 export default async function HomePage() {
   const [products, categories] = await Promise.all([
     getProducts(),

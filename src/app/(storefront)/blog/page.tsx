@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { getAdminClient } from "@/lib/supabase/admin";
+import { getServerSupabase } from "@/lib/supabase/server";
 import { formatDateTime } from "@/lib/admin/format";
 
 export const revalidate = 3600; // revalidate every hour
 
 export default async function BlogIndexPage() {
-  const supabase = getAdminClient();
+  const supabase = await getServerSupabase();
   if (!supabase) return <div className="p-8 text-center">Supabase not configured.</div>;
 
   const { data: articles } = await supabase
@@ -45,8 +45,17 @@ export default async function BlogIndexPage() {
                 {a.title}
               </h2>
               <p className="text-sm text-[color:var(--color-muted)] line-clamp-3">
-                {/* Strip markdown/HTML roughly for the preview */}
-                {a.content.replace(/[#*`_\[\]]/g, '').slice(0, 150)}...
+                {/* Clean markdown syntax for plain text excerpt */}
+              {a.content
+                .replace(/^#{1,6}\s+/gm, '')      // headings
+                .replace(/\*\*(.+?)\*\*/g, '$1')  // bold
+                .replace(/\*(.+?)\*/g, '$1')       // italic
+                .replace(/`{1,3}[^`]*`{1,3}/g, '') // code
+                .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1') // links/images
+                .replace(/^[-*+>]\s+/gm, '')        // lists/blockquotes
+                .replace(/\n+/g, ' ')               // newlines
+                .trim()
+                .slice(0, 150)}...
               </p>
             </div>
           </Link>

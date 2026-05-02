@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { getCurrentUser } from "@/lib/supabase/server";
+import { getCurrentUser, getServerSupabase } from "@/lib/supabase/server";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { t } from "@/lib/i18n";
 
@@ -47,4 +47,38 @@ export async function saveProfileAction(
 
   revalidatePath("/account");
   return { success: t.account.profileSaved };
+}
+
+const PasswordSchema = z
+  .object({
+    password: z.string().min(8, "Password minimal 8 karakter"),
+    confirm: z.string(),
+  })
+  .refine((d) => d.password === d.confirm, {
+    message: "Konfirmasi password tidak cocok",
+    path: ["confirm"],
+  });
+
+export async function changePasswordAction(
+  _prev: ProfileState,
+  formData: FormData,
+): Promise<ProfileState> {
+  const { authUser } = await getCurrentUser();
+  if (!authUser) return { error: "Anda belum login." };
+
+  const parsed = PasswordSchema.safeParse({
+    password: formData.get("password"),
+    confirm: formData.get("confirm"),
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Data tidak valid." };
+  }
+
+  const supabase = await getServerSupabase();
+  if (!supabase) return { error: "Layanan belum dikonfigurasi." };
+
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  if (error) return { error: error.message };
+
+  return { success: "Password berhasil diubah." };
 }

@@ -115,7 +115,12 @@ export default async function AccountOrderDetailPage({
             {data.order_items.map((item, idx) => (
               <tr key={`${item.product_slug}-${idx}`}>
                 <td className="py-2">
-                  <p className="font-semibold">{item.product_name}</p>
+                  <Link
+                    href={`/shop/${item.product_slug}`}
+                    className="font-semibold hover:text-[color:var(--color-navy-900)] hover:underline transition-colors"
+                  >
+                    {item.product_name}
+                  </Link>
                   {item.variant_label && (
                     <p className="text-xs text-[color:var(--color-navy-900)]">
                       {item.variant_label}
