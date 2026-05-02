@@ -370,6 +370,22 @@ create table if not exists public.site_settings (
 );
 insert into public.site_settings (id) values (1) on conflict (id) do nothing;
 
+-- Migration guards: safely add columns that may not exist in older instances.
+alter table public.site_settings add column if not exists biteship_api_key            text;
+alter table public.site_settings add column if not exists origin_postal_code           text default '68168';
+alter table public.site_settings add column if not exists payment_banks               jsonb not null default '[]'::jsonb;
+alter table public.site_settings add column if not exists payment_qris_url            text;
+alter table public.site_settings add column if not exists pixel_meta_id               text;
+alter table public.site_settings add column if not exists pixel_tiktok_id             text;
+alter table public.site_settings add column if not exists pixel_google_id             text;
+alter table public.site_settings add column if not exists seo_default_title           text;
+alter table public.site_settings add column if not exists seo_default_description     text;
+alter table public.site_settings add column if not exists rajaongkir_api_key          text;
+alter table public.site_settings add column if not exists rajaongkir_payment_settings text;
+alter table public.site_settings add column if not exists default_origin_id           text;
+alter table public.site_settings add column if not exists default_origin_pinpoint     text;
+
+
 -- 5c. Features: Articles, API Keys, Product Reviews ----------------------
 create table if not exists public.articles (
   id           uuid primary key default gen_random_uuid(),
