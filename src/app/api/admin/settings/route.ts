@@ -26,7 +26,7 @@ const Schema = z.object({
   pixel_google_id: z.string().nullable().optional(),
   seo_default_title: z.string().nullable().optional(),
   seo_default_description: z.string().nullable().optional(),
-  affiliate_commission_percent: z.number().min(0).max(100).optional(),
+  affiliate_commission_percent: z.coerce.number().min(0).max(100).optional(),
 });
 
 export async function GET() {
