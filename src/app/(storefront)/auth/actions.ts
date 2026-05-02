@@ -26,21 +26,21 @@ const ForgotSchema = z.object({
 export type AuthState = { error?: string; success?: string } | undefined;
 
 async function siteOrigin(): Promise<string | null> {
-  // Prefer the server-configured origin so attacker-controlled
-  // `x-forwarded-host` / `host` headers can't redirect auth emails to
-  // a hostile origin (which would let the attacker steal the auth
-  // code from the confirmation/reset email).
-  const envUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  if (envUrl) return envUrl.replace(/\/$/, "");
-  // Fail-closed in production: refuse to derive the origin from
-  // request headers. Caller must surface an actionable error so the
-  // operator sets NEXT_PUBLIC_SITE_URL.
-  if (process.env.NODE_ENV === "production") return null;
-  // Local-dev fallback only.
-  const h = await headers();
-  const proto = h.get("x-forwarded-proto") ?? "http";
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  if (host) return `${proto}://${host}`;
+  const envUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL;
+  if (envUrl) {
+    const url = envUrl.startsWith('http') ? envUrl : `https://${envUrl}`;
+    return url.replace(/\/$/, "");
+  }
+  
+  // Fallback to request headers
+  try {
+    const h = await headers();
+    const proto = h.get("x-forwarded-proto") ?? "http";
+    const host = h.get("x-forwarded-host") ?? h.get("host");
+    if (host) return `${proto}://${host}`;
+  } catch (e) {
+    // ignore
+  }
   return "http://localhost:3000";
 }
 

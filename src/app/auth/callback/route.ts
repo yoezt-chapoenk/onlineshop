@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSupabase } from "@/lib/supabase/server";
+import { getAdminClient } from "@/lib/supabase/admin";
 
 /**
  * OAuth / email-link callback. Supabase redirects here with a `code`
@@ -19,7 +20,39 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await getServerSupabase();
     if (supabase) {
-      await supabase.auth.exchangeCodeForSession(code);
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+      
+      // Auto-create user profile for OAuth signups (like Google)
+      if (!error && data.user) {
+        const admin = getAdminClient();
+        if (admin) {
+          const user = data.user;
+          // Check if profile exists
+          const { data: existing } = await admin
+            .from("users")
+            .select("id")
+            .eq("email", user.email)
+            .maybeSingle();
+            
+          if (existing && existing.id !== user.id) {
+            // Found by email but different ID (pre-auth reseller approval)
+            await admin.from("users").update({
+              id: user.id,
+              full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "User",
+              updated_at: new Date().toISOString()
+            }).eq("email", user.email);
+          } else if (!existing) {
+            // Completely new user
+            await admin.from("users").insert({
+              id: user.id,
+              email: user.email,
+              full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "User",
+              role: "customer",
+              reseller_status: "none"
+            });
+          }
+        }
+      }
     }
   }
 
