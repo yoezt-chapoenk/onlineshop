@@ -50,6 +50,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.5,
     },
+    ...[
+      "/wholesale",
+      "/legal/privacy",
+      "/legal/terms",
+      "/legal/returns",
+      "/legal/shipping",
+    ].map((path) => ({
+      url: `${baseUrl}${path}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.3,
+    })),
   ];
 
   // 2. Fetch Products
