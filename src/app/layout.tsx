@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/constants";
 
@@ -28,6 +29,9 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.svg",
   },
+  verification: {
+    google: "Y7Kj3dGN2txF6pU7GKWHGoAYBHEPjMamXjaYdcFkMOg",
+  },
 };
 
 // Root layout intentionally only owns the html/body shell and global
@@ -44,6 +48,22 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-white text-[color:var(--color-ink)]">
         {children}
       </body>
+      <Script
+        strategy="afterInteractive"
+        src="https://www.googletagmanager.com/gtag/js?id=G-VK9XHSB6T6"
+      />
+      <Script
+        id="google-analytics"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-VK9XHSB6T6');
+          `,
+        }}
+      />
     </html>
   );
 }
