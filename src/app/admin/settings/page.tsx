@@ -40,6 +40,9 @@ export default async function AdminSettingsPage() {
           // JSONB field — parse array
           const raw = row[k];
           next[k] = Array.isArray(raw) ? (raw as BankAccount[]) : [];
+        } else if (k === "affiliate_commission_percent") {
+          const val = row[k];
+          next[k] = (typeof val === "number" ? val : EMPTY[k]) as never;
         } else {
           const val = row[k];
           next[k] = (typeof val === "string" ? val : "") as never;
