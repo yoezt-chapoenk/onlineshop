@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { CheckCircle2, XCircle, ExternalLink } from "lucide-react";
-import { formatRupiah, formatDateTime } from "@/lib/admin/format";
+import { formatDateTime } from "@/lib/admin/format";
+import { formatRupiah } from "@/lib/format";
 import { processPaymentConfirmation } from "./actions";
 import Link from "next/link";
 

@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { UploadCloud, CheckCircle2, Clock, XCircle, FileImage } from "lucide-react";
 import { submitPaymentConfirmation } from "./actions";
-import { formatRupiah, formatDate } from "@/lib/format";
+import { formatRupiah } from "@/lib/format";
 
 export default function PaymentConfirmationClient({ 
   initialOrderNumber, 
@@ -254,7 +254,11 @@ export default function PaymentConfirmationClient({
                         "bg-yellow-100 text-yellow-700"
                       }`}>{h.status}</span>
                     </div>
-                    <p className="text-xs text-[color:var(--color-muted)] mt-0.5">{formatDate(h.created_at)}</p>
+                    <p className="text-xs text-[color:var(--color-muted)] mt-0.5">
+                      {new Date(h.created_at).toLocaleDateString("id-ID", {
+                        day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
+                      })}
+                    </p>
                     <p className="text-sm mt-1">{h.bank_name} - {h.account_name}</p>
                     <div className="flex justify-between items-center mt-2">
                       <p className="font-bold text-[color:var(--color-navy-900)]">{formatRupiah(h.amount)}</p>
