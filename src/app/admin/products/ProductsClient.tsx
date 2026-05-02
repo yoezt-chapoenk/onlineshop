@@ -181,7 +181,7 @@ export default function ProductsClient({ initialProducts, categories }: Props) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--color-navy-400)]" />
           <input
             type="search"
-            className="input pl-9"
+            className="input !pl-9"
             placeholder="Cari nama, SKU, atau slug…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}

@@ -109,7 +109,7 @@ export default function AreaSearch({
           onChange={(e) => handleChange(e.target.value)}
           onFocus={() => results.length > 0 && !selected && setOpen(true)}
           placeholder="Ketik nama kota atau kecamatan…"
-          className="input pl-9 pr-8"
+          className="input !pl-9 !pr-8"
           autoComplete="off"
           disabled={disabled}
         />
