@@ -1,6 +1,7 @@
 "use server";
 
 import { getServerSupabase } from "@/lib/supabase/server";
+import { getAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
 export async function generateAffiliateCode(code: string) {
@@ -21,7 +22,10 @@ export async function generateAffiliateCode(code: string) {
     return { error: "Kode sudah digunakan oleh agen lain. Silakan pilih kode lain." };
   }
 
-  const { error } = await supabase
+  const adminClient = getAdminClient();
+  if (!adminClient) return { error: "Admin client not configured" };
+
+  const { error } = await adminClient
     .from("users")
     .update({ affiliate_code: code })
     .eq("id", session.user.id);
@@ -50,8 +54,11 @@ export async function requestWithdrawal(amount: number, bankName: string, accoun
     return { error: "Saldo tidak mencukupi" };
   }
 
+  const adminClient = getAdminClient();
+  if (!adminClient) return { error: "Admin client not configured" };
+
   // Insert withdrawal
-  const { error: insertError } = await supabase
+  const { error: insertError } = await adminClient
     .from("withdrawals")
     .insert({
       affiliate_id: session.user.id,
@@ -64,7 +71,7 @@ export async function requestWithdrawal(amount: number, bankName: string, accoun
   if (insertError) return { error: insertError.message };
 
   // Deduct balance
-  const { error: updateError } = await supabase
+  const { error: updateError } = await adminClient
     .from("users")
     .update({ balance: profile.balance - amount })
     .eq("id", session.user.id);
