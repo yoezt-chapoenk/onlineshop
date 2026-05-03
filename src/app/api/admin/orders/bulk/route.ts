@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 const BulkSchema = z.object({
   orderIds: z.array(z.string().uuid()).min(1),
-  status: z.enum(ORDER_STATUSES as [string, ...string[]]),
+  status: z.enum(ORDER_STATUSES as unknown as [string, ...string[]]),
 });
 
 export async function PATCH(request: Request) {
