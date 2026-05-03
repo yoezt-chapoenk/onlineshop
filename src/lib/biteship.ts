@@ -1,15 +1,41 @@
 import "server-only";
+import { getServerSupabase } from "@/lib/supabase/server";
+import { STORE_ORIGIN_POSTAL_CODE } from "@/lib/constants";
 
 const BITESHIP_BASE = "https://api.biteship.com/v1";
 
-function getApiKey(): string {
-  const key = process.env.BITESHIP_API_KEY;
-  if (!key) {
+async function getBiteshipConfig(): Promise<{ apiKey: string; originPostalCode: string }> {
+  let dbApiKey: string | null = null;
+  let dbPostalCode: string | null = null;
+
+  try {
+    const supabase = await getServerSupabase();
+    if (supabase) {
+      const { data } = await supabase
+        .from("site_settings")
+        .select("biteship_api_key, origin_postal_code")
+        .eq("id", 1)
+        .single();
+      
+      if (data) {
+        dbApiKey = data.biteship_api_key;
+        dbPostalCode = data.origin_postal_code;
+      }
+    }
+  } catch (e) {
+    console.error("[biteship] failed to fetch config from db", e);
+  }
+
+  const apiKey = dbApiKey || process.env.BITESHIP_API_KEY;
+  if (!apiKey) {
     throw new Error(
-      "BITESHIP_API_KEY is not set. Add it to .env.local or Vercel env vars.",
+      "BITESHIP_API_KEY is not set in DB or env vars.",
     );
   }
-  return key;
+
+  const originPostalCode = dbPostalCode || STORE_ORIGIN_POSTAL_CODE;
+
+  return { apiKey, originPostalCode };
 }
 
 // ---------------------------------------------------------------------------
@@ -74,7 +100,8 @@ export async function searchAreas(query: string): Promise<BiteshipArea[]> {
 
   let apiKey: string;
   try {
-    apiKey = getApiKey();
+    const config = await getBiteshipConfig();
+    apiKey = config.apiKey;
   } catch {
     console.warn("[biteship] BITESHIP_API_KEY not configured, skipping area search");
     return [];
@@ -121,7 +148,7 @@ interface RatesResponse {
 }
 
 export interface GetRatesParams {
-  originPostalCode: string;
+  originPostalCode?: string;
   destinationPostalCode: string;
   items: BiteshipRateItem[];
   couriers?: string; // comma-separated courier codes
@@ -135,10 +162,10 @@ export interface GetRatesParams {
 export async function getCourierRates(
   params: GetRatesParams,
 ): Promise<BiteshipCourierRate[]> {
-  const apiKey = getApiKey();
+  const config = await getBiteshipConfig();
 
   const body = {
-    origin_postal_code: Number(params.originPostalCode),
+    origin_postal_code: Number(params.originPostalCode ?? config.originPostalCode),
     destination_postal_code: Number(params.destinationPostalCode),
     couriers: params.couriers ?? ENABLED_COURIERS,
     items: params.items.map((item) => ({
@@ -156,7 +183,7 @@ export async function getCourierRates(
   const res = await fetch(`${BITESHIP_BASE}/rates/couriers`, {
     method: "POST",
     headers: {
-      Authorization: apiKey,
+      Authorization: config.apiKey,
       "Content-Type": "application/json",
     },
     cache: "no-store",

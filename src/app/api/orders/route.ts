@@ -6,7 +6,6 @@ import { getCurrentUser } from "@/lib/supabase/server";
 import { calculatePrice } from "@/lib/pricing";
 import { products as seedProducts } from "@/lib/products";
 import { getCourierRates, ENABLED_COURIERS } from "@/lib/biteship";
-import { STORE_ORIGIN_POSTAL_CODE } from "@/lib/constants";
 import type { Product } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -420,7 +419,6 @@ export async function POST(request: Request) {
     }));
 
     const rates = await getCourierRates({
-      originPostalCode: STORE_ORIGIN_POSTAL_CODE,
       destinationPostalCode: shipping.destinationPostalCode,
       items: rateItems,
       couriers: ENABLED_COURIERS,

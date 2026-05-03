@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCourierRates, ENABLED_COURIERS } from "@/lib/biteship";
-import { STORE_ORIGIN_POSTAL_CODE } from "@/lib/constants";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -45,7 +44,6 @@ export async function POST(request: Request) {
 
   try {
     const rates = await getCourierRates({
-      originPostalCode: STORE_ORIGIN_POSTAL_CODE,
       destinationPostalCode: parsed.data.destinationPostalCode,
       items: parsed.data.items,
       couriers: ENABLED_COURIERS,
