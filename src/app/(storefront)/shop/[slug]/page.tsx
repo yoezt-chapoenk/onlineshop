@@ -9,7 +9,7 @@ import {
   getRelatedProducts,
 } from "@/lib/data";
 import ProductDetailClient from "./ProductDetailClient";
-import ProductGrid from "@/components/products/ProductGrid";
+import ProductCard from "@/components/products/ProductCard";
 
 export const revalidate = 3600; // revalidate every hour
 
