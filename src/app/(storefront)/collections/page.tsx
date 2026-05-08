@@ -50,8 +50,8 @@ export default async function CollectionsPage() {
                 justifyContent: "center", padding: 48, minHeight: 280
               }}>
                 <GlassesPlaceholder
-                  color={col.slug === "kacamata-hitam" ? "#c9a96e" : col.slug === "kacamata-optik" ? "#e8ddd0" : "#4a3728"}
-                  shape={col.slug === "kacamata-hitam" ? "aviator" : col.slug === "kacamata-optik" ? "round" : "cat-eye"}
+                  color={col.slug === "sunglasses" ? "#c9a96e" : col.slug === "eyeglasses" ? "#e8ddd0" : "#4a3728"}
+                  shape={col.slug === "sunglasses" ? "aviator" : col.slug === "eyeglasses" ? "round" : "cat-eye"}
                   width={300} height={150} 
                 />
               </div>
