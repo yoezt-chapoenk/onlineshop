@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OBSCURA — Fashion Eyewear</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #080c14;
+    --bg2: #0d1220;
+    --surface: #111827;
+    --surface2: #1a2540;
+    --border: #1e2d4a;
+    --gold: #7eb3e8;
+    --gold-light: #aacff5;
+    --gold-dim: #3d6a9e;
+    --text: #e8eef8;
+    --text-muted: #7a90b0;
+    --text-dim: #3a4d6a;
+    --display: 'Playfair Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --nav-bg: rgba(8,12,20,0.92);
+    --hero-bg-start: #0d1a30;
+    --hero-bg-end: #080c14;
+    --hero-card-bg: rgba(13,18,32,0.7);
+    --hero-card-border: rgba(126,179,232,0.15);
+    --overlay-sm: rgba(8,12,20,0.6);
+    --overlay-md: rgba(8,12,20,0.7);
+    --overlay-lg: rgba(8,12,20,0.88);
+    --scrolled-border: rgba(126,179,232,0.12);
+  }
+
+  :root.light-mode {
+    --bg: #ffffff;
+    --bg2: #f5f8fd;
+    --surface: #ffffff;
+    --surface2: #e8f0fa;
+    --border: #d0dff0;
+    --gold: #1a5ca8;
+    --gold-light: #0f4a8c;
+    --gold-dim: #5a8ec4;
+    --text: #0a1628;
+    --text-muted: #3a5070;
+    --text-dim: #8aabcc;
+    --nav-bg: rgba(255,255,255,0.95);
+    --hero-bg-start: #ddeaf8;
+    --hero-bg-end: #f5f8fd;
+    --hero-card-bg: rgba(255,255,255,0.8);
+    --hero-card-border: rgba(26,92,168,0.2);
+    --overlay-sm: rgba(240,246,255,0.7);
+    --overlay-md: rgba(10,22,40,0.4);
+    --overlay-lg: rgba(10,22,40,0.6);
+    --scrolled-border: rgba(26,92,168,0.15);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    transition: background 0.35s ease, color 0.35s ease;
+  }
+  #root { min-height: 100vh; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+  /* Grain texture overlay */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.35;
+    transition: opacity 0.4s;
+  }
+  html.light-mode body::after {
+    opacity: 0.08;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="app.jsx"></script>
+</body>
+</html>

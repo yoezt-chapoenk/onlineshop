@@ -1,114 +1,128 @@
+"use client";
+
 import Link from "next/link";
-import {
-  SITE_NAME,
-  STORE_ADDRESS,
-  STORE_PHONE,
-  SUPPORT_EMAIL,
-} from "@/lib/constants";
-
-const SHOP_LINKS = [
-  { label: "Kacamata Optik", href: "/collections/eyeglasses" },
-  { label: "Kacamata Hitam", href: "/collections/sunglasses" },
-  { label: "Kacamata Blue Light", href: "/collections/blue-light" },
-  { label: "Aksesoris", href: "/collections/accessories" },
-  { label: "Semua Produk", href: "/shop" },
-];
-
-const COMPANY_LINKS = [
-  { label: "Tentang Kami", href: "/about" },
-  { label: "Blog", href: "/blog" },
-  { label: "Jadi Reseller", href: "/wholesale" },
-  { label: "Jadi Affiliate", href: "/affiliate" },
-  { label: "Kontak", href: "/contact" },
-];
-
-const POLICY_LINKS = [
-  { label: "Kebijakan Privasi", href: "/legal/privacy" },
-  { label: "Syarat & Ketentuan", href: "/legal/terms" },
-  { label: "Kebijakan Pengembalian", href: "/legal/returns" },
-  { label: "Kebijakan Pengiriman", href: "/legal/shipping" },
-];
+import { SITE_NAME } from "@/lib/constants";
 
 export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-[color:var(--color-navy-900)] text-white mt-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
-          <div className="col-span-2 md:col-span-1">
-            <div className="text-xl font-bold tracking-tight">{SITE_NAME}</div>
-            <p className="mt-3 text-sm text-white/70 leading-relaxed">
-              Kacamata premium dan grosir di Indonesia. Harga retail dan reseller,
-              pengiriman cepat, layanan pelanggan responsif.
-            </p>
-            <div className="mt-5 space-y-1.5 text-sm text-white/80">
-              <div>{STORE_ADDRESS}</div>
-              <div>
-                <a href={`tel:${STORE_PHONE.replace(/\s+/g, "")}`} className="hover:underline">
-                  {STORE_PHONE}
-                </a>
-              </div>
-              <div>
-                <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:underline">
-                  {SUPPORT_EMAIL}
-                </a>
-              </div>
+    <footer
+      style={{
+        background: "var(--bg)",
+        borderTop: "1px solid var(--border)",
+        padding: "64px 8% 40px",
+      }}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-10 mb-14">
+        <div className="md:col-span-2">
+          <div
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: 20,
+              letterSpacing: "0.18em",
+              color: "var(--text)",
+              marginBottom: 16,
+            }}
+          >
+            {SITE_NAME.toUpperCase()}
+          </div>
+          <p
+            style={{
+              fontSize: 13,
+              color: "var(--text-muted)",
+              lineHeight: 1.75,
+              maxWidth: 280,
+            }}
+          >
+            Handcrafted fashion eyewear. Made in Italy & Japan. Designed for those who see everything.
+          </p>
+        </div>
+        {[
+          {
+            title: "Shop",
+            links: [
+              { label: "Kacamata Optik", href: "/collections/eyeglasses" },
+              { label: "Kacamata Hitam", href: "/collections/sunglasses" },
+              { label: "Kacamata Blue Light", href: "/collections/blue-light" },
+              { label: "Aksesoris", href: "/collections/accessories" },
+              { label: "Semua Produk", href: "/shop" },
+            ],
+          },
+          {
+            title: "Company",
+            links: [
+              { label: "Tentang Kami", href: "/about" },
+              { label: "Blog", href: "/blog" },
+              { label: "Jadi Reseller", href: "/wholesale" },
+              { label: "Jadi Affiliate", href: "/affiliate" },
+              { label: "Kontak", href: "/contact" },
+            ],
+          },
+          {
+            title: "Support",
+            links: [
+              { label: "Kebijakan Privasi", href: "/legal/privacy" },
+              { label: "Syarat & Ketentuan", href: "/legal/terms" },
+              { label: "Pengembalian", href: "/legal/returns" },
+              { label: "Pengiriman", href: "/legal/shipping" },
+            ],
+          },
+        ].map((col) => (
+          <div key={col.title} className="col-span-1">
+            <div
+              style={{
+                fontSize: 10,
+                letterSpacing: "0.22em",
+                color: "var(--gold)",
+                textTransform: "uppercase",
+                marginBottom: 16,
+              }}
+            >
+              {col.title}
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {col.links.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    fontSize: 13,
+                    color: "var(--text-muted)",
+                    fontFamily: "var(--font-sans)",
+                    padding: 0,
+                    transition: "color 0.2s",
+                    textDecoration: "none",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
+                >
+                  {l.label}
+                </Link>
+              ))}
             </div>
           </div>
-
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-white/90">
-              Belanja
-            </h4>
-            <ul className="mt-4 space-y-2 text-sm text-white/75">
-              {SHOP_LINKS.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="hover:text-white">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-white/90">
-              Perusahaan
-            </h4>
-            <ul className="mt-4 space-y-2 text-sm text-white/75">
-              {COMPANY_LINKS.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="hover:text-white">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-white/90">
-              Pelanggan
-            </h4>
-            <ul className="mt-4 space-y-2 text-sm text-white/75">
-              {POLICY_LINKS.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="hover:text-white">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+        ))}
+      </div>
+      <div
+        style={{
+          borderTop: "1px solid var(--border)",
+          paddingTop: 28,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 16,
+        }}
+      >
+        <div style={{ fontSize: 12, color: "var(--text-dim)" }}>
+          © {year} {SITE_NAME.toUpperCase()}. All rights reserved.
         </div>
-
-        <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 sm:gap-6 sm:items-center justify-between text-xs text-white/60">
-          <div>© {year} {SITE_NAME}. Hak cipta dilindungi.</div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1">
-            <span>Pembayaran aman via Bank Transfer, VA, QRIS</span>
-            <span aria-hidden>·</span>
-            <span>Dikirim dengan kurir terpercaya seluruh Indonesia</span>
-          </div>
-        </div>
+        <div style={{ fontSize: 12, color: "var(--text-dim)" }}>Build With Deadline</div>
       </div>
     </footer>
   );

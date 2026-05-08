@@ -1,150 +1,194 @@
 "use client";
 
 import Link from "next/link";
-import { Heart, ShoppingCart } from "lucide-react";
 import { useState } from "react";
-import clsx from "clsx";
 import type { Product } from "@/lib/types";
 import { formatRupiah } from "@/lib/format";
 import { useCart } from "@/components/cart/CartProvider";
-import GlassesArt from "./GlassesArt";
+import { GlassesPlaceholder } from "@/components/ui/GlassesPlaceholder";
 
 interface Props {
   product: Product;
   className?: string;
 }
 
-export default function ProductCard({ product, className }: Props) {
+export default function ProductCard({ product }: Props) {
+  const [hovered, setHovered] = useState(false);
   const { addItem } = useCart();
-  const [favorited, setFavorited] = useState(false);
   const [added, setAdded] = useState(false);
 
-  const showSale =
-    product.promotionalPrice && product.promotionalPrice < product.retailPrice;
-  // Products with variants require a size/color/type selection before
-  // we can add anything sensible to the cart, so the card CTA becomes
-  // a nav link to the detail page instead of a quick-add.
   const hasVariants = (product.variants?.length ?? 0) > 0;
 
   function handleAdd(e: React.MouseEvent) {
     e.preventDefault();
+    e.stopPropagation();
     addItem(product, 1);
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1200);
   }
 
+  // Map frameColor to hex
+  const mappedColor =
+    product.frameColor === "black"
+      ? "#1a1a1a"
+      : product.frameColor === "gold"
+      ? "#c9a96e"
+      : product.frameColor === "tortoise"
+      ? "#4a3728"
+      : product.frameColor === "silver"
+      ? "#e8ddd0"
+      : "#3a3a3a";
+
+  const tag = product.isNewArrival ? "New" : product.isBestSeller ? "Bestseller" : null;
+
   return (
-    <article
-      className={clsx(
-        "card group relative flex flex-col overflow-hidden",
-        className,
-      )}
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{ cursor: "pointer" }}
     >
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          setFavorited((f) => !f);
-        }}
-        aria-label={favorited ? "Hapus dari favorit" : "Tambah ke favorit"}
-        className="absolute right-3 top-3 z-10 h-8 w-8 inline-flex items-center justify-center rounded-full bg-white/90 backdrop-blur border border-[color:var(--color-line)] hover:bg-white transition-colors"
-      >
-        <Heart
-          className={clsx(
-            "h-4 w-4 transition-colors",
-            favorited
-              ? "fill-[color:var(--color-navy-900)] text-[color:var(--color-navy-900)]"
-              : "text-[color:var(--color-navy-900)]",
-          )}
-        />
-      </button>
-
-      {showSale && (
-        <span className="absolute left-3 top-3 z-10 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-[color:var(--color-blue-500)] text-white">
-          Promo
-        </span>
-      )}
-      {!showSale && product.isNewArrival && (
-        <span className="absolute left-3 top-3 z-10 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-[color:var(--color-navy-900)] text-white">
-          Baru
-        </span>
-      )}
-
-      <Link
-        href={`/shop/${product.slug}`}
-        className="block bg-white aspect-[4/3] flex items-center justify-center overflow-hidden p-4"
-      >
-        {product.imageUrls && product.imageUrls.length > 0 ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={product.imageUrls[0]}
-            alt={product.name}
-            loading="lazy"
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <GlassesArt product={product} size={180} />
-        )}
-      </Link>
-
-      <div className="flex-1 flex flex-col p-4 sm:p-5 gap-3">
-        <Link href={`/shop/${product.slug}`} className="flex-1 min-w-0">
-          <h3 className="text-[15px] font-semibold text-[color:var(--color-ink)] line-clamp-1">
-            {product.name}
-          </h3>
-          <p className="text-xs text-[color:var(--color-muted)] mt-0.5">
-            {product.categoryLabel}
-          </p>
-        </Link>
-
-        <div>
-          {showSale ? (
-            <div className="flex items-baseline gap-2 flex-wrap">
-              <span className="text-base sm:text-[17px] font-bold text-[color:var(--color-navy-900)]">
-                {formatRupiah(product.promotionalPrice ?? 0)}
-              </span>
-              <span className="text-xs text-[color:var(--color-muted)] line-through">
-                {formatRupiah(product.retailPrice)}
-              </span>
-            </div>
-          ) : (
-            <div className="text-base sm:text-[17px] font-bold text-[color:var(--color-navy-900)]">
-              {formatRupiah(product.retailPrice)}
+      <Link href={`/shop/${product.slug}`} style={{ textDecoration: 'none', display: 'block' }}>
+        <div
+          style={{
+            position: "relative",
+            background: "var(--surface)",
+            padding: "40px 32px 32px",
+            transition: "transform 0.35s ease",
+            transform: hovered ? "translateY(-4px)" : "none",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: 120,
+            }}
+          >
+            <GlassesPlaceholder color={mappedColor} shape={product.frame} width={220} height={110} />
+          </div>
+          {tag && (
+            <div
+              style={{
+                position: "absolute",
+                top: 16,
+                left: 16,
+                background: tag === "New" ? "var(--gold)" : "var(--surface2)",
+                color: tag === "New" ? "var(--bg)" : "var(--gold)",
+                fontSize: 9,
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                padding: "4px 10px",
+                fontWeight: 600,
+              }}
+            >
+              {tag}
             </div>
           )}
-        </div>
-
-        {hasVariants ? (
-          <Link
-            href={`/shop/${product.slug}`}
-            className="btn btn-primary w-full !py-2 text-xs"
-            aria-label={`Lihat detail ${product.name} untuk menambahkan ke keranjang`}
+          {/* hover overlay */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "var(--overlay-sm)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              opacity: hovered ? 1 : 0,
+              transition: "opacity 0.3s",
+            }}
           >
-            <ShoppingCart className="h-3.5 w-3.5" />
-            <span>Tambah ke Keranjang</span>
-          </Link>
-        ) : (
-          <button
-            type="button"
-            onClick={handleAdd}
-            disabled={product.stock === 0}
-            className="btn btn-primary w-full !py-2 text-xs"
-            aria-label={`Tambahkan ${product.name} ke keranjang`}
-          >
-            <ShoppingCart className="h-3.5 w-3.5" />
-            <span>{added ? "Ditambahkan" : "Tambah ke Keranjang"}</span>
-          </button>
-        )}
-
-        {product.minWholesaleQty > 0 && (
-          <div className="text-[11px] text-[color:var(--color-muted)]">
-            Grosir mulai{" "}
-            <span className="font-semibold text-[color:var(--color-ink)]">
-              {product.minWholesaleQty} pcs
+            <span
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: 11,
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "var(--text)",
+                border: "1px solid rgba(242,237,230,0.3)",
+                padding: "10px 24px",
+              }}
+            >
+              Quick View
             </span>
           </div>
-        )}
+        </div>
+      </Link>
+      
+      {/* Info */}
+      <div
+        style={{
+          padding: "18px 0 0",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
+      >
+        <div>
+          <div
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: 17,
+              fontWeight: 400,
+              color: "var(--text)",
+              marginBottom: 2,
+            }}
+          >
+            {product.name}
+          </div>
+          <div style={{ fontSize: 12, color: "var(--text-muted)", letterSpacing: "0.08em" }}>
+            {product.categoryLabel}
+          </div>
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontSize: 16, color: "var(--gold)", fontWeight: 400 }}>
+            {formatRupiah(product.retailPrice)}
+          </div>
+          {hasVariants ? (
+            <Link href={`/shop/${product.slug}`} style={{ textDecoration: 'none' }}>
+              <button
+                style={{
+                  marginTop: 6,
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: 10,
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: hovered ? "var(--gold)" : "var(--text-dim)",
+                  fontFamily: "var(--font-sans)",
+                  transition: "color 0.2s",
+                  padding: 0,
+                }}
+              >
+                View Options
+              </button>
+            </Link>
+          ) : (
+            <button
+              onClick={handleAdd}
+              disabled={product.stock === 0}
+              style={{
+                marginTop: 6,
+                background: "none",
+                border: "none",
+                cursor: product.stock === 0 ? "not-allowed" : "pointer",
+                fontSize: 10,
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                color: hovered ? "var(--gold)" : "var(--text-dim)",
+                fontFamily: "var(--font-sans)",
+                transition: "color 0.2s",
+                padding: 0,
+                opacity: product.stock === 0 ? 0.5 : 1
+              }}
+            >
+              {added ? "Added" : product.stock === 0 ? "Out of Stock" : "Add to Bag"}
+            </button>
+          )}
+        </div>
       </div>
-    </article>
+    </div>
   );
 }

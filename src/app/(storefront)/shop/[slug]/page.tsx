@@ -9,10 +9,9 @@ import {
   getRelatedProducts,
 } from "@/lib/data";
 import ProductDetailClient from "./ProductDetailClient";
-import ProductGrid from "@/components/products/ProductGrid";
+import ProductCard from "@/components/products/ProductCard";
 
 export const revalidate = 3600; // revalidate every hour
-
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -75,55 +74,58 @@ export default async function ProductPage({ params }: PageProps) {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop: 64, background: "var(--bg)", minHeight: "100vh" }}>
       <Script
         id={`product-jsonld-${product.slug}`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <section className="bg-[color:var(--color-cloud-100)] border-b border-[color:var(--color-line)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
-          <nav aria-label="Breadcrumb">
-            <ol className="flex items-center flex-wrap gap-1 text-xs text-[color:var(--color-muted)]">
-              <li>
-                <Link href="/" className="inline-flex items-center hover:text-[color:var(--color-navy-900)]">
-                  <Home className="h-3.5 w-3.5" />
-                </Link>
-              </li>
-              <li className="flex items-center gap-1">
-                <ChevronRight className="h-3 w-3 text-[color:var(--color-cloud-300)]" />
-                <Link href="/shop" className="hover:text-[color:var(--color-navy-900)]">
-                  Belanja
-                </Link>
-              </li>
-              <li className="flex items-center gap-1">
-                <ChevronRight className="h-3 w-3 text-[color:var(--color-cloud-300)]" />
-                <Link
-                  href={`/collections/${product.category}`}
-                  className="hover:text-[color:var(--color-navy-900)]"
-                >
-                  {product.categoryLabel}
-                </Link>
-              </li>
-              <li className="flex items-center gap-1">
-                <ChevronRight className="h-3 w-3 text-[color:var(--color-cloud-300)]" />
-                <span className="text-[color:var(--color-ink)] font-medium line-clamp-1">
-                  {product.name}
-                </span>
-              </li>
-            </ol>
-          </nav>
-        </div>
+      
+      <section style={{ padding: "32px 8%", borderBottom: "1px solid var(--border)" }}>
+        <nav aria-label="Breadcrumb">
+          <ol style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8, fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+            <li>
+              <Link href="/" style={{ color: "inherit", textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
+                <Home style={{ width: 14, height: 14 }} />
+              </Link>
+            </li>
+            <li style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <ChevronRight style={{ width: 14, height: 14, color: "var(--border)" }} />
+              <Link href="/shop" style={{ color: "inherit", textDecoration: "none", transition: "color 0.2s" }}>
+                Belanja
+              </Link>
+            </li>
+            <li style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <ChevronRight style={{ width: 14, height: 14, color: "var(--border)" }} />
+              <Link
+                href={`/collections/${product.category}`}
+                style={{ color: "inherit", textDecoration: "none", transition: "color 0.2s" }}
+              >
+                {product.categoryLabel}
+              </Link>
+            </li>
+            <li style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <ChevronRight style={{ width: 14, height: 14, color: "var(--border)" }} />
+              <span style={{ color: "var(--text)", fontWeight: 500 }}>
+                {product.name}
+              </span>
+            </li>
+          </ol>
+        </nav>
       </section>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+      <div style={{ padding: "0 8% 64px" }}>
         <ProductDetailClient product={product} />
 
         {related.length > 0 && (
-          <div className="mt-16">
-            <h2 className="text-2xl font-bold tracking-tight">Anda mungkin juga suka</h2>
-            <div className="mt-6">
-              <ProductGrid products={related} />
+          <div style={{ marginTop: 96 }}>
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 400, color: "var(--text)", marginBottom: 32 }}>
+              Anda mungkin juga suka
+            </h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "48px 28px" }}>
+              {related.map(p => (
+                <ProductCard key={p.id} product={p} />
+              ))}
             </div>
           </div>
         )}

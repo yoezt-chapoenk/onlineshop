@@ -1,13 +1,10 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Search, ShoppingCart, Menu, X, User, LogIn } from "lucide-react";
-import { useState } from "react";
-import clsx from "clsx";
-import { NAV_LINKS, SITE_NAME } from "@/lib/constants";
 import { useCart } from "@/components/cart/CartProvider";
-import { t } from "@/lib/i18n";
+import { useTheme } from "@/components/layout/ThemeProvider";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 
 export interface HeaderAuthState {
   isAuthenticated: boolean;
@@ -15,145 +12,203 @@ export interface HeaderAuthState {
 }
 
 export default function Header({ auth }: { auth: HeaderAuthState }) {
-  const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
   const { itemCount, isHydrated } = useCart();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { isLightMode, toggleLightMode } = useTheme();
+  const [cartOpen, setCartOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const links = [
+    { label: "Shop", href: "/shop" },
+    { label: "Collections", href: "/collections" },
+    { label: "About", href: "/about" },
+  ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-[color:var(--color-line)]">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between gap-4">
-          <Link
-            href="/"
-            className="text-lg sm:text-xl font-bold tracking-tight text-[color:var(--color-navy-900)]"
+    <>
+      <nav
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          padding: scrolled ? "14px 40px" : "22px 40px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          background: scrolled ? "var(--nav-bg)" : "transparent",
+          backdropFilter: scrolled ? "blur(12px)" : "none",
+          borderBottom: scrolled ? "1px solid var(--scrolled-border)" : "none",
+          transition: "all 0.35s ease",
+        }}
+      >
+        {/* Logo */}
+        <Link href="/" style={{ textDecoration: "none" }}>
+          <span
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: 22,
+              letterSpacing: "0.18em",
+              color: "var(--text)",
+              fontWeight: 500,
+            }}
           >
-            {SITE_NAME}
-          </Link>
+            JURAGAN GROSIR
+          </span>
+        </Link>
 
-          <nav className="hidden lg:flex items-center gap-7 text-sm font-medium">
-            {NAV_LINKS.map((link) => {
-              const isActive =
-                link.href === "/"
-                  ? pathname === "/"
-                  : pathname?.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={clsx(
-                    "relative py-2 transition-colors",
-                    isActive
-                      ? "text-[color:var(--color-navy-900)]"
-                      : "text-[color:var(--color-ink)] hover:text-[color:var(--color-navy-900)]",
-                  )}
-                >
-                  {link.label}
-                  {isActive && (
-                    <span className="absolute -bottom-px left-0 right-0 h-0.5 bg-[color:var(--color-navy-900)]" />
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
-
-          <div className="flex items-center gap-1 sm:gap-2">
+        {/* Desktop nav */}
+        <div style={{ display: "flex", gap: 36, alignItems: "center" }}>
+          {links.map((l) => (
             <Link
-              href="/shop"
-              aria-label={t.common.search}
-              className="hidden sm:inline-flex h-10 w-10 items-center justify-center rounded-lg text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)] transition-colors"
+              key={l.href}
+              href={l.href}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: "var(--font-sans)",
+                fontSize: 12,
+                letterSpacing: "0.16em",
+                color: "var(--text-muted)",
+                textTransform: "uppercase",
+                transition: "color 0.2s",
+                textDecoration: "none"
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--gold)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
             >
-              <Search className="h-5 w-5" />
+              {l.label}
             </Link>
-            {auth.isAuthenticated ? (
-              <Link
-                href="/account"
-                className="hidden sm:inline-flex h-10 items-center gap-2 rounded-lg px-3 text-sm font-medium text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)] transition-colors"
-              >
-                <User className="h-4 w-4" />
-                <span className="max-w-[8rem] truncate">{auth.displayName ?? t.nav.account}</span>
-              </Link>
-            ) : (
-              <Link
-                href="/login"
-                className="hidden sm:inline-flex h-10 items-center gap-2 rounded-lg px-3 text-sm font-medium text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)] transition-colors"
-              >
-                <LogIn className="h-4 w-4" />
-                {t.nav.login}
-              </Link>
-            )}
-            <Link
-              href="/cart"
-              aria-label={t.nav.cart}
-              className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)] transition-colors"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              <span
-                aria-live="polite"
-                className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-[color:var(--color-navy-900)] text-white text-[11px] font-semibold flex items-center justify-center"
-              >
-                {isHydrated ? itemCount : 0}
-              </span>
-            </Link>
-            <button
-              type="button"
-              className="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)] transition-colors"
-              onClick={() => setMobileOpen((o) => !o)}
-              aria-label={mobileOpen ? "Tutup menu" : "Buka menu"}
-              aria-expanded={mobileOpen}
-            >
-              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
-          </div>
+          ))}
         </div>
 
-        {mobileOpen && (
-          <nav className="lg:hidden pb-4 border-t border-[color:var(--color-line)] -mx-4 sm:-mx-6 px-4 sm:px-6">
-            <ul className="flex flex-col gap-1 pt-3">
-              {NAV_LINKS.map((link) => {
-                const isActive =
-                  link.href === "/"
-                    ? pathname === "/"
-                    : pathname?.startsWith(link.href);
-                return (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      onClick={() => setMobileOpen(false)}
-                      className={clsx(
-                        "block px-3 py-2.5 rounded-lg text-sm font-medium",
-                        isActive
-                          ? "bg-[color:var(--color-cloud-100)] text-[color:var(--color-navy-900)]"
-                          : "text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)]",
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                );
-              })}
-              <li className="pt-2 mt-2 border-t border-[color:var(--color-line)]">
-                {auth.isAuthenticated ? (
-                  <Link
-                    href="/account"
-                    onClick={() => setMobileOpen(false)}
-                    className="block px-3 py-2.5 rounded-lg text-sm font-medium text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)]"
-                  >
-                    {t.nav.account}
-                  </Link>
-                ) : (
-                  <Link
-                    href="/login"
-                    onClick={() => setMobileOpen(false)}
-                    className="block px-3 py-2.5 rounded-lg text-sm font-medium text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)]"
-                  >
-                    {t.nav.login}
-                  </Link>
-                )}
-              </li>
-            </ul>
-          </nav>
-        )}
-      </div>
-    </header>
+        {/* Right actions */}
+        <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
+          {auth.isAuthenticated ? (
+            <Link
+              href="/account"
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "var(--text-muted)",
+                fontSize: 12,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                textDecoration: "none"
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--gold)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
+            >
+              {auth.displayName ?? "Account"}
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "var(--text-muted)",
+                fontSize: 12,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                textDecoration: "none"
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--gold)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
+            >
+              Login
+            </Link>
+          )}
+
+          {/* Light/Dark toggle */}
+          <button
+            onClick={toggleLightMode}
+            title={isLightMode ? "Switch to Dark" : "Switch to Light"}
+            style={{
+              background: "none",
+              border: "1px solid var(--border)",
+              cursor: "pointer",
+              width: 30,
+              height: 30,
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--text-muted)",
+              fontSize: 13,
+              flexShrink: 0,
+              transition: "border-color 0.2s, color 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "var(--gold)";
+              e.currentTarget.style.color = "var(--gold)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "var(--border)";
+              e.currentTarget.style.color = "var(--text-muted)";
+            }}
+          >
+            {isLightMode ? "☀" : "☽"}
+          </button>
+          
+          <button
+            onClick={() => setCartOpen(true)}
+            style={{
+              position: "relative",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: 12,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--text-muted)",
+                transition: "color 0.2s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--gold)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
+            >
+              Bag
+            </span>
+            {isHydrated && itemCount > 0 && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: -6,
+                  right: -14,
+                  background: "var(--gold)",
+                  color: "var(--bg)",
+                  fontSize: 9,
+                  fontWeight: 600,
+                  borderRadius: "50%",
+                  width: 16,
+                  height: 16,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {itemCount}
+              </span>
+            )}
+          </button>
+        </div>
+      </nav>
+
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+    </>
   );
 }

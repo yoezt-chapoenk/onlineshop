@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import PageHeader from "@/components/ui/PageHeader";
-import GlassesArt from "@/components/products/GlassesArt";
-import { getCategories, getProducts } from "@/lib/data";
+import { GlassesPlaceholder } from "@/components/ui/GlassesPlaceholder";
+import { getCategories } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Koleksi",
@@ -12,55 +10,55 @@ export const metadata: Metadata = {
 };
 
 export default async function CollectionsPage() {
-  const [categories, products] = await Promise.all([
-    getCategories(),
-    getProducts(),
-  ]);
-  const sample = (slug: string) =>
-    products.find((p) => p.category === slug);
+  const categories = await getCategories();
 
   return (
-    <div>
-      <PageHeader
-        eyebrow="Koleksi"
-        title="Belanja per Kategori"
-        description="Dari kacamata harian, kacamata hitam fesyen, hingga frame blue light untuk layar — temukan koleksi yang tepat untuk Anda."
-        breadcrumbs={[{ label: "Koleksi" }]}
-      />
-
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {categories.map((c) => {
-            const sampleProduct = sample(c.slug);
-            return (
-              <Link
-                key={c.slug}
-                href={`/collections/${c.slug}`}
-                className="card group p-7 sm:p-8 flex items-center gap-6 hover:-translate-y-0.5 transition-transform"
-              >
-                <div className="flex-1">
-                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
-                    {c.name}
+    <div style={{ paddingTop: 64, minHeight: "100vh", background: "var(--bg)" }}>
+      <div style={{ padding: "60px 8% 48px", borderBottom: "1px solid var(--border)" }}>
+        <div style={{ fontSize: 10, letterSpacing: "0.28em", color: "var(--gold)", textTransform: "uppercase", marginBottom: 10 }}>JURAGAN GROSIR</div>
+        <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(32px, 4vw, 56px)", fontWeight: 400, color: "var(--text)" }}>Koleksi</h1>
+      </div>
+      <div style={{ padding: "64px 8%" }}>
+        {categories.map((col, idx) => (
+          <Link key={col.slug} href={`/shop`} style={{ textDecoration: 'none', display: 'block' }}>
+            <div style={{
+              display: "grid", gridTemplateColumns: "1fr 1fr",
+              gap: 0, marginBottom: 2, cursor: "pointer",
+              background: "var(--surface)",
+              transition: "background 0.2s"
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = "var(--surface2)"}
+            onMouseLeave={(e) => e.currentTarget.style.background = "var(--surface)"}>
+              
+              <div style={{ padding: "64px 8%", display: "flex", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontSize: 10, letterSpacing: "0.22em", color: "var(--gold-dim)", textTransform: "uppercase", marginBottom: 8 }}>
+                    {col.productCount} Styles
+                  </div>
+                  <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(32px, 3vw, 48px)", fontWeight: 400, color: "var(--text)", marginBottom: 12 }}>
+                    {col.name}
                   </h2>
-                  <p className="mt-2 text-sm text-[color:var(--color-muted)] max-w-xs">
-                    {c.description}
-                  </p>
-                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--color-navy-900)]">
-                    Belanja {c.name} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  <p style={{ fontSize: 14, color: "var(--text-muted)", marginBottom: 28, lineHeight: 1.6 }}>{col.description}</p>
+                  <span style={{ fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--gold)", borderBottom: "1px solid var(--gold-dim)", paddingBottom: 2 }}>
+                    Shop Now →
                   </span>
-                  <div className="mt-3 text-xs text-[color:var(--color-muted)]">
-                    {c.productCount} produk
-                  </div>
                 </div>
-                {sampleProduct && (
-                  <div className="hidden sm:block">
-                    <GlassesArt product={sampleProduct} size={140} />
-                  </div>
-                )}
-              </Link>
-            );
-          })}
-        </div>
+              </div>
+              
+              <div style={{
+                background: "var(--bg2)", display: "flex", alignItems: "center",
+                justifyContent: "center", padding: 48, minHeight: 280
+              }}>
+                <GlassesPlaceholder
+                  color={col.slug === "kacamata-hitam" ? "#c9a96e" : col.slug === "kacamata-optik" ? "#e8ddd0" : "#4a3728"}
+                  shape={col.slug === "kacamata-hitam" ? "aviator" : col.slug === "kacamata-optik" ? "round" : "cat-eye"}
+                  width={300} height={150} 
+                />
+              </div>
+
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

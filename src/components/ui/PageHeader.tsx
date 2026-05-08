@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
 
@@ -20,39 +22,44 @@ export default function PageHeader({
   breadcrumbs,
 }: Props) {
   return (
-    <section className="bg-[color:var(--color-cloud-100)] border-b border-[color:var(--color-line)]">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+    <section style={{ padding: "140px 8% 80px", background: "var(--bg)", borderBottom: "1px solid var(--border)" }}>
+      <div style={{ maxWidth: 800 }}>
         {breadcrumbs && breadcrumbs.length > 0 && (
-          <nav aria-label="Breadcrumb" className="mb-4">
-            <ol className="flex items-center flex-wrap gap-1 text-xs text-[color:var(--color-muted)]">
+          <nav aria-label="Breadcrumb" style={{ marginBottom: 24 }}>
+            <ol style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8, fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
               <li>
-                <Link href="/" className="inline-flex items-center hover:text-[color:var(--color-navy-900)]">
-                  <Home className="h-3.5 w-3.5" />
+                <Link href="/" style={{ color: "inherit", textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
+                  <Home style={{ width: 14, height: 14 }} />
                 </Link>
               </li>
               {breadcrumbs.map((c, i) => (
-                <li key={i} className="flex items-center gap-1">
-                  <ChevronRight className="h-3 w-3 text-[color:var(--color-cloud-300)]" />
+                <li key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <ChevronRight style={{ width: 14, height: 14, color: "var(--border)" }} />
                   {c.href ? (
-                    <Link href={c.href} className="hover:text-[color:var(--color-navy-900)]">
+                    <Link href={c.href} style={{ color: "inherit", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--gold)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}>
                       {c.label}
                     </Link>
                   ) : (
-                    <span className="text-[color:var(--color-ink)] font-medium">
-                      {c.label}
-                    </span>
+                    <span style={{ color: "var(--text)" }}>{c.label}</span>
                   )}
                 </li>
               ))}
             </ol>
           </nav>
         )}
-        {eyebrow && <span className="eyebrow">{eyebrow}</span>}
-        <h1 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[color:var(--color-ink)]">
+        
+        {eyebrow && (
+          <div style={{ fontSize: 10, letterSpacing: "0.28em", color: "var(--gold)", textTransform: "uppercase", marginBottom: 16 }}>
+            {eyebrow}
+          </div>
+        )}
+        
+        <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(36px, 5vw, 64px)", fontWeight: 400, color: "var(--text)", lineHeight: 1.1, marginBottom: 24 }}>
           {title}
         </h1>
+        
         {description && (
-          <p className="mt-3 max-w-2xl text-sm sm:text-base text-[color:var(--color-muted)]">
+          <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.7, maxWidth: 540 }}>
             {description}
           </p>
         )}

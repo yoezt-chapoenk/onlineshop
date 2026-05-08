@@ -2,9 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
-import clsx from "clsx";
 import PageHeader from "@/components/ui/PageHeader";
-import ProductGrid from "@/components/products/ProductGrid";
+import ProductCard from "@/components/products/ProductCard";
 import type { Category, CategorySlug, Gender, Product, Style } from "@/lib/types";
 
 interface Props {
@@ -22,12 +21,6 @@ const SORT_OPTIONS = [
 
 type SortValue = (typeof SORT_OPTIONS)[number]["value"];
 
-const GENDERS: Gender[] = ["men", "women", "unisex", "kids"];
-const STYLES: Style[] = ["fashion", "casual", "sport", "vintage", "premium"];
-
-const PRICE_MIN = 50000;
-const PRICE_MAX_FALLBACK = 300000;
-
 function rupiah(n: number) {
   return `Rp ${n.toLocaleString("id-ID")}`;
 }
@@ -36,56 +29,15 @@ export default function ShopClient({
   products: allProducts,
   categories,
 }: Props) {
-  // Derive the slider ceiling from the actual catalog so admin-added
-  // products above the original Rp 300.000 default are still reachable.
-  // Round up to the nearest Rp 10.000 so the slider lands on a tidy
-  // value and always offers at least the legacy fallback range.
-  const priceMax = useMemo(() => {
-    const highest = allProducts.reduce(
-      (acc, p) => (p.retailPrice > acc ? p.retailPrice : acc),
-      PRICE_MAX_FALLBACK,
-    );
-    return Math.ceil(highest / 10000) * 10000;
-  }, [allProducts]);
-
-  const [search, setSearch] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<CategorySlug[]>([]);
-  const [selectedGenders, setSelectedGenders] = useState<Gender[]>([]);
-  const [selectedStyles, setSelectedStyles] = useState<Style[]>([]);
-  const [wholesaleOnly, setWholesaleOnly] = useState(false);
-  const [inStockOnly, setInStockOnly] = useState(false);
-  const [maxPrice, setMaxPrice] = useState<number>(priceMax);
+  const [filter, setFilter] = useState<string>("All");
   const [sort, setSort] = useState<SortValue>("newest");
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const filtered = useMemo(() => {
     let list = [...allProducts];
 
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.shortDescription.toLowerCase().includes(q) ||
-          p.sku.toLowerCase().includes(q),
-      );
+    if (filter !== "All") {
+      list = list.filter((p) => p.category === filter);
     }
-    if (selectedCategories.length > 0) {
-      list = list.filter((p) => selectedCategories.includes(p.category));
-    }
-    if (selectedGenders.length > 0) {
-      list = list.filter((p) => selectedGenders.includes(p.gender));
-    }
-    if (selectedStyles.length > 0) {
-      list = list.filter((p) => selectedStyles.includes(p.style));
-    }
-    if (wholesaleOnly) {
-      list = list.filter((p) => p.priceTiers.length > 0);
-    }
-    if (inStockOnly) {
-      list = list.filter((p) => p.stock > 0);
-    }
-    list = list.filter((p) => p.retailPrice <= maxPrice);
 
     switch (sort) {
       case "price-low":
@@ -105,353 +57,97 @@ export default function ShopClient({
         list.sort((a, b) => Number(b.isNewArrival) - Number(a.isNewArrival));
     }
     return list;
-  }, [
-    allProducts,
-    search,
-    selectedCategories,
-    selectedGenders,
-    selectedStyles,
-    wholesaleOnly,
-    inStockOnly,
-    maxPrice,
-    sort,
-  ]);
+  }, [allProducts, filter, sort]);
 
-  function toggle<T>(value: T, list: T[], setList: (v: T[]) => void) {
-    setList(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
-  }
-
-  function clearAll() {
-    setSearch("");
-    setSelectedCategories([]);
-    setSelectedGenders([]);
-    setSelectedStyles([]);
-    setWholesaleOnly(false);
-    setInStockOnly(false);
-    setMaxPrice(priceMax);
-  }
-
-  const activeFilters: { label: string; onRemove: () => void }[] = [
-    ...selectedCategories.map((slug) => {
-      const c = categories.find((x) => x.slug === slug);
-      return {
-        label: c?.name ?? slug,
-        onRemove: () =>
-          setSelectedCategories(selectedCategories.filter((x) => x !== slug)),
-      };
-    }),
-    ...selectedGenders.map((g) => ({
-      label: g.charAt(0).toUpperCase() + g.slice(1),
-      onRemove: () => setSelectedGenders(selectedGenders.filter((x) => x !== g)),
-    })),
-    ...selectedStyles.map((s) => ({
-      label: s.charAt(0).toUpperCase() + s.slice(1),
-      onRemove: () => setSelectedStyles(selectedStyles.filter((x) => x !== s)),
-    })),
-    ...(wholesaleOnly
-      ? [{ label: "Tersedia grosir", onRemove: () => setWholesaleOnly(false) }]
-      : []),
-    ...(inStockOnly
-      ? [{ label: "Hanya stok ada", onRemove: () => setInStockOnly(false) }]
-      : []),
-    ...(maxPrice < priceMax
-      ? [
-          {
-            label: `Sampai ${rupiah(maxPrice)}`,
-            onRemove: () => setMaxPrice(priceMax),
-          },
-        ]
-      : []),
-  ];
-
-  const renderFilterPanel = (idPrefix: string) => (
-    <div className="space-y-7">
-      <div>
-        <label className="label" htmlFor={`${idPrefix}-search`}>
-          Cari
-        </label>
-        <input
-          id={`${idPrefix}-search`}
-          className="input"
-          placeholder="contoh: aviator, blue light"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
-
-      <FilterSection title="Kategori">
-        <ul className="space-y-2">
-          {categories.map((c) => (
-            <li key={c.slug}>
-              <label className="flex items-center gap-2 text-sm cursor-pointer hover:text-[color:var(--color-navy-900)]">
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.includes(c.slug)}
-                  onChange={() =>
-                    toggle(c.slug, selectedCategories, setSelectedCategories)
-                  }
-                  className="h-4 w-4 accent-[color:var(--color-navy-900)] cursor-pointer"
-                />
-                <span>{c.name}</span>
-                <span className="ml-auto text-xs text-[color:var(--color-muted)]">
-                  {c.productCount}
-                </span>
-              </label>
-            </li>
-          ))}
-        </ul>
-      </FilterSection>
-
-      <FilterSection title="Gender">
-        {/* Gender label is universal in fashion in Indonesia */}
-        <div className="flex flex-wrap gap-2">
-          {GENDERS.map((g) => (
-            <ChipButton
-              key={g}
-              label={g}
-              active={selectedGenders.includes(g)}
-              onClick={() => toggle(g, selectedGenders, setSelectedGenders)}
-            />
-          ))}
-        </div>
-      </FilterSection>
-
-      <FilterSection title="Gaya">
-        <div className="flex flex-wrap gap-2">
-          {STYLES.map((s) => (
-            <ChipButton
-              key={s}
-              label={s}
-              active={selectedStyles.includes(s)}
-              onClick={() => toggle(s, selectedStyles, setSelectedStyles)}
-            />
-          ))}
-        </div>
-      </FilterSection>
-
-      <FilterSection title="Harga maksimal">
-        <div className="text-xs text-[color:var(--color-muted)] mb-2">
-          {rupiah(PRICE_MIN)} —{" "}
-          <span className="font-semibold text-[color:var(--color-ink)]">
-            {rupiah(maxPrice)}
-          </span>
-        </div>
-        <input
-          type="range"
-          min={PRICE_MIN}
-          max={priceMax}
-          step={5000}
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(Number(e.target.value))}
-          className="w-full accent-[color:var(--color-navy-900)] cursor-pointer"
-        />
-      </FilterSection>
-
-      <FilterSection title="Ketersediaan">
-        <div className="space-y-2.5">
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <input
-              type="checkbox"
-              checked={wholesaleOnly}
-              onChange={(e) => setWholesaleOnly(e.target.checked)}
-              className="h-4 w-4 accent-[color:var(--color-navy-900)] cursor-pointer"
-            />
-            Tersedia grosir
-          </label>
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <input
-              type="checkbox"
-              checked={inStockOnly}
-              onChange={(e) => setInStockOnly(e.target.checked)}
-              className="h-4 w-4 accent-[color:var(--color-navy-900)] cursor-pointer"
-            />
-            Hanya stok tersedia
-          </label>
-        </div>
-      </FilterSection>
-
-      <button
-        type="button"
-        onClick={clearAll}
-        className="btn btn-outline w-full !py-2 text-sm"
-      >
-        Hapus semua filter
-      </button>
-    </div>
-  );
+  const cats = ["All", ...categories.map(c => c.slug)];
 
   return (
-    <div>
+    <div style={{ minHeight: "100vh", background: "var(--bg)", paddingTop: 64 }}>
       <PageHeader
-        eyebrow="Belanja"
-        title="Semua Produk"
+        eyebrow="Shop"
+        title="All Eyewear"
         description="Telusuri seluruh katalog kacamata kami. Gunakan filter untuk menemukan frame favorit Anda."
         breadcrumbs={[{ label: "Belanja" }]}
       />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8 lg:gap-10">
-          {/* Desktop sidebar */}
-          <aside className="hidden lg:block lg:sticky lg:top-24 self-start">
-            <div className="card p-5">{renderFilterPanel("desktop")}</div>
-          </aside>
-
-          <div>
-            {/* Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-5 border-b border-[color:var(--color-line)]">
-              <div className="flex items-center gap-3">
+      <div style={{ padding: "48px 8%" }}>
+        {/* Toolbar */}
+        <div style={{
+          display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center",
+          marginBottom: 48, gap: 24, borderBottom: "1px solid var(--border)", paddingBottom: 24
+        }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {cats.map((c) => {
+              const label = c === "All" ? "Semua" : categories.find(cat => cat.slug === c)?.name || c;
+              return (
                 <button
-                  type="button"
-                  onClick={() => setMobileFiltersOpen(true)}
-                  className="lg:hidden btn btn-outline !py-2 !px-3 text-xs"
+                  key={c}
+                  onClick={() => setFilter(c)}
+                  style={{
+                    background: filter === c ? "var(--gold)" : "none",
+                    border: `1px solid ${filter === c ? "var(--gold)" : "var(--border)"}`,
+                    color: filter === c ? "var(--bg)" : "var(--text-muted)",
+                    padding: "8px 20px",
+                    fontSize: 11,
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    cursor: "pointer",
+                    fontFamily: "var(--font-sans)",
+                    transition: "all 0.2s"
+                  }}
                 >
-                  <SlidersHorizontal className="h-3.5 w-3.5" />
-                  Filter
-                  {activeFilters.length > 0 && (
-                    <span className="ml-1 inline-flex items-center justify-center min-w-5 h-5 rounded-full bg-[color:var(--color-navy-900)] text-white text-[10px] font-semibold px-1.5">
-                      {activeFilters.length}
-                    </span>
-                  )}
+                  {label}
                 </button>
-                <div className="text-sm text-[color:var(--color-muted)]">
-                  Menampilkan{" "}
-                  <span className="font-semibold text-[color:var(--color-ink)]">
-                    {filtered.length}
-                  </span>{" "}
-                  dari {allProducts.length} produk
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <label
-                  htmlFor="sort"
-                  className="text-sm text-[color:var(--color-muted)]"
-                >
-                  Urutkan
-                </label>
-                <select
-                  id="sort"
-                  className="input !py-1.5 !pr-8 !w-auto text-sm"
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value as SortValue)}
-                >
-                  {SORT_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+              );
+            })}
+          </div>
 
-            {/* Active filters */}
-            {activeFilters.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2 mb-5">
-                {activeFilters.map((f) => (
-                  <button
-                    key={f.label}
-                    type="button"
-                    onClick={f.onRemove}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[color:var(--color-blue-50)] text-[color:var(--color-navy-900)] text-xs font-medium border border-[color:var(--color-blue-100)] hover:bg-[color:var(--color-blue-100)] transition-colors"
-                  >
-                    {f.label}
-                    <X className="h-3 w-3" />
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={clearAll}
-                  className="text-xs text-[color:var(--color-muted)] hover:text-[color:var(--color-navy-900)] underline underline-offset-2"
-                >
-                  Hapus semua
-                </button>
-              </div>
-            )}
-
-            <ProductGrid products={filtered} />
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <span style={{ fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+              {filtered.length} products
+            </span>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortValue)}
+              style={{
+                background: "none",
+                border: "1px solid var(--border)",
+                color: "var(--text-muted)",
+                padding: "8px 16px",
+                fontSize: 11,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                fontFamily: "var(--font-sans)",
+                outline: "none",
+                cursor: "pointer"
+              }}
+            >
+              {SORT_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value} style={{ background: "var(--surface)", color: "var(--text)" }}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
+
+        {/* Grid */}
+        {filtered.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "120px 0", color: "var(--text-dim)" }}>
+            No products found.
+          </div>
+        ) : (
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+            gap: "56px 32px"
+          }}>
+            {filtered.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        )}
       </div>
-
-      {/* Mobile filter drawer */}
-      {mobileFiltersOpen && (
-        <div
-          className="fixed inset-0 z-50 lg:hidden"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div
-            className="absolute inset-0 bg-[color:var(--color-navy-900)]/40"
-            onClick={() => setMobileFiltersOpen(false)}
-          />
-          <div className="absolute inset-y-0 left-0 w-[88%] max-w-sm bg-white shadow-2xl flex flex-col">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[color:var(--color-line)]">
-              <h2 className="text-base font-semibold">Filter</h2>
-              <button
-                type="button"
-                onClick={() => setMobileFiltersOpen(false)}
-                aria-label="Tutup filter"
-                className="h-8 w-8 inline-flex items-center justify-center rounded-full hover:bg-[color:var(--color-cloud-100)]"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto px-5 py-5">
-              {renderFilterPanel("mobile")}
-            </div>
-            <div className="px-5 py-4 border-t border-[color:var(--color-line)]">
-              <button
-                type="button"
-                onClick={() => setMobileFiltersOpen(false)}
-                className="btn btn-primary w-full"
-              >
-                Tampilkan {filtered.length} produk
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
-  );
-}
-
-function FilterSection({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="pt-1">
-      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--color-muted)] mb-3">
-        {title}
-      </h3>
-      {children}
-    </div>
-  );
-}
-
-function ChipButton({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={clsx(
-        "px-3 py-1.5 rounded-full text-xs font-medium border transition-colors capitalize",
-        active
-          ? "bg-[color:var(--color-navy-900)] text-white border-[color:var(--color-navy-900)]"
-          : "bg-white text-[color:var(--color-ink)] border-[color:var(--color-line)] hover:border-[color:var(--color-navy-900)] hover:text-[color:var(--color-navy-900)]",
-      )}
-    >
-      {label}
-    </button>
   );
 }

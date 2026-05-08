@@ -8,7 +8,7 @@ import { calculatePrice } from "@/lib/pricing";
 import { formatRupiah } from "@/lib/format";
 import { useCart } from "@/components/cart/CartProvider";
 import { useSession } from "@/components/auth/SessionProvider";
-import GlassesArt from "@/components/products/GlassesArt";
+import { GlassesPlaceholder } from "@/components/ui/GlassesPlaceholder";
 
 interface Props {
   product: Product;
@@ -40,7 +40,6 @@ export default function ProductDetailClient({ product }: Props) {
   const variants = useMemo(() => product.variants ?? [], [product.variants]);
   const hasVariants = variants.length > 0;
 
-  // Which axes this product actually uses (hide empty ones).
   const axes = useMemo<Axis[]>(() => {
     const list: Axis[] = [];
     if (variants.some((v) => v.color)) list.push("color");
@@ -64,28 +63,17 @@ export default function ProductDetailClient({ product }: Props) {
     return match.length === 1 ? match[0] : undefined;
   }, [variants, axes, selected, hasVariants]);
 
-  // Image to display: prefer the fully-matched variant's image, then
-  // fall back to the first variant that matches the COLOR selection
-  // (so the image updates immediately on color click, even when other
-  // axes like size haven't been chosen yet), then fall back to the
-  // first product image.
   const imageForSelection = useMemo(() => {
-    // 1. Fully matched variant (all axes chosen)
     if (matchedVariant?.imageUrl) return matchedVariant.imageUrl;
-
-    // 2. First variant that matches the currently selected color
     if (selected.color) {
       const colorVariant = variants.find(
         (v) => v.color === selected.color && v.imageUrl
       );
       if (colorVariant?.imageUrl) return colorVariant.imageUrl;
     }
-
-    // 3. Fall back to first product image
     return product.imageUrls.length > 0 ? product.imageUrls[0] : null;
   }, [matchedVariant, selected.color, variants, product.imageUrls]);
 
-  // Keep activeImage in sync so thumbnail clicks can override selection
   useEffect(() => {
     setActiveImage(imageForSelection);
   }, [imageForSelection]);
@@ -99,9 +87,6 @@ export default function ProductDetailClient({ product }: Props) {
     : product.stock > 0;
 
   const effectiveQty = Math.max(1, Math.min(quantity, activeStock || 1));
-  // If a variant has a price override, use it directly; otherwise fall back
-  // to tiered product pricing (reseller/promo/wholesale). Compare against
-  // null so a legitimate override of 0 is honoured (matches cart + server).
   const variantUnitPrice = matchedVariant?.priceOverride;
   const pricing = variantUnitPrice != null
     ? {
@@ -117,14 +102,10 @@ export default function ProductDetailClient({ product }: Props) {
     product.promotionalPrice &&
     product.promotionalPrice < product.retailPrice;
 
-
-
   function setAxis(axis: Axis, value: string) {
     setSelected((prev) => ({ ...prev, [axis]: value }));
   }
 
-  // Values available for a given axis, considering what's already picked
-  // on the other axes (so unavailable combinations grey out naturally).
   function optionsFor(axis: Axis): { value: string; disabled: boolean }[] {
     const all = uniq(variants.map((v) => variantValue(v, axis)));
     return all.map((value) => {
@@ -142,11 +123,7 @@ export default function ProductDetailClient({ product }: Props) {
 
   function handleAdd() {
     if (!canAdd) return;
-    // Override the product's frameColor if needed, but since we removed hex swatches,
-    // we just use the default.
-    const productWithColor = {
-      ...product,
-    };
+    const productWithColor = { ...product };
     addItem(productWithColor, effectiveQty, matchedVariant);
     const label = matchedVariant
       ? `${product.name} (${[
@@ -161,321 +138,362 @@ export default function ProductDetailClient({ product }: Props) {
     window.setTimeout(() => setFeedback(null), 2400);
   }
 
+  // Map frameColor to hex
+  const mappedColor =
+    product.frameColor === "black"
+      ? "#1a1a1a"
+      : product.frameColor === "gold"
+      ? "#c9a96e"
+      : product.frameColor === "tortoise"
+      ? "#4a3728"
+      : product.frameColor === "silver"
+      ? "#e8ddd0"
+      : "#3a3a3a";
+
+  const tag = product.isNewArrival ? "New" : product.isBestSeller ? "Bestseller" : null;
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
-      <div>
-        <div className="rounded-2xl bg-white border border-[color:var(--color-line)] aspect-square overflow-hidden">
-          {activeImage ? (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              key={activeImage}
-              src={activeImage}
-              alt={product.name}
-              className="h-full w-full object-cover transition-opacity duration-300"
-            />
-          ) : (
-            <div className="h-full w-full flex items-center justify-center p-10">
-              <GlassesArt product={product} size={360} />
-            </div>
-          )}
-        </div>
-        <div className="mt-4 grid grid-cols-4 gap-3">
-          {product.imageUrls && product.imageUrls.length > 1
-            ? product.imageUrls.slice(0, 4).map((url, i) => (
-                <button
-                  key={url + i}
-                  type="button"
-                  onClick={() => setActiveImage(url)}
-                  className={clsx(
-                    "rounded-xl bg-white border aspect-square overflow-hidden transition-all",
-                    activeImage === url
-                      ? "border-[color:var(--color-navy-900)] ring-2 ring-[color:var(--color-navy-900)]/20"
-                      : "border-[color:var(--color-line)] hover:border-[color:var(--color-navy-400)]"
-                  )}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={url}
-                    alt={`${product.name} ${i + 1}`}
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                  />
-                </button>
-              ))
-            : [0, 1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="rounded-xl bg-white border border-[color:var(--color-line)] aspect-square flex items-center justify-center p-3"
-                >
-                  <GlassesArt product={product} size={70} />
-                </div>
-              ))}
-        </div>
-      </div>
-
-      <div className="flex flex-col">
-        <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--color-navy-900)]">
-          {product.categoryLabel}
-        </div>
-        <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight">
-          {product.name}
-        </h1>
-        <div className="mt-2 flex items-center gap-2 text-sm">
-          <div className="flex items-center text-[color:var(--color-navy-900)]">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={`h-4 w-4 ${i < Math.round(product.rating) ? "fill-current" : ""}`}
-              />
-            ))}
-          </div>
-          <span className="text-[color:var(--color-muted)]">
-            {product.rating.toFixed(1)} ({product.reviewCount} ulasan)
-          </span>
-        </div>
-
-        <p className="mt-5 text-[color:var(--color-muted)] leading-relaxed">
-          {product.description}
-        </p>
-
-        <div className="mt-6 space-y-5">
-          <div className="flex items-baseline gap-3 flex-wrap">
-        <div className="text-3xl sm:text-4xl font-bold text-[color:var(--color-navy-900)]">
-          {formatRupiah(pricing.unitPrice)}
-        </div>
-        <div className="text-sm text-[color:var(--color-muted)]">/ pcs</div>
-        {showSale && pricing.appliedType === "promo" && (
-          <div className="text-sm text-[color:var(--color-muted)] line-through">
-            {formatRupiah(product.retailPrice)}
-          </div>
-        )}
-        {pricing.tierLabel && (
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-[color:var(--color-success)]/10 text-[color:var(--color-success)]">
-            {pricing.tierLabel}
-          </span>
-        )}
-      </div>
-      <div className="text-sm">
-        Subtotal:{" "}
-        <span className="font-semibold text-[color:var(--color-ink)]">
-          {formatRupiah(pricing.subtotal)}
-        </span>{" "}
-        <span className="text-[color:var(--color-muted)]">
-          ({effectiveQty} × {formatRupiah(pricing.unitPrice)})
-        </span>
-      </div>
-
-      {hasVariants && (
-        <div className="space-y-4 rounded-xl border border-[color:var(--color-line)] p-4">
-          {axes.map((axis) => {
-            const options = optionsFor(axis);
-            return (
-              <div key={axis}>
-                <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--color-muted)]">
-                  {AXIS_LABEL[axis]}
-                  {selected[axis] ? (
-                    <span className="ml-2 normal-case tracking-normal text-[color:var(--color-ink)]">
-                      {selected[axis]}
-                    </span>
-                  ) : null}
-                </div>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {options.map(({ value, disabled }) => {
-                    const isActive = selected[axis] === value;
-                    return (
-                      <button
-                        key={value}
-                        type="button"
-                        disabled={disabled && !isActive}
-                        onClick={() => setAxis(axis, value)}
-                        className={clsx(
-                          "rounded-full border px-3 py-1.5 text-sm transition",
-                          isActive
-                            ? "border-[color:var(--color-navy-900)] bg-[color:var(--color-navy-900)] text-white"
-                            : disabled
-                              ? "border-[color:var(--color-line)] text-[color:var(--color-muted)] line-through cursor-not-allowed"
-                              : "border-[color:var(--color-line)] hover:border-[color:var(--color-navy-900)]",
-                        )}
-                      >
-                        {value}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-          {allSelected && matchedVariant ? (
-            <div className="text-xs text-[color:var(--color-muted)]">
-              Stok {matchedVariant.stock} pcs
-            </div>
-          ) : (
-            <div className="text-xs text-[color:var(--color-muted)]">
-              Pilih semua opsi untuk melanjutkan.
-            </div>
-          )}
-        </div>
-      )}
-
-
-      {/* Action Buttons */}
-      <div className="space-y-3 w-fit">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="inline-flex items-center rounded-lg border border-[color:var(--color-line)] overflow-hidden">
-            <button
-              type="button"
-              aria-label="Kurangi jumlah"
-              className="h-10 w-10 flex items-center justify-center hover:bg-[color:var(--color-cloud-100)]"
-              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-            >
-              <Minus className="h-4 w-4" />
-            </button>
-            <input
-              type="number"
-              min={1}
-              max={activeStock || 1}
-              value={quantity}
-              onChange={(e) => {
-                const v = Number(e.target.value);
-                if (Number.isFinite(v)) {
-                  setQuantity(
-                    Math.max(1, Math.min(activeStock || 1, Math.floor(v))),
-                  );
-                }
-              }}
-              className="h-10 w-14 text-center text-sm font-semibold border-x border-[color:var(--color-line)] focus:outline-none"
-            />
-            <button
-              type="button"
-              aria-label="Tambah jumlah"
-              className="h-10 w-10 flex items-center justify-center hover:bg-[color:var(--color-cloud-100)]"
-              onClick={() =>
-                setQuantity((q) => Math.min(activeStock || 1, q + 1))
-              }
-            >
-              <Plus className="h-4 w-4" />
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleAdd}
-            disabled={!canAdd}
-            className="btn btn-primary"
-          >
-            <ShoppingCart className="h-4 w-4" /> Tambah ke Keranjang
-          </button>
-        </div>
-
-        {/* Marketplace buttons */}
-        <div className="grid grid-cols-2 gap-3">
-        <a
-          href="https://shopee.co.id/juragangrosir"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn btn-outline justify-center"
-        >
-          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C9.243 2 7 4.243 7 7h2c0-1.654 1.346-3 3-3s3 1.346 3 3h2c0-2.757-2.243-5-5-5zm-7.5 6A1.5 1.5 0 003 9.5v10A2.5 2.5 0 005.5 22h13a2.5 2.5 0 002.5-2.5v-10A1.5 1.5 0 0019.5 8h-15zM12 17c-2.21 0-4-1.79-4-4h1.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5H16c0 2.21-1.79 4-4 4z"/>
-          </svg>
-          Shopee
-        </a>
-        <a
-          href="https://www.tiktok.com/@juragangrosir"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn btn-outline justify-center"
-        >
-          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.46V13a8.28 8.28 0 005.58 2.17v-3.48a4.85 4.85 0 01-3.77-1.77V6.69h3.77z"/>
-          </svg>
-          TikTok
-        </a>
-      </div>
-
-        <div
-          className={clsx(
-            "text-sm font-medium transition-all duration-300 overflow-hidden",
-            feedback ? "h-6 opacity-100 text-[color:var(--color-success)]" : "h-0 opacity-0",
-          )}
-          aria-live="polite"
-        >
-          {feedback}
-        </div>
-      </div>
-    </div>
+    <div>
+      <div style={{
+        background: "var(--surface)", width: "100%",
+        display: "grid", gridTemplateColumns: "1fr",
+        gap: 0,
+        position: "relative",
+      }} className="lg:grid-cols-2 lg:gap-14">
         
-    {/* Tier table */}
-        <div className="mt-8">
-          <h3 className="text-sm font-semibold mb-2">Harga grosir bertingkat</h3>
-          <div className="card overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-[color:var(--color-cloud-100)] text-[color:var(--color-muted)]">
-                <tr>
-                  <th className="text-left font-medium py-2.5 px-4">Jumlah</th>
-                  <th className="text-right font-medium py-2.5 px-4">Harga per pcs</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[color:var(--color-line)]">
-                {(() => {
-                  const firstTierMin = product.priceTiers[0]?.minQty;
-                  const retailRange =
-                    firstTierMin && firstTierMin > 1
-                      ? `1–${firstTierMin - 1} pcs`
-                      : firstTierMin === 1
-                        ? "Harga retail"
-                        : "1+ pcs";
-                  return (
-                    <tr>
-                      <td className="py-2.5 px-4">{retailRange}</td>
-                      <td className="py-2.5 px-4 text-right font-semibold">
-                        {formatRupiah(product.retailPrice)}
+        {/* Visual */}
+        <div>
+          <div style={{
+            background: "var(--bg2)", display: "flex", alignItems: "center",
+            justifyContent: "center", padding: "64px 48px", position: "relative",
+            minHeight: 400
+          }}>
+            {activeImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={activeImage}
+                alt={product.name}
+                className="max-h-[300px] object-contain transition-opacity duration-300"
+              />
+            ) : (
+              <GlassesPlaceholder color={mappedColor} shape={product.frame} width={280} height={140} />
+            )}
+            
+            {tag && (
+              <div style={{
+                position: "absolute", top: 20, left: 20,
+                background: tag === "New" ? "var(--gold)" : "var(--surface2)",
+                color: tag === "New" ? "var(--bg)" : "var(--gold)",
+                fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase",
+                padding: "4px 10px", fontWeight: 600
+              }}>
+                {tag}
+              </div>
+            )}
+          </div>
+          
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginTop: 16 }}>
+            {product.imageUrls && product.imageUrls.length > 1
+              ? product.imageUrls.slice(0, 4).map((url, i) => (
+                  <button
+                    key={url + i}
+                    type="button"
+                    onClick={() => setActiveImage(url)}
+                    style={{
+                      background: "var(--bg2)", border: activeImage === url ? "2px solid var(--gold)" : "2px solid transparent",
+                      aspectRatio: "1/1", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+                      padding: 0, overflow: "hidden"
+                    }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={url}
+                      alt={`${product.name} ${i + 1}`}
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
+                ))
+              : null}
+          </div>
+        </div>
+
+        {/* Details */}
+        <div style={{ padding: "48px 0" }}>
+          <div style={{ fontSize: 10, letterSpacing: "0.22em", color: "var(--gold)", textTransform: "uppercase", marginBottom: 12 }}>
+            {product.categoryLabel}
+          </div>
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: 38, fontWeight: 400, color: "var(--text)", marginBottom: 6, lineHeight: 1.1 }}>
+            {product.name}
+          </h1>
+          
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 24 }}>
+            <div style={{ display: "flex", color: "var(--gold)" }}>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  style={{ width: 14, height: 14, fill: i < Math.round(product.rating) ? "currentColor" : "none" }}
+                />
+              ))}
+            </div>
+            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
+              {product.rating.toFixed(1)} ({product.reviewCount} reviews)
+            </span>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 24, flexWrap: "wrap" }}>
+            <div style={{ fontSize: 22, color: "var(--gold)" }}>
+              {formatRupiah(pricing.unitPrice)}
+            </div>
+            <div style={{ fontSize: 12, color: "var(--text-muted)" }}>/ pcs</div>
+            {showSale && pricing.appliedType === "promo" && (
+              <div style={{ fontSize: 14, color: "var(--text-muted)", textDecoration: "line-through" }}>
+                {formatRupiah(product.retailPrice)}
+              </div>
+            )}
+            {pricing.tierLabel && (
+              <span style={{ padding: "4px 10px", borderRadius: 999, fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", background: "rgba(201,169,110,0.1)", color: "var(--gold)" }}>
+                {pricing.tierLabel}
+              </span>
+            )}
+          </div>
+
+          <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.75, marginBottom: 36 }}>
+            {product.description}
+          </p>
+
+          {hasVariants && (
+            <div style={{ marginBottom: 36, display: "flex", flexDirection: "column", gap: 20 }}>
+              {axes.map((axis) => {
+                const options = optionsFor(axis);
+                return (
+                  <div key={axis}>
+                    <div style={{ fontSize: 11, letterSpacing: "0.16em", color: "var(--text-dim)", textTransform: "uppercase", marginBottom: 12 }}>
+                      {AXIS_LABEL[axis]}
+                      {selected[axis] ? (
+                        <span style={{ marginLeft: 8, textTransform: "none", color: "var(--text)", letterSpacing: "normal" }}>
+                          {selected[axis]}
+                        </span>
+                      ) : null}
+                    </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                      {options.map(({ value, disabled }) => {
+                        const isActive = selected[axis] === value;
+                        return (
+                          <button
+                            key={value}
+                            type="button"
+                            disabled={disabled && !isActive}
+                            onClick={() => setAxis(axis, value)}
+                            style={{
+                              background: isActive ? "var(--gold)" : "none",
+                              color: isActive ? "var(--bg)" : disabled ? "var(--text-dim)" : "var(--text-muted)",
+                              border: `1px solid ${isActive ? "var(--gold)" : "var(--border)"}`,
+                              padding: "8px 16px", fontSize: 12, cursor: disabled && !isActive ? "not-allowed" : "pointer",
+                              textDecoration: disabled && !isActive ? "line-through" : "none",
+                              transition: "all 0.2s",
+                              fontFamily: "var(--font-sans)"
+                            }}
+                          >
+                            {value}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+              
+              <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8 }}>
+                {allSelected && matchedVariant ? (
+                  `Stok ${matchedVariant.stock} pcs`
+                ) : (
+                  "Pilih semua opsi untuk melanjutkan."
+                )}
+              </div>
+            </div>
+          )}
+
+          <div style={{ fontSize: 12, marginBottom: 20, color: "var(--text)" }}>
+            Subtotal:{" "}
+            <span style={{ fontWeight: 600 }}>{formatRupiah(pricing.subtotal)}</span>{" "}
+            <span style={{ color: "var(--text-muted)" }}>
+              ({effectiveQty} × {formatRupiah(pricing.unitPrice)})
+            </span>
+          </div>
+
+          <div style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", border: "1px solid var(--border)", background: "var(--bg)" }}>
+              <button
+                type="button"
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                style={{ width: 44, height: 44, background: "none", border: "none", color: "var(--text)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+              >
+                <Minus style={{ width: 14, height: 14 }} />
+              </button>
+              <input
+                type="number"
+                min={1}
+                max={activeStock || 1}
+                value={quantity}
+                onChange={(e) => {
+                  const v = Number(e.target.value);
+                  if (Number.isFinite(v)) {
+                    setQuantity(Math.max(1, Math.min(activeStock || 1, Math.floor(v))));
+                  }
+                }}
+                style={{ width: 44, height: 44, background: "none", border: "none", borderLeft: "1px solid var(--border)", borderRight: "1px solid var(--border)", textAlign: "center", color: "var(--text)", fontSize: 14, outline: "none", fontFamily: "var(--font-sans)" }}
+              />
+              <button
+                type="button"
+                onClick={() => setQuantity((q) => Math.min(activeStock || 1, q + 1))}
+                style={{ width: 44, height: 44, background: "none", border: "none", color: "var(--text)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+              >
+                <Plus style={{ width: 14, height: 14 }} />
+              </button>
+            </div>
+
+            <button
+              onClick={handleAdd}
+              disabled={!canAdd}
+              style={{
+                flex: 1, minWidth: 200, background: "var(--gold)", color: "var(--bg)",
+                border: "none", cursor: canAdd ? "pointer" : "not-allowed", padding: "0 24px", height: 44,
+                fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase",
+                fontFamily: "var(--font-sans)", fontWeight: 500,
+                transition: "background 0.2s", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                opacity: canAdd ? 1 : 0.5
+              }}
+              onMouseEnter={(e) => canAdd && (e.currentTarget.style.background = "var(--gold-light)")}
+              onMouseLeave={(e) => canAdd && (e.currentTarget.style.background = "var(--gold)")}
+            >
+              <ShoppingCart style={{ width: 16, height: 16 }} />
+              Add to Bag
+            </button>
+          </div>
+
+          <div
+            style={{
+              fontSize: 13, fontWeight: 500, transition: "opacity 0.3s",
+              color: "var(--gold)", height: 24, opacity: feedback ? 1 : 0
+            }}
+          >
+            {feedback}
+          </div>
+
+          <div style={{ marginTop: 24, fontSize: 12, color: "var(--text-dim)", lineHeight: 1.6, paddingTop: 24, borderTop: "1px solid var(--border)" }}>
+            Free shipping on orders over Rp 200.000 · 30-day returns · Complimentary case included
+          </div>
+
+          <div style={{ display: "flex", gap: 12, marginTop: 24 }}>
+            <a
+              href="https://shopee.co.id/juragangrosir"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px", border: "1px solid var(--border)", color: "var(--text-muted)", textDecoration: "none", fontSize: 13, transition: "all 0.2s" }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--gold)"; e.currentTarget.style.color = "var(--gold)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-muted)"; }}
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                <path d="M12 2C9.243 2 7 4.243 7 7h2c0-1.654 1.346-3 3-3s3 1.346 3 3h2c0-2.757-2.243-5-5-5zm-7.5 6A1.5 1.5 0 003 9.5v10A2.5 2.5 0 005.5 22h13a2.5 2.5 0 002.5-2.5v-10A1.5 1.5 0 0019.5 8h-15zM12 17c-2.21 0-4-1.79-4-4h1.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5H16c0 2.21-1.79 4-4 4z"/>
+              </svg>
+              Shopee
+            </a>
+            <a
+              href="https://www.tiktok.com/@juragangrosir"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px", border: "1px solid var(--border)", color: "var(--text-muted)", textDecoration: "none", fontSize: 13, transition: "all 0.2s" }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--gold)"; e.currentTarget.style.color = "var(--gold)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-muted)"; }}
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.46V13a8.28 8.28 0 005.58 2.17v-3.48a4.85 4.85 0 01-3.77-1.77V6.69h3.77z"/>
+              </svg>
+              TikTok
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ marginTop: 64, borderTop: "1px solid var(--border)", paddingTop: 64 }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontSize: 24, color: "var(--text)", marginBottom: 24 }}>Spesifikasi & Harga Grosir</h3>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 48 }} className="md:grid-cols-2">
+          
+          <div>
+            <h4 style={{ fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 16 }}>Harga Bertingkat</h4>
+            <div style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
+              <table style={{ width: "100%", fontSize: 13, color: "var(--text)" }}>
+                <thead style={{ background: "var(--bg2)", color: "var(--text-muted)", textAlign: "left" }}>
+                  <tr>
+                    <th style={{ padding: "12px 16px", fontWeight: 400 }}>Jumlah</th>
+                    <th style={{ padding: "12px 16px", fontWeight: 400, textAlign: "right" }}>Harga per pcs</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(() => {
+                    const firstTierMin = product.priceTiers[0]?.minQty;
+                    const retailRange =
+                      firstTierMin && firstTierMin > 1
+                        ? `1–${firstTierMin - 1} pcs`
+                        : firstTierMin === 1
+                          ? "Harga retail"
+                          : "1+ pcs";
+                    return (
+                      <tr style={{ borderTop: "1px solid var(--border)" }}>
+                        <td style={{ padding: "12px 16px" }}>{retailRange}</td>
+                        <td style={{ padding: "12px 16px", textAlign: "right", color: "var(--gold)" }}>
+                          {formatRupiah(product.retailPrice)}
+                        </td>
+                      </tr>
+                    );
+                  })()}
+                  {product.priceTiers.map((t) => (
+                    <tr key={t.minQty} style={{ borderTop: "1px solid var(--border)" }}>
+                      <td style={{ padding: "12px 16px" }}>
+                        {t.maxQty
+                          ? `${t.minQty}–${t.maxQty} pcs`
+                          : `${t.minQty}+ pcs`}
+                      </td>
+                      <td style={{ padding: "12px 16px", textAlign: "right", color: "var(--gold)" }}>
+                        {formatRupiah(t.unitPrice)}
                       </td>
                     </tr>
-                  );
-                })()}
-                {product.priceTiers.map((t) => (
-                  <tr key={t.minQty}>
-                    <td className="py-2.5 px-4">
-                      {t.maxQty
-                        ? `${t.minQty}–${t.maxQty} pcs`
-                        : `${t.minQty}+ pcs`}
-                    </td>
-                    <td className="py-2.5 px-4 text-right font-semibold text-[color:var(--color-navy-900)]">
-                      {formatRupiah(t.unitPrice)}
-                    </td>
-                  </tr>
-                ))}
-                {product.resellerPrice && (
-                  <tr className="bg-[color:var(--color-cloud-50)]">
-                    <td className="py-2.5 px-4">Harga reseller (disetujui)</td>
-                    <td className="py-2.5 px-4 text-right font-semibold text-[color:var(--color-navy-900)]">
-                      {formatRupiah(product.resellerPrice)}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-2 text-xs text-[color:var(--color-muted)]">
-            Harga grosir otomatis berlaku saat jumlah minimum tercapai.
-          </p>
-        </div>
-
-        <div className="mt-8 grid grid-cols-2 gap-4 text-sm">
-          {product.specs.map((s) => (
-            <div key={s.label}>
-              <dt className="text-[color:var(--color-muted)] text-xs">{s.label}</dt>
-              <dd className="font-semibold mt-0.5">{s.value}</dd>
+                  ))}
+                  {product.resellerPrice && (
+                    <tr style={{ borderTop: "1px solid var(--border)", background: "rgba(201,169,110,0.05)" }}>
+                      <td style={{ padding: "12px 16px" }}>Harga reseller</td>
+                      <td style={{ padding: "12px 16px", textAlign: "right", color: "var(--gold)" }}>
+                        {formatRupiah(product.resellerPrice)}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
-          ))}
-          <div>
-            <dt className="text-[color:var(--color-muted)] text-xs">Berat</dt>
-            <dd className="font-semibold mt-0.5">{product.weightGram} g</dd>
+            <p style={{ marginTop: 12, fontSize: 11, color: "var(--text-dim)" }}>
+              Harga grosir otomatis berlaku saat jumlah minimum tercapai.
+            </p>
           </div>
+
           <div>
-            <dt className="text-[color:var(--color-muted)] text-xs">Stok</dt>
-            <dd className="font-semibold mt-0.5">{product.stock} pcs tersedia</dd>
+            <h4 style={{ fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 16 }}>Detail Spesifikasi</h4>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 24, fontSize: 13 }}>
+              {product.specs.map((s) => (
+                <div key={s.label}>
+                  <div style={{ color: "var(--text-muted)", marginBottom: 4 }}>{s.label}</div>
+                  <div style={{ color: "var(--text)" }}>{s.value}</div>
+                </div>
+              ))}
+              <div>
+                <div style={{ color: "var(--text-muted)", marginBottom: 4 }}>Berat</div>
+                <div style={{ color: "var(--text)" }}>{product.weightGram} g</div>
+              </div>
+              <div>
+                <div style={{ color: "var(--text-muted)", marginBottom: 4 }}>Stok Tersedia</div>
+                <div style={{ color: "var(--text)" }}>{product.stock} pcs</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

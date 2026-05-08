@@ -3,6 +3,7 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { SessionProvider, type SessionUser } from "@/components/auth/SessionProvider";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { getCurrentUser } from "@/lib/supabase/server";
 
 // Storefront-only chrome: the public Header, Footer, and floating
@@ -33,13 +34,15 @@ export default async function StorefrontLayout({
   };
 
   return (
-    <SessionProvider initialUser={initialUser}>
-      <CartProvider>
-        <Header auth={auth} />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <WhatsAppFloat />
-      </CartProvider>
-    </SessionProvider>
+    <ThemeProvider>
+      <SessionProvider initialUser={initialUser}>
+        <CartProvider>
+          <Header auth={auth} />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <WhatsAppFloat />
+        </CartProvider>
+      </SessionProvider>
+    </ThemeProvider>
   );
 }
