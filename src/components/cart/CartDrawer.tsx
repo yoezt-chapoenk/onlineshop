@@ -7,7 +7,8 @@ import { formatRupiah } from "@/lib/format";
 import Link from "next/link";
 
 export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { items, updateQuantity, removeItem, isHydrated, subtotal } = useCart();
+  const { items, updateQuantity, removeItem, isHydrated } = useCart();
+  const subtotal = items.reduce((sum, item) => sum + item.retailPrice * item.quantity, 0);
 
   if (!isHydrated) return null;
 
