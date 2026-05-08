@@ -38,50 +38,52 @@ export default async function AccountOrdersPage() {
     orders = (data ?? []) as OrderRow[];
   }
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">{t.account.orders}</h1>
-      <div className="card overflow-hidden">
+    <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+      <h1 style={{ fontSize: 24, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)" }}>{t.account.orders}</h1>
+      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", overflow: "hidden" }}>
         {orders.length === 0 ? (
-          <div className="p-6 text-sm text-[color:var(--color-muted)]">
+          <div style={{ padding: 24, fontSize: 14, color: "var(--text-muted)" }}>
             {t.account.noOrdersYet}{" "}
-            <Link href="/shop" className="text-[color:var(--color-navy-900)] hover:underline">
+            <Link href="/shop" style={{ color: "var(--gold)", textDecoration: "none" }}>
               {t.account.startShopping}
             </Link>
           </div>
         ) : (
-          <table className="w-full">
-            <thead className="bg-[color:var(--color-cloud-100)] text-[color:var(--color-muted)] text-xs uppercase tracking-wider">
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead style={{ background: "var(--bg2)", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>
               <tr>
-                <th className="text-left font-medium py-3 px-5">{t.account.orderNumber}</th>
-                <th className="text-left font-medium py-3 px-5 hidden sm:table-cell">
+                <th style={{ textAlign: "left", fontWeight: 500, padding: "16px 20px" }}>{t.account.orderNumber}</th>
+                <th style={{ textAlign: "left", fontWeight: 500, padding: "16px 20px" }} className="hidden sm:table-cell">
                   {t.account.orderDate}
                 </th>
-                <th className="text-left font-medium py-3 px-5">{t.account.orderStatus}</th>
-                <th className="text-right font-medium py-3 px-5">{t.account.orderTotal}</th>
-                <th className="text-right font-medium py-3 px-5"></th>
+                <th style={{ textAlign: "left", fontWeight: 500, padding: "16px 20px" }}>{t.account.orderStatus}</th>
+                <th style={{ textAlign: "right", fontWeight: 500, padding: "16px 20px" }}>{t.account.orderTotal}</th>
+                <th style={{ textAlign: "right", fontWeight: 500, padding: "16px 20px" }}></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[color:var(--color-line)]">
+            <tbody>
               {orders.map((o) => (
-                <tr key={o.id}>
-                  <td className="py-3 px-5 text-sm font-semibold">{o.order_number}</td>
-                  <td className="py-3 px-5 text-sm hidden sm:table-cell">
+                <tr key={o.id} style={{ borderTop: "1px solid var(--border)" }}>
+                  <td style={{ padding: "16px 20px", fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{o.order_number}</td>
+                  <td style={{ padding: "16px 20px", fontSize: 14, color: "var(--text)" }} className="hidden sm:table-cell">
                     {new Date(o.created_at).toLocaleDateString("id-ID", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
                     })}
                   </td>
-                  <td className="py-3 px-5 text-sm">
+                  <td style={{ padding: "16px 20px", fontSize: 14, color: "var(--text-muted)" }}>
                     {STATUS_LABEL[o.status] ?? o.status}
                   </td>
-                  <td className="py-3 px-5 text-sm text-right font-bold">
+                  <td style={{ padding: "16px 20px", fontSize: 14, textAlign: "right", fontWeight: 600, color: "var(--text)" }}>
                     {formatRupiah(o.total)}
                   </td>
-                  <td className="py-3 px-5 text-right">
+                  <td style={{ padding: "16px 20px", textAlign: "right" }}>
                     <Link
                       href={`/account/orders/${o.id}`}
-                      className="text-xs text-[color:var(--color-navy-900)] hover:underline"
+                      style={{ fontSize: 12, color: "var(--gold)", textDecoration: "none" }}
+                      onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"}
+                      onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}
                     >
                       {t.account.viewOrder}
                     </Link>

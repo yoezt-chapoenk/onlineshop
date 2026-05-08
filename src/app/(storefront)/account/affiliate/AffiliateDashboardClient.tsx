@@ -39,7 +39,7 @@ export default function AffiliateDashboardClient({ profile, commissions, withdra
 
   async function handleWithdraw(e: React.FormEvent) {
     e.preventDefault();
-    const amount = parseInt(withdrawAmount.replace(/\\D/g, ""));
+    const amount = parseInt(withdrawAmount.replace(/\D/g, ""));
     if (!amount || amount < 50000) {
       setWithdrawError("Minimal penarikan adalah Rp 50.000");
       return;
@@ -72,75 +72,73 @@ export default function AffiliateDashboardClient({ profile, commissions, withdra
   }
 
   return (
-    <div className="space-y-8">
+    <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
       {!profile.affiliate_code ? (
-        <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-6">
-          <h2 className="text-lg font-bold mb-2">Mulai Program Affiliate</h2>
-          <p className="text-[color:var(--color-muted)] mb-4 text-sm">
+        <section style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 32, maxWidth: 600 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 400, color: "var(--text)", marginBottom: 8 }}>Mulai Program Affiliate</h2>
+          <p style={{ fontSize: 14, color: "var(--text-muted)", marginBottom: 24, lineHeight: 1.5 }}>
             Buat kode referral unik Anda. Sebarkan link Anda dan dapatkan komisi dari setiap pembeli yang berbelanja menggunakan link tersebut.
           </p>
-          <form onSubmit={handleGenerate} className="flex flex-col sm:flex-row gap-3 max-w-md">
+          <form onSubmit={handleGenerate} style={{ display: "flex", gap: 12 }}>
             <input
               type="text"
               placeholder="Contoh: AGENBUDI"
-              className="input flex-1 uppercase"
+              style={{ flex: 1, background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)", textTransform: "uppercase" }}
               value={code}
               onChange={e => setCode(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
               maxLength={15}
             />
-            <button type="submit" disabled={generating || !code} className="btn btn-primary whitespace-nowrap">
+            <button type="submit" disabled={generating || !code} className="btn btn-primary" style={{ whiteSpace: "nowrap" }}>
               {generating ? "Membuat..." : "Buat Kode"}
             </button>
           </form>
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          {error && <p style={{ color: "var(--error)", fontSize: 13, marginTop: 12 }}>{error}</p>}
         </section>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
           {/* Dashboard Stat */}
-          <section className="rounded-2xl bg-gradient-to-br from-[color:var(--color-navy-900)] to-blue-900 text-white p-6 relative overflow-hidden">
-            <h2 className="text-sm font-medium text-white/80 uppercase tracking-widest mb-1">Saldo Komisi Aktif</h2>
-            <div className="text-4xl font-bold mb-6">{formatRupiah(profile.balance)}</div>
+          <section style={{ background: "var(--gold)", color: "var(--bg)", padding: 32, position: "relative", overflow: "hidden" }}>
+            <h2 style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--bg)", opacity: 0.8, marginBottom: 8 }}>Saldo Komisi Aktif</h2>
+            <div style={{ fontSize: 32, fontWeight: 600, fontFamily: "var(--font-display)", marginBottom: 32 }}>{formatRupiah(profile.balance)}</div>
             
-            <div className="space-y-2 relative z-10">
-              <label className="text-xs text-white/70">Link Referral Anda</label>
-              <div className="flex gap-2">
+            <div style={{ position: "relative", zIndex: 10 }}>
+              <label style={{ fontSize: 12, color: "var(--bg)", opacity: 0.8, marginBottom: 8, display: "block" }}>Link Referral Anda</label>
+              <div style={{ display: "flex", gap: 8 }}>
                 <input 
                   readOnly 
                   value={affiliateLink} 
-                  className="bg-white/10 border border-white/20 text-white rounded-lg px-3 py-2 text-sm flex-1 outline-none truncate"
+                  style={{ flex: 1, background: "rgba(0,0,0,0.1)", border: "1px solid rgba(0,0,0,0.2)", color: "var(--bg)", padding: "8px 12px", outline: "none", fontSize: 13, fontFamily: "var(--font-sans)" }}
                 />
-                <button onClick={handleCopy} className="btn bg-white/20 hover:bg-white/30 text-white border-0 !px-3">
-                  {copied ? <CheckCircle2 className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                <button type="button" onClick={handleCopy} style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "8px 16px", background: "var(--bg)", color: "var(--text)", border: "none", cursor: "pointer", transition: "opacity 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"} onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}>
+                  {copied ? <CheckCircle2 style={{ width: 16, height: 16 }} /> : <Copy style={{ width: 16, height: 16 }} />}
                 </button>
               </div>
             </div>
-            
-            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-2xl pointer-events-none" />
           </section>
 
           {/* Withdraw Form */}
-          <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-6">
-            <h2 className="text-lg font-bold mb-4">Tarik Saldo</h2>
-            <form onSubmit={handleWithdraw} className="space-y-3">
+          <section style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 32 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 400, color: "var(--text)", marginBottom: 16 }}>Tarik Saldo</h2>
+            <form onSubmit={handleWithdraw} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <input
                 type="number"
                 placeholder="Nominal (Min. Rp 50.000)"
-                className="input text-sm"
+                style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
                 value={withdrawAmount}
                 onChange={e => setWithdrawAmount(e.target.value)}
               />
-              <div className="grid grid-cols-2 gap-3">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <input
                   type="text"
                   placeholder="Nama Bank (BCA, dll)"
-                  className="input text-sm"
+                  style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
                   value={bankName}
                   onChange={e => setBankName(e.target.value)}
                 />
                 <input
                   type="text"
                   placeholder="Atas Nama"
-                  className="input text-sm"
+                  style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
                   value={accountName}
                   onChange={e => setAccountName(e.target.value)}
                 />
@@ -148,15 +146,16 @@ export default function AffiliateDashboardClient({ profile, commissions, withdra
               <input
                 type="text"
                 placeholder="Nomor Rekening"
-                className="input text-sm"
+                style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
                 value={accountNumber}
-                onChange={e => setAccountNumber(e.target.value.replace(/\\D/g, ""))}
+                onChange={e => setAccountNumber(e.target.value.replace(/\D/g, ""))}
               />
-              {withdrawError && <p className="text-red-500 text-xs">{withdrawError}</p>}
+              {withdrawError && <p style={{ color: "var(--error)", fontSize: 13 }}>{withdrawError}</p>}
               <button 
                 type="submit" 
                 disabled={withdrawing || profile.balance < 50000} 
-                className="btn btn-primary w-full"
+                className="btn btn-primary"
+                style={{ width: "100%", marginTop: 8 }}
               >
                 {withdrawing ? "Memproses..." : "Ajukan Pencairan"}
               </button>
@@ -166,29 +165,29 @@ export default function AffiliateDashboardClient({ profile, commissions, withdra
       )}
 
       {profile.affiliate_code && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] overflow-hidden">
-            <div className="px-5 py-4 border-b border-[color:var(--color-line)]">
-              <h2 className="font-bold">Riwayat Komisi</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
+          <section style={{ background: "var(--surface)", border: "1px solid var(--border)", overflow: "hidden" }}>
+            <div style={{ padding: "16px 24px", borderBottom: "1px solid var(--border)" }}>
+              <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>Riwayat Komisi</h2>
             </div>
-            <div className="p-0">
+            <div>
               {commissions.length === 0 ? (
-                <p className="p-5 text-center text-sm text-[color:var(--color-muted)]">Belum ada komisi masuk.</p>
+                <p style={{ padding: 32, textAlign: "center", fontSize: 14, color: "var(--text-muted)" }}>Belum ada komisi masuk.</p>
               ) : (
-                <table className="w-full text-sm text-left">
-                  <thead className="bg-[color:var(--color-cloud-100)] text-xs uppercase text-[color:var(--color-muted)]">
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+                  <thead style={{ background: "var(--bg2)", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>
                     <tr>
-                      <th className="px-5 py-3 font-medium">Tanggal</th>
-                      <th className="px-5 py-3 font-medium">Order</th>
-                      <th className="px-5 py-3 font-medium text-right">Nominal</th>
+                      <th style={{ textAlign: "left", fontWeight: 500, padding: "12px 24px" }}>Tanggal</th>
+                      <th style={{ textAlign: "left", fontWeight: 500, padding: "12px 24px" }}>Order</th>
+                      <th style={{ textAlign: "right", fontWeight: 500, padding: "12px 24px" }}>Nominal</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[color:var(--color-line)]">
+                  <tbody>
                     {commissions.map((c, i) => (
-                      <tr key={i}>
-                        <td className="px-5 py-3">{formatDate(c.created_at)}</td>
-                        <td className="px-5 py-3 text-[color:var(--color-muted)]">#{c.orders?.order_number}</td>
-                        <td className="px-5 py-3 text-right font-medium text-[color:var(--color-success)]">
+                      <tr key={i} style={{ borderTop: "1px solid var(--border)" }}>
+                        <td style={{ padding: "12px 24px", color: "var(--text)" }}>{formatDate(c.created_at)}</td>
+                        <td style={{ padding: "12px 24px", color: "var(--text-muted)" }}>#{c.orders?.order_number}</td>
+                        <td style={{ padding: "12px 24px", textAlign: "right", fontWeight: 600, color: "var(--gold)" }}>
                           +{formatRupiah(c.amount)}
                         </td>
                       </tr>
@@ -199,36 +198,32 @@ export default function AffiliateDashboardClient({ profile, commissions, withdra
             </div>
           </section>
 
-          <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] overflow-hidden">
-            <div className="px-5 py-4 border-b border-[color:var(--color-line)]">
-              <h2 className="font-bold">Riwayat Penarikan</h2>
+          <section style={{ background: "var(--surface)", border: "1px solid var(--border)", overflow: "hidden" }}>
+            <div style={{ padding: "16px 24px", borderBottom: "1px solid var(--border)" }}>
+              <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>Riwayat Penarikan</h2>
             </div>
-            <div className="p-0">
+            <div>
               {withdrawals.length === 0 ? (
-                <p className="p-5 text-center text-sm text-[color:var(--color-muted)]">Belum ada riwayat penarikan.</p>
+                <p style={{ padding: 32, textAlign: "center", fontSize: 14, color: "var(--text-muted)" }}>Belum ada riwayat penarikan.</p>
               ) : (
-                <table className="w-full text-sm text-left">
-                  <thead className="bg-[color:var(--color-cloud-100)] text-xs uppercase text-[color:var(--color-muted)]">
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+                  <thead style={{ background: "var(--bg2)", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>
                     <tr>
-                      <th className="px-5 py-3 font-medium">Tanggal</th>
-                      <th className="px-5 py-3 font-medium">Status</th>
-                      <th className="px-5 py-3 font-medium text-right">Nominal</th>
+                      <th style={{ textAlign: "left", fontWeight: 500, padding: "12px 24px" }}>Tanggal</th>
+                      <th style={{ textAlign: "left", fontWeight: 500, padding: "12px 24px" }}>Status</th>
+                      <th style={{ textAlign: "right", fontWeight: 500, padding: "12px 24px" }}>Nominal</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[color:var(--color-line)]">
+                  <tbody>
                     {withdrawals.map((w, i) => (
-                      <tr key={i}>
-                        <td className="px-5 py-3">{formatDate(w.created_at)}</td>
-                        <td className="px-5 py-3">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider ${
-                            w.status === "completed" ? "bg-green-100 text-green-800" :
-                            w.status === "rejected" ? "bg-red-100 text-red-800" :
-                            "bg-yellow-100 text-yellow-800"
-                          }`}>
+                      <tr key={i} style={{ borderTop: "1px solid var(--border)" }}>
+                        <td style={{ padding: "12px 24px", color: "var(--text)" }}>{formatDate(w.created_at)}</td>
+                        <td style={{ padding: "12px 24px" }}>
+                          <span style={{ display: "inline-block", fontSize: 10, textTransform: "uppercase", fontWeight: 600, padding: "2px 6px", background: w.status === "completed" ? "rgba(52, 168, 83, 0.1)" : w.status === "rejected" ? "rgba(255, 59, 48, 0.1)" : "rgba(201, 169, 110, 0.1)", color: w.status === "completed" ? "#34a853" : w.status === "rejected" ? "var(--error)" : "var(--gold)" }}>
                             {w.status}
                           </span>
                         </td>
-                        <td className="px-5 py-3 text-right font-medium text-red-600">
+                        <td style={{ padding: "12px 24px", textAlign: "right", fontWeight: 600, color: "var(--error)" }}>
                           -{formatRupiah(w.amount)}
                         </td>
                       </tr>

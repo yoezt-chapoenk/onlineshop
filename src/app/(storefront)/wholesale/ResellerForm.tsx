@@ -72,14 +72,14 @@ export default function ResellerForm() {
 
   if (submitted) {
     return (
-      <div className="card p-7">
-        <div className="flex items-start gap-4">
-          <div className="h-11 w-11 rounded-full bg-[color:var(--color-success)]/10 text-[color:var(--color-success)] flex items-center justify-center shrink-0">
-            <CheckCircle2 className="h-5 w-5" />
+      <div style={{ background: "var(--surface)", border: "1px solid var(--gold)", padding: 32 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
+          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(52, 168, 83, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--success)", flexShrink: 0 }}>
+            <CheckCircle2 style={{ width: 24, height: 24 }} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold">Aplikasi terkirim</h3>
-            <p className="mt-2 text-sm text-[color:var(--color-muted)] leading-relaxed">
+            <h3 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)" }}>Aplikasi terkirim</h3>
+            <p style={{ marginTop: 8, fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6 }}>
               Terima kasih sudah mendaftar! Tim kami akan meninjau aplikasi
               Anda dalam 1–2 hari kerja. Kami akan menghubungi via WhatsApp
               atau email saat akun reseller Anda siap.
@@ -87,7 +87,8 @@ export default function ResellerForm() {
             <button
               type="button"
               onClick={() => setSubmitted(false)}
-              className="btn btn-ghost mt-5 !px-3 !py-2 text-sm"
+              className="btn btn-outline"
+              style={{ marginTop: 24, padding: "8px 16px", fontSize: 14 }}
             >
               Kirim aplikasi lain
             </button>
@@ -100,49 +101,51 @@ export default function ResellerForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="card p-7"
+      style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 32 }}
       aria-label="Form aplikasi reseller"
     >
-      <h2 className="text-xl font-bold tracking-tight">Jadi Reseller</h2>
-      <p className="mt-1.5 text-sm text-[color:var(--color-muted)]">
+      <h2 style={{ fontSize: 24, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)" }}>Jadi Reseller</h2>
+      <p style={{ marginTop: 8, fontSize: 14, color: "var(--text-muted)" }}>
         Reseller yang disetujui mendapat harga eksklusif di seluruh katalog.
       </p>
 
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="sm:col-span-2">
-          <label className="label" htmlFor="full_name">Nama lengkap</label>
-          <input id="full_name" name="full_name" required className="input" placeholder="Nama lengkap Anda" />
+      <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <div style={{ gridColumn: "1 / -1" }}>
+          <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }} htmlFor="full_name">Nama lengkap</label>
+          <input id="full_name" name="full_name" required style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }} placeholder="Nama lengkap Anda" />
         </div>
         <div>
-          <label className="label" htmlFor="phone">Nomor WhatsApp</label>
-          <input id="phone" name="phone" required type="tel" className="input" placeholder="08…" />
+          <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }} htmlFor="phone">Nomor WhatsApp</label>
+          <input id="phone" name="phone" required type="tel" style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }} placeholder="08…" />
         </div>
         <div>
-          <label className="label" htmlFor="email">Email</label>
-          <input id="email" name="email" required type="email" className="input" placeholder="anda@email.com" />
+          <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }} htmlFor="email">Email</label>
+          <input id="email" name="email" required type="email" style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }} placeholder="anda@email.com" />
         </div>
         <div>
-          <label className="label" htmlFor="city">Kota</label>
-          <input id="city" name="city" required className="input" placeholder="contoh: Bandung" />
+          <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }} htmlFor="city">Kota</label>
+          <input id="city" name="city" required style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }} placeholder="contoh: Bandung" />
         </div>
         <div>
-          <label className="label" htmlFor="business_name">Nama bisnis (opsional)</label>
-          <input id="business_name" name="business_name" className="input" placeholder="Toko Optik Bahagia" />
+          <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }} htmlFor="business_name">Nama bisnis (opsional)</label>
+          <input id="business_name" name="business_name" style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }} placeholder="Toko Optik Bahagia" />
         </div>
 
-        <div className="sm:col-span-2">
-          <label className="label">Kanal jualan</label>
-          <div className="flex flex-wrap gap-2">
+        <div style={{ gridColumn: "1 / -1" }}>
+          <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>Kanal jualan</label>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             {CHANNELS.map((c) => (
               <label
                 key={c}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border border-[color:var(--color-line)] bg-white hover:border-[color:var(--color-navy-900)] cursor-pointer"
+                style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 12px", border: "1px solid var(--border)", background: "var(--bg2)", fontSize: 13, cursor: "pointer", transition: "border 0.2s" }}
+                onMouseEnter={(e) => e.currentTarget.style.borderColor = "var(--gold)"}
+                onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--border)"}
               >
                 <input
                   type="checkbox"
                   name="selling_channel"
                   value={c}
-                  className="h-3.5 w-3.5 accent-[color:var(--color-navy-900)]"
+                  style={{ width: 14, height: 14, accentColor: "var(--gold)" }}
                 />
                 {c}
               </label>
@@ -150,9 +153,9 @@ export default function ResellerForm() {
           </div>
         </div>
 
-        <div className="sm:col-span-2">
-          <label className="label" htmlFor="volume">Estimasi pemesanan bulanan</label>
-          <select id="volume" name="estimated_monthly_order" required className="input">
+        <div style={{ gridColumn: "1 / -1" }}>
+          <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }} htmlFor="volume">Estimasi pemesanan bulanan</label>
+          <select id="volume" name="estimated_monthly_order" required style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}>
             <option value="">Pilih salah satu…</option>
             {VOLUMES.map((v) => (
               <option key={v} value={v}>
@@ -162,12 +165,12 @@ export default function ResellerForm() {
           </select>
         </div>
 
-        <div className="sm:col-span-2">
-          <label className="label" htmlFor="notes">Catatan (opsional)</label>
+        <div style={{ gridColumn: "1 / -1" }}>
+          <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }} htmlFor="notes">Catatan (opsional)</label>
           <textarea
             id="notes"
             name="notes"
-            className="input min-h-[100px] resize-y"
+            style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)", minHeight: 100, resize: "vertical" }}
             placeholder="Ceritakan tentang bisnis Anda atau produk yang ingin Anda jual."
           />
         </div>
@@ -176,7 +179,7 @@ export default function ResellerForm() {
       {error && (
         <p
           role="alert"
-          className="mt-4 text-sm text-[color:var(--color-error)]"
+          style={{ marginTop: 16, fontSize: 14, color: "var(--error)" }}
         >
           {error}
         </p>
@@ -184,11 +187,12 @@ export default function ResellerForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="btn btn-primary w-full mt-6"
+        className="btn btn-primary"
+        style={{ width: "100%", marginTop: 32 }}
       >
         {submitting ? "Mengirim\u2026" : "Kirim aplikasi"}
       </button>
-      <p className="mt-3 text-xs text-[color:var(--color-muted)] text-center">
+      <p style={{ marginTop: 16, fontSize: 12, color: "var(--text-muted)", textAlign: "center" }}>
         Dengan mengirim form ini, Anda setuju untuk dihubungi terkait aplikasi.
       </p>
     </form>

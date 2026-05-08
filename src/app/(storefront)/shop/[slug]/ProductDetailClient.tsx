@@ -414,90 +414,87 @@ export default function ProductDetailClient({ product }: Props) {
             </a>
           </div>
         </div>
-      </div>
-
-      <div style={{ marginTop: 64, borderTop: "1px solid var(--border)", paddingTop: 64 }}>
-        <h3 style={{ fontFamily: "var(--font-display)", fontSize: 24, color: "var(--text)", marginBottom: 24 }}>Spesifikasi & Harga Grosir</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 48 }} className="md:grid-cols-2">
-          
+        <div style={{ marginTop: 48, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48 }}>
+          {/* Tier table */}
           <div>
-            <h4 style={{ fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 16 }}>Harga Bertingkat</h4>
-            <div style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
-              <table style={{ width: "100%", fontSize: 13, color: "var(--text)" }}>
-                <thead style={{ background: "var(--bg2)", color: "var(--text-muted)", textAlign: "left" }}>
-                  <tr>
-                    <th style={{ padding: "12px 16px", fontWeight: 400 }}>Jumlah</th>
-                    <th style={{ padding: "12px 16px", fontWeight: 400, textAlign: "right" }}>Harga per pcs</th>
+            <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12, color: "var(--text)" }}>Harga grosir bertingkat</h3>
+            <div style={{ border: "1px solid var(--border)", background: "var(--surface)", borderRadius: 8, overflow: "hidden" }}>
+            <table style={{ width: "100%", fontSize: 13, color: "var(--text)" }}>
+              <thead style={{ background: "var(--bg2)", color: "var(--text-muted)", textAlign: "left" }}>
+                <tr>
+                  <th style={{ padding: "12px 16px", fontWeight: 500 }}>Jumlah</th>
+                  <th style={{ padding: "12px 16px", fontWeight: 500, textAlign: "right" }}>Harga per pcs</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(() => {
+                  const firstTierMin = product.priceTiers[0]?.minQty;
+                  const retailRange =
+                    firstTierMin && firstTierMin > 1
+                      ? `1–${firstTierMin - 1} pcs`
+                      : firstTierMin === 1
+                        ? "Harga retail"
+                        : "1+ pcs";
+                  return (
+                    <tr style={{ borderTop: "1px solid var(--border)" }}>
+                      <td style={{ padding: "12px 16px" }}>{retailRange}</td>
+                      <td style={{ padding: "12px 16px", textAlign: "right", color: "var(--gold)", fontWeight: 600 }}>
+                        {formatRupiah(product.retailPrice)}
+                      </td>
+                    </tr>
+                  );
+                })()}
+                {product.priceTiers.map((t) => (
+                  <tr key={t.minQty} style={{ borderTop: "1px solid var(--border)" }}>
+                    <td style={{ padding: "12px 16px" }}>
+                      {t.maxQty
+                        ? `${t.minQty}–${t.maxQty} pcs`
+                        : `${t.minQty}+ pcs`}
+                    </td>
+                    <td style={{ padding: "12px 16px", textAlign: "right", color: "var(--gold)", fontWeight: 600 }}>
+                      {formatRupiah(t.unitPrice)}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {(() => {
-                    const firstTierMin = product.priceTiers[0]?.minQty;
-                    const retailRange =
-                      firstTierMin && firstTierMin > 1
-                        ? `1–${firstTierMin - 1} pcs`
-                        : firstTierMin === 1
-                          ? "Harga retail"
-                          : "1+ pcs";
-                    return (
-                      <tr style={{ borderTop: "1px solid var(--border)" }}>
-                        <td style={{ padding: "12px 16px" }}>{retailRange}</td>
-                        <td style={{ padding: "12px 16px", textAlign: "right", color: "var(--gold)" }}>
-                          {formatRupiah(product.retailPrice)}
-                        </td>
-                      </tr>
-                    );
-                  })()}
-                  {product.priceTiers.map((t) => (
-                    <tr key={t.minQty} style={{ borderTop: "1px solid var(--border)" }}>
-                      <td style={{ padding: "12px 16px" }}>
-                        {t.maxQty
-                          ? `${t.minQty}–${t.maxQty} pcs`
-                          : `${t.minQty}+ pcs`}
-                      </td>
-                      <td style={{ padding: "12px 16px", textAlign: "right", color: "var(--gold)" }}>
-                        {formatRupiah(t.unitPrice)}
-                      </td>
-                    </tr>
-                  ))}
-                  {product.resellerPrice && (
-                    <tr style={{ borderTop: "1px solid var(--border)", background: "rgba(201,169,110,0.05)" }}>
-                      <td style={{ padding: "12px 16px" }}>Harga reseller</td>
-                      <td style={{ padding: "12px 16px", textAlign: "right", color: "var(--gold)" }}>
-                        {formatRupiah(product.resellerPrice)}
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                ))}
+                {product.resellerPrice && (
+                  <tr style={{ borderTop: "1px solid var(--border)", background: "rgba(201,169,110,0.05)" }}>
+                    <td style={{ padding: "12px 16px" }}>Harga reseller</td>
+                    <td style={{ padding: "12px 16px", textAlign: "right", color: "var(--gold)", fontWeight: 600 }}>
+                      {formatRupiah(product.resellerPrice)}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
             <p style={{ marginTop: 12, fontSize: 11, color: "var(--text-dim)" }}>
               Harga grosir otomatis berlaku saat jumlah minimum tercapai.
             </p>
           </div>
 
           <div>
-            <h4 style={{ fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 16 }}>Detail Spesifikasi</h4>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 24, fontSize: 13 }}>
-              {product.specs.map((s) => (
-                <div key={s.label}>
-                  <div style={{ color: "var(--text-muted)", marginBottom: 4 }}>{s.label}</div>
-                  <div style={{ color: "var(--text)" }}>{s.value}</div>
-                </div>
-              ))}
-              <div>
-                <div style={{ color: "var(--text-muted)", marginBottom: 4 }}>Berat</div>
-                <div style={{ color: "var(--text)" }}>{product.weightGram} g</div>
-              </div>
-              <div>
-                <div style={{ color: "var(--text-muted)", marginBottom: 4 }}>Stok Tersedia</div>
-                <div style={{ color: "var(--text)" }}>{product.stock} pcs</div>
-              </div>
+            <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12, color: "var(--text)" }}>Detail Spesifikasi</h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, fontSize: 13 }}>
+          {product.specs.map((s) => (
+            <div key={s.label}>
+              <dt style={{ color: "var(--text-muted)", fontSize: 12, marginBottom: 4 }}>{s.label}</dt>
+              <dd style={{ color: "var(--text)", fontWeight: 500 }}>{s.value}</dd>
             </div>
+          ))}
+          <div>
+            <dt style={{ color: "var(--text-muted)", fontSize: 12, marginBottom: 4 }}>Berat</dt>
+            <dd style={{ color: "var(--text)", fontWeight: 500 }}>{product.weightGram} g</dd>
+          </div>
+          <div>
+            <dt style={{ color: "var(--text-muted)", fontSize: 12, marginBottom: 4 }}>Stok Tersedia</dt>
+            <dd style={{ color: "var(--text)", fontWeight: 500 }}>{product.stock} pcs</dd>
           </div>
         </div>
       </div>
     </div>
+
+  </div>
+</div>
   );
 }
 

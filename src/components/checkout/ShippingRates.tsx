@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { Truck, Loader2 } from "lucide-react";
-import clsx from "clsx";
 import { formatRupiah } from "@/lib/format";
 
 export interface ShippingRate {
@@ -116,7 +115,7 @@ export default function ShippingRates({
 
   if (!postalCode) {
     return (
-      <div className="text-sm text-[color:var(--color-muted)] italic py-4">
+      <div style={{ fontSize: 14, color: "var(--text-muted)", fontStyle: "italic", padding: "16px 0" }}>
         Pilih kota / kecamatan tujuan untuk melihat tarif pengiriman.
       </div>
     );
@@ -124,8 +123,8 @@ export default function ShippingRates({
 
   if (loading) {
     return (
-      <div className="flex items-center gap-3 py-6 text-sm text-[color:var(--color-muted)]">
-        <Loader2 className="h-5 w-5 animate-spin" />
+      <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "24px 0", fontSize: 14, color: "var(--text-muted)" }}>
+        <Loader2 style={{ width: 20, height: 20 }} className="animate-spin" />
         <span>Memuat tarif kurir…</span>
       </div>
     );
@@ -133,12 +132,13 @@ export default function ShippingRates({
 
   if (error) {
     return (
-      <div className="space-y-2">
-        <p className="text-sm text-[color:var(--color-error)]">{error}</p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <p style={{ fontSize: 14, color: "var(--error)" }}>{error}</p>
         <button
           type="button"
           onClick={fetchRates}
-          className="btn btn-outline text-xs py-1.5 px-3"
+          className="btn btn-outline"
+          style={{ padding: "8px 16px", fontSize: 12, alignSelf: "flex-start" }}
         >
           Coba lagi
         </button>
@@ -148,26 +148,33 @@ export default function ShippingRates({
 
   if (fetched && rates.length === 0) {
     return (
-      <div className="text-sm text-[color:var(--color-muted)] italic py-4">
+      <div style={{ fontSize: 14, color: "var(--text-muted)", fontStyle: "italic", padding: "16px 0" }}>
         Tidak ada kurir yang tersedia untuk tujuan ini.
       </div>
     );
   }
 
   return (
-    <ul className="space-y-2.5">
+    <ul style={{ display: "flex", flexDirection: "column", gap: 10, listStyle: "none", padding: 0 }}>
       {rates.map((rate) => {
         const id = rateId(rate);
         const selected = selectedId === id;
         return (
           <li key={id}>
             <label
-              className={clsx(
-                "flex items-center gap-3 rounded-xl border p-4 cursor-pointer transition-colors",
-                selected
-                  ? "border-[color:var(--color-navy-900)] bg-[color:var(--color-navy-900)]/[0.03]"
-                  : "border-[color:var(--color-line)] hover:border-[color:var(--color-navy-300)]",
-              )}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                border: "1px solid",
+                borderColor: selected ? "var(--gold)" : "var(--border)",
+                background: selected ? "var(--bg2)" : "transparent",
+                padding: 16,
+                cursor: "pointer",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={(e) => { if (!selected) e.currentTarget.style.borderColor = "var(--text-muted)"; }}
+              onMouseLeave={(e) => { if (!selected) e.currentTarget.style.borderColor = "var(--border)"; }}
             >
               <input
                 type="radio"
@@ -176,19 +183,19 @@ export default function ShippingRates({
                 checked={selected}
                 disabled={disabled}
                 onChange={() => onSelect(rate)}
-                className="h-4 w-4 accent-[color:var(--color-navy-900)]"
+                style={{ width: 16, height: 16, accentColor: "var(--gold)" }}
               />
-              <Truck className="h-4 w-4 shrink-0 text-[color:var(--color-navy-600)]" />
-              <div className="flex-1">
-                <div className="text-sm font-semibold">
+              <Truck style={{ width: 16, height: 16, flexShrink: 0, color: selected ? "var(--gold)" : "var(--text-muted)" }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>
                   {formatCourierName(rate.courierName)} ·{" "}
                   {rate.courierServiceName}
                 </div>
-                <div className="text-xs text-[color:var(--color-muted)]">
+                <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>
                   Estimasi {rate.duration}
                 </div>
               </div>
-              <div className="text-sm font-bold text-[color:var(--color-navy-900)]">
+              <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>
                 {formatRupiah(rate.price)}
               </div>
             </label>

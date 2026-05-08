@@ -8,72 +8,66 @@ export const metadata = {
 
 export default function AffiliateLandingPage() {
   return (
-    <div className="pb-24">
+    <div style={{ display: "flex", flexDirection: "column" }}>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[color:var(--color-navy-900)] to-blue-900 text-white py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <div className="mx-auto max-w-4xl text-center relative z-10">
-          <span className="text-sm font-semibold uppercase tracking-[0.15em] text-white/70 mb-4 block">
+      <section style={{ position: "relative", overflow: "hidden", background: "var(--bg2)", borderBottom: "1px solid var(--border)", padding: "100px 24px", textAlign: "center" }}>
+        <div style={{ position: "relative", zIndex: 10, maxWidth: 800, margin: "0 auto" }}>
+          <span style={{ display: "block", fontSize: 12, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", marginBottom: 16 }}>
             Program Kemitraan
           </span>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6">
-            Rekomendasikan Produk, <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-white">
+          <h1 style={{ fontSize: "clamp(32px, 5vw, 64px)", fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)", lineHeight: 1.1, marginBottom: 24 }}>
+            Rekomendasikan Produk, <br style={{ display: "none" }} className="sm:block" />
+            <span style={{ color: "var(--gold)" }}>
               Dapatkan Komisi Tunai
             </span>
           </h1>
-          <p className="text-lg sm:text-xl text-white/80 max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p style={{ fontSize: "clamp(16px, 2vw, 20px)", color: "var(--text-muted)", maxWidth: 640, margin: "0 auto 40px auto", lineHeight: 1.6 }}>
             Bergabunglah dengan Program Affiliate Juragan Grosir. Sebarkan link Anda, dan raih komisi dari setiap pembeli yang berbelanja melalui link Anda.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/account/affiliate" className="btn !bg-white !text-[color:var(--color-navy-900)] !px-8 !py-4 !text-base font-bold shadow-lg hover:-translate-y-0.5 transition-transform">
-              Daftar Sekarang <ArrowRight className="w-5 h-5" />
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 16 }}>
+            <Link href="/account/affiliate" className="btn btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "16px 32px", fontSize: 16 }}>
+              Daftar Sekarang <ArrowRight style={{ width: 20, height: 20 }} />
             </Link>
           </div>
-        </div>
-        
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-white/5 blur-3xl" />
-          <div className="absolute top-[60%] -right-[10%] w-[40%] h-[60%] rounded-full bg-blue-500/10 blur-3xl" />
         </div>
       </section>
 
       {/* How it Works */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight mb-4">Bagaimana Cara Kerjanya?</h2>
-          <p className="text-[color:var(--color-muted)] max-w-2xl mx-auto">
+      <section style={{ padding: "80px 24px", maxWidth: 1200, margin: "0 auto", width: "100%" }}>
+        <div style={{ textAlign: "center", marginBottom: 64 }}>
+          <h2 style={{ fontSize: 32, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: 16 }}>Bagaimana Cara Kerjanya?</h2>
+          <p style={{ fontSize: 16, color: "var(--text-muted)", maxWidth: 600, margin: "0 auto" }}>
             Hanya butuh 3 langkah mudah untuk mulai menghasilkan uang bersama kami.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-16">
-          <div className="text-center">
-            <div className="w-16 h-16 mx-auto bg-[color:var(--color-blue-50)] text-[color:var(--color-navy-700)] rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-[color:var(--color-blue-100)]">
-              <Users className="w-8 h-8" />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 40 }}>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ width: 64, height: 64, margin: "0 auto 24px auto", background: "var(--surface)", border: "1px solid var(--gold)", color: "var(--gold)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Users style={{ width: 28, height: 28 }} />
             </div>
-            <h3 className="text-xl font-bold mb-3">1. Mendaftar & Buat Link</h3>
-            <p className="text-[color:var(--color-muted)]">
+            <h3 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 12 }}>1. Mendaftar & Buat Link</h3>
+            <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6 }}>
               Masuk ke akun Anda dan buat Kode Affiliate unik Anda. Sistem kami akan secara otomatis menghasilkan Link Referral khusus untuk Anda.
             </p>
           </div>
           
-          <div className="text-center">
-            <div className="w-16 h-16 mx-auto bg-[color:var(--color-blue-50)] text-[color:var(--color-navy-700)] rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-[color:var(--color-blue-100)]">
-              <Share2 className="w-8 h-8" />
+          <div style={{ textAlign: "center" }}>
+            <div style={{ width: 64, height: 64, margin: "0 auto 24px auto", background: "var(--surface)", border: "1px solid var(--gold)", color: "var(--gold)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Share2 style={{ width: 28, height: 28 }} />
             </div>
-            <h3 className="text-xl font-bold mb-3">2. Promosikan Link</h3>
-            <p className="text-[color:var(--color-muted)]">
+            <h3 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 12 }}>2. Promosikan Link</h3>
+            <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6 }}>
               Sebarkan link tersebut ke WhatsApp, Instagram, TikTok, atau blog Anda. Rekomendasikan kacamata berkualitas kami ke jaringan Anda.
             </p>
           </div>
 
-          <div className="text-center">
-            <div className="w-16 h-16 mx-auto bg-[color:var(--color-blue-50)] text-[color:var(--color-navy-700)] rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-[color:var(--color-blue-100)]">
-              <Wallet className="w-8 h-8" />
+          <div style={{ textAlign: "center" }}>
+            <div style={{ width: 64, height: 64, margin: "0 auto 24px auto", background: "var(--surface)", border: "1px solid var(--gold)", color: "var(--gold)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Wallet style={{ width: 28, height: 28 }} />
             </div>
-            <h3 className="text-xl font-bold mb-3">3. Dapatkan Komisi</h3>
-            <p className="text-[color:var(--color-muted)]">
+            <h3 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 12 }}>3. Dapatkan Komisi</h3>
+            <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6 }}>
               Ketika ada yang mengeklik link Anda dan melakukan pembelian dalam 30 hari, komisi akan otomatis masuk ke saldo Anda.
             </p>
           </div>
@@ -81,28 +75,28 @@ export default function AffiliateLandingPage() {
       </section>
 
       {/* Benefits */}
-      <section className="bg-[color:var(--color-cloud-100)] py-20 px-4 sm:px-6 lg:px-8 border-y border-[color:var(--color-line)]">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold tracking-tight mb-10 text-center">Keuntungan Menjadi Affiliate</h2>
+      <section style={{ background: "var(--bg2)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", padding: "80px 24px" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+          <h2 style={{ fontSize: 32, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: 48, textAlign: "center" }}>Keuntungan Menjadi Affiliate</h2>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-2xl border border-[color:var(--color-cloud-200)] shadow-sm flex gap-4">
-              <div className="shrink-0 mt-1 text-green-600">
-                <Banknote className="w-6 h-6" />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
+            <div style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 24, display: "flex", alignItems: "flex-start", gap: 16 }}>
+              <div style={{ color: "var(--success)", flexShrink: 0 }}>
+                <Banknote style={{ width: 24, height: 24 }} />
               </div>
               <div>
-                <h4 className="font-bold text-lg mb-1">Pencairan Dana Fleksibel</h4>
-                <p className="text-sm text-[color:var(--color-muted)]">Tarik saldo Anda kapan saja ke rekening bank lokal pilihan Anda dengan minimal penarikan Rp 50.000.</p>
+                <h4 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>Pencairan Dana Fleksibel</h4>
+                <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.5 }}>Tarik saldo Anda kapan saja ke rekening bank lokal pilihan Anda dengan minimal penarikan Rp 50.000.</p>
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-2xl border border-[color:var(--color-cloud-200)] shadow-sm flex gap-4">
-              <div className="shrink-0 mt-1 text-blue-600">
-                <Share2 className="w-6 h-6" />
+            <div style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 24, display: "flex", alignItems: "flex-start", gap: 16 }}>
+              <div style={{ color: "var(--gold)", flexShrink: 0 }}>
+                <Share2 style={{ width: 24, height: 24 }} />
               </div>
               <div>
-                <h4 className="font-bold text-lg mb-1">Cookies Tahan 30 Hari</h4>
-                <p className="text-sm text-[color:var(--color-muted)]">Pembeli tidak harus langsung belanja hari itu. Selama mereka belanja dalam 30 hari sejak klik, komisi tetap milik Anda.</p>
+                <h4 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>Cookies Tahan 30 Hari</h4>
+                <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.5 }}>Pembeli tidak harus langsung belanja hari itu. Selama mereka belanja dalam 30 hari sejak klik, komisi tetap milik Anda.</p>
               </div>
             </div>
           </div>
@@ -110,12 +104,12 @@ export default function AffiliateLandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 text-center max-w-3xl mx-auto">
-        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-6">Siap untuk mulai menghasilkan?</h2>
-        <p className="text-[color:var(--color-muted)] mb-10">
+      <section style={{ padding: "100px 24px", textAlign: "center", maxWidth: 800, margin: "0 auto" }}>
+        <h2 style={{ fontSize: "clamp(28px, 4vw, 36px)", fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: 24 }}>Siap untuk mulai menghasilkan?</h2>
+        <p style={{ fontSize: 16, color: "var(--text-muted)", marginBottom: 40, lineHeight: 1.6 }}>
           Gabung sekarang, tanpa biaya pendaftaran (100% Gratis). Mulai promosikan produk terlaris kami dan nikmati keuntungannya.
         </p>
-        <Link href="/account/affiliate" className="btn btn-primary !px-8 !py-4 !text-base shadow-lg">
+        <Link href="/account/affiliate" className="btn btn-primary" style={{ display: "inline-flex", padding: "16px 32px", fontSize: 16 }}>
           Mulai Jadi Affiliate
         </Link>
       </section>

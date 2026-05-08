@@ -26,30 +26,30 @@ const TESTIMONIALS = [
 
 export default function Testimonials() {
   return (
-    <section>
-      <div className="text-center max-w-2xl mx-auto">
-        <span className="eyebrow">Dipercaya 10.000+ pelanggan</span>
-        <h2 className="mt-4 text-2xl sm:text-3xl font-bold tracking-tight">
+    <section style={{ padding: "80px 24px", maxWidth: 1200, margin: "0 auto" }}>
+      <div style={{ textAlign: "center", marginBottom: 64 }}>
+        <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", display: "block", marginBottom: 16 }}>Dipercaya 10.000+ pelanggan</span>
+        <h2 style={{ fontSize: 32, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)" }}>
           Cerita nyata dari pelanggan kami
         </h2>
       </div>
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
         {TESTIMONIALS.map((t) => (
           <figure
             key={t.name}
-            className="card p-6 flex flex-col gap-4"
+            style={{ display: "flex", flexDirection: "column", gap: 24, background: "var(--surface)", border: "1px solid var(--border)", padding: 32, margin: 0 }}
           >
-            <div className="flex gap-1 text-[color:var(--color-navy-900)]">
+            <div style={{ display: "flex", gap: 4, color: "var(--gold)" }}>
               {Array.from({ length: t.rating }).map((_, i) => (
-                <Star key={i} className="h-4 w-4 fill-current" />
+                <Star key={i} style={{ width: 16, height: 16, fill: "currentColor" }} />
               ))}
             </div>
-            <blockquote className="text-sm leading-relaxed text-[color:var(--color-ink)]">
+            <blockquote style={{ fontSize: 15, lineHeight: 1.7, color: "var(--text-muted)", margin: 0 }}>
               “{t.quote}”
             </blockquote>
-            <figcaption className="mt-auto">
-              <div className="text-sm font-semibold">{t.name}</div>
-              <div className="text-xs text-[color:var(--color-muted)]">{t.role}</div>
+            <figcaption style={{ marginTop: "auto" }}>
+              <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>{t.name}</div>
+              <div style={{ fontSize: 13, color: "var(--text-dim)" }}>{t.role}</div>
             </figcaption>
           </figure>
         ))}

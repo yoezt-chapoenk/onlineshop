@@ -34,7 +34,7 @@ const PERKS = [
 
 export default function WholesalePage() {
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <PageHeader
         eyebrow="Grosir & Reseller"
         title="Kembangkan bisnis kacamata Anda bersama kami."
@@ -42,21 +42,21 @@ export default function WholesalePage() {
         breadcrumbs={[{ label: "Grosir" }]}
       />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-1 lg:grid-cols-[1fr_minmax(0,460px)] gap-10 lg:gap-14">
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "64px 24px", display: "grid", gridTemplateColumns: "1fr minmax(0, 460px)", gap: 48, width: "100%" }}>
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Kenapa bermitra dengan kami</h2>
-          <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <h2 style={{ fontSize: 24, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)" }}>Kenapa bermitra dengan kami</h2>
+          <ul style={{ marginTop: 24, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16, listStyle: "none", padding: 0 }}>
             {PERKS.map(({ icon: Icon, title, desc }) => (
               <li
                 key={title}
-                className="card p-5 flex items-start gap-4"
+                style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 24, display: "flex", alignItems: "flex-start", gap: 16 }}
               >
-                <div className="h-11 w-11 rounded-xl bg-[color:var(--color-cloud-100)] flex items-center justify-center text-[color:var(--color-navy-900)] shrink-0">
-                  <Icon className="h-5 w-5" />
+                <div style={{ width: 48, height: 48, borderRadius: 0, border: "1px solid var(--gold)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--gold)", flexShrink: 0 }}>
+                  <Icon style={{ width: 20, height: 20 }} />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold">{title}</div>
-                  <p className="text-xs text-[color:var(--color-muted)] mt-1 leading-relaxed">
+                  <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{title}</div>
+                  <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 8, lineHeight: 1.5 }}>
                     {desc}
                   </p>
                 </div>
@@ -64,9 +64,9 @@ export default function WholesalePage() {
             ))}
           </ul>
 
-          <div className="mt-10 card p-6">
-            <h3 className="text-base font-semibold">Cara kerjanya</h3>
-            <ol className="mt-4 space-y-4">
+          <div style={{ marginTop: 40, background: "var(--surface)", border: "1px solid var(--border)", padding: 32 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>Cara kerjanya</h3>
+            <ol style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 24, listStyle: "none", padding: 0 }}>
               {[
                 {
                   step: "01",
@@ -84,21 +84,21 @@ export default function WholesalePage() {
                   desc: "Harga reseller otomatis berlaku di setiap pesanan dari akun Anda.",
                 },
               ].map((s) => (
-                <li key={s.step} className="flex gap-4">
-                  <div className="text-xs font-bold text-[color:var(--color-navy-900)] mt-0.5">
+                <li key={s.step} style={{ display: "flex", gap: 16 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "var(--gold)", marginTop: 2 }}>
                     {s.step}
                   </div>
                   <div>
-                    <div className="text-sm font-semibold">{s.title}</div>
-                    <p className="text-xs text-[color:var(--color-muted)] mt-0.5 leading-relaxed">
+                    <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{s.title}</div>
+                    <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4, lineHeight: 1.5 }}>
                       {s.desc}
                     </p>
                   </div>
                 </li>
               ))}
             </ol>
-            <div className="mt-6 text-xs text-[color:var(--color-muted)] flex items-center gap-1">
-              Ada pertanyaan? <ArrowRight className="h-3 w-3" /> Hubungi tim kami via form atau WhatsApp.
+            <div style={{ marginTop: 32, paddingTop: 24, borderTop: "1px solid var(--border)", fontSize: 13, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 8 }}>
+              Ada pertanyaan? <ArrowRight style={{ width: 14, height: 14, color: "var(--gold)" }} /> Hubungi tim kami via form atau WhatsApp.
             </div>
           </div>
         </div>

@@ -21,7 +21,7 @@ export default function LegalPage({
   lastUpdated = "January 2026",
 }: Props) {
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <PageHeader
         eyebrow="Legal"
         title={title}
@@ -31,15 +31,15 @@ export default function LegalPage({
           { label: breadcrumbLabel },
         ]}
       />
-      <article className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12">
-        <p className="text-xs text-[color:var(--color-muted)] uppercase tracking-wider">
+      <article style={{ maxWidth: 800, margin: "0 auto", padding: "64px 24px", width: "100%" }}>
+        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 32 }}>
           Last updated {lastUpdated}
         </p>
-        <div className="mt-8 space-y-9">
+        <div style={{ display: "flex", flexDirection: "column", gap: 48 }}>
           {sections.map((s) => (
             <section key={s.heading}>
-              <h2 className="text-lg sm:text-xl font-bold tracking-tight">{s.heading}</h2>
-              <div className="mt-3 space-y-3 text-[15px] leading-relaxed text-[color:var(--color-muted)]">
+              <h2 style={{ fontSize: 20, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: 16 }}>{s.heading}</h2>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16, fontSize: 15, color: "var(--text-muted)", lineHeight: 1.7 }}>
                 {s.body.map((p, i) => (
                   <p key={i}>{p}</p>
                 ))}

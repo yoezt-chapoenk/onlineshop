@@ -26,44 +26,42 @@ const FAQS = [
 
 export default function FAQPreview() {
   return (
-    <section>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <div>
-          <span className="eyebrow">Pertanyaan Umum</span>
-          <h2 className="mt-4 text-2xl sm:text-3xl font-bold tracking-tight">
-            Jawaban singkat untuk pertanyaan populer
-          </h2>
-          <p className="mt-4 text-sm text-[color:var(--color-muted)]">
-            Punya pertanyaan lain? Hubungi tim kami via WhatsApp atau form kontak.
-          </p>
-          <Link
-            href="/contact"
-            className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--color-navy-900)] hover:underline"
-          >
-            Hubungi customer service <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-        <div className="lg:col-span-2">
-          <ul className="divide-y divide-[color:var(--color-line)] border border-[color:var(--color-line)] rounded-xl bg-white">
-            {FAQS.map((f) => (
-              <li key={f.q}>
-                <details className="group p-5">
-                  <summary className="flex items-center justify-between gap-4 cursor-pointer list-none">
-                    <span className="text-sm sm:text-[15px] font-semibold text-[color:var(--color-ink)]">
-                      {f.q}
-                    </span>
-                    <span className="h-6 w-6 shrink-0 rounded-full border border-[color:var(--color-line)] flex items-center justify-center text-[color:var(--color-navy-900)] group-open:rotate-45 transition-transform text-lg leading-none">
-                      +
-                    </span>
-                  </summary>
-                  <p className="mt-3 text-sm text-[color:var(--color-muted)] leading-relaxed">
-                    {f.a}
-                  </p>
-                </details>
-              </li>
-            ))}
-          </ul>
-        </div>
+    <section style={{ padding: "80px 24px", maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48 }}>
+      <div>
+        <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)", marginBottom: 16, display: "block" }}>Pertanyaan Umum</span>
+        <h2 style={{ fontSize: 32, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: 16 }}>
+          Jawaban singkat untuk pertanyaan populer
+        </h2>
+        <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.6, marginBottom: 24 }}>
+          Punya pertanyaan lain? Hubungi tim kami via WhatsApp atau form kontak.
+        </p>
+        <Link
+          href="/contact"
+          style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, color: "var(--gold)", textDecoration: "none", textTransform: "uppercase", letterSpacing: "0.1em" }}
+        >
+          Hubungi customer service <ArrowRight style={{ width: 16, height: 16 }} />
+        </Link>
+      </div>
+      <div>
+        <ul style={{ listStyle: "none", padding: 0, margin: 0, background: "var(--surface)", border: "1px solid var(--border)" }}>
+          {FAQS.map((f, i) => (
+            <li key={f.q} style={{ borderBottom: i === FAQS.length - 1 ? "none" : "1px solid var(--border)" }}>
+              <details style={{ padding: 24 }}>
+                <summary style={{ display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", listStyle: "none" }}>
+                  <span style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>
+                    {f.q}
+                  </span>
+                  <span style={{ width: 24, height: 24, borderRadius: "50%", border: "1px solid var(--gold)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--gold)" }}>
+                    +
+                  </span>
+                </summary>
+                <p style={{ marginTop: 16, fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6 }}>
+                  {f.a}
+                </p>
+              </details>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

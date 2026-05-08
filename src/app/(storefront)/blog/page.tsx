@@ -6,7 +6,7 @@ export const revalidate = 3600; // revalidate every hour
 
 export default async function BlogIndexPage() {
   const supabase = await getServerSupabase();
-  if (!supabase) return <div className="p-8 text-center">Supabase not configured.</div>;
+  if (!supabase) return <div style={{ padding: 32, textAlign: "center", color: "var(--text-muted)" }}>Supabase not configured.</div>;
 
   const { data: articles } = await supabase
     .from("articles")
@@ -16,35 +16,35 @@ export default async function BlogIndexPage() {
 
   if (!articles || articles.length === 0) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-16 text-center">
-        <h1 className="text-3xl font-bold tracking-tight mb-4">Blog</h1>
-        <p className="text-[color:var(--color-muted)]">Belum ada artikel yang diterbitkan.</p>
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: "64px 24px", textAlign: "center" }}>
+        <h1 style={{ fontSize: 32, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: 16 }}>Blog</h1>
+        <p style={{ fontSize: 16, color: "var(--text-muted)" }}>Belum ada artikel yang diterbitkan.</p>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-      <h1 className="text-3xl font-bold tracking-tight mb-8">Artikel Terbaru</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div style={{ maxWidth: 1200, margin: "0 auto", padding: "64px 24px" }}>
+      <h1 style={{ fontSize: 32, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: 32 }}>Artikel Terbaru</h1>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 32 }}>
         {articles.map((a) => (
-          <Link key={a.slug} href={`/blog/${a.slug}`} className="group flex flex-col overflow-hidden rounded-2xl border border-[color:var(--color-line)] bg-white transition-shadow hover:shadow-lg">
+          <Link key={a.slug} href={`/blog/${a.slug}`} style={{ display: "flex", flexDirection: "column", background: "var(--surface)", border: "1px solid var(--border)", textDecoration: "none", overflow: "hidden", transition: "border 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.borderColor = "var(--gold)"} onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--border)"}>
             {a.image_url ? (
-              <div className="aspect-[16/9] w-full overflow-hidden bg-[color:var(--color-cloud-100)]">
+              <div style={{ aspectRatio: "16/9", width: "100%", overflow: "hidden", background: "var(--bg2)", borderBottom: "1px solid var(--border)" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={a.image_url} alt={a.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <img src={a.image_url} alt={a.title} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }} />
               </div>
             ) : (
-              <div className="aspect-[16/9] w-full bg-[color:var(--color-cloud-200)] flex items-center justify-center">
-                <span className="text-[color:var(--color-muted)] text-sm">Tidak ada gambar</span>
+              <div style={{ aspectRatio: "16/9", width: "100%", background: "var(--bg2)", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ color: "var(--text-dim)", fontSize: 14 }}>Tidak ada gambar</span>
               </div>
             )}
-            <div className="flex flex-1 flex-col p-5">
-              <time className="text-xs text-[color:var(--color-muted)] mb-2">{formatDateTime(a.created_at)}</time>
-              <h2 className="text-lg font-bold leading-tight text-[color:var(--color-navy-900)] mb-3 group-hover:text-blue-600 transition-colors">
+            <div style={{ flex: 1, padding: 24, display: "flex", flexDirection: "column" }}>
+              <time style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 8 }}>{formatDateTime(a.created_at)}</time>
+              <h2 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 12, lineHeight: 1.4 }}>
                 {a.title}
               </h2>
-              <p className="text-sm text-[color:var(--color-muted)] line-clamp-3">
+              <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                 {/* Clean markdown syntax for plain text excerpt */}
               {a.content
                 .replace(/^#{1,6}\s+/gm, '')      // headings

@@ -23,10 +23,10 @@ export default function ProfileForm({
   );
 
   return (
-    <div className="space-y-6 max-w-xl">
+    <div style={{ display: "flex", flexDirection: "column", gap: 32, maxWidth: 600 }}>
       {/* Profile Info */}
-      <form action={profileAction} className="card p-6 space-y-4">
-        <h2 className="text-base font-semibold">Informasi Akun</h2>
+      <form action={profileAction} style={{ background: "var(--surface)", padding: 32, border: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 20 }}>
+        <h2 style={{ fontSize: 16, fontWeight: 400, color: "var(--text)" }}>Informasi Akun</h2>
         <Field
           id="email"
           label={t.auth.email}
@@ -53,19 +53,19 @@ export default function ProfileForm({
           autoComplete="tel"
         />
         {profileState?.error && (
-          <p className="text-sm text-[color:var(--color-error)]">{profileState.error}</p>
+          <p style={{ fontSize: 13, color: "var(--error)" }}>{profileState.error}</p>
         )}
         {profileState?.success && (
-          <p className="text-sm text-[color:var(--color-success)]">{profileState.success}</p>
+          <p style={{ fontSize: 13, color: "var(--success)" }}>{profileState.success}</p>
         )}
-        <button type="submit" disabled={profilePending} className="btn btn-primary">
+        <button type="submit" disabled={profilePending} className="btn btn-primary" style={{ alignSelf: "flex-start", padding: "12px 24px" }}>
           {profilePending ? t.common.loading : t.account.saveProfile}
         </button>
       </form>
 
       {/* Change Password */}
-      <form action={pwAction} className="card p-6 space-y-4">
-        <h2 className="text-base font-semibold">Ganti Password</h2>
+      <form action={pwAction} style={{ background: "var(--surface)", padding: 32, border: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 20 }}>
+        <h2 style={{ fontSize: 16, fontWeight: 400, color: "var(--text)" }}>Ganti Password</h2>
         <Field
           id="password"
           label="Password Baru"
@@ -85,12 +85,12 @@ export default function ProfileForm({
           placeholder="Ulangi password baru"
         />
         {pwState?.error && (
-          <p className="text-sm text-[color:var(--color-error)]">{pwState.error}</p>
+          <p style={{ fontSize: 13, color: "var(--error)" }}>{pwState.error}</p>
         )}
         {pwState?.success && (
-          <p className="text-sm text-[color:var(--color-success)]">{pwState.success}</p>
+          <p style={{ fontSize: 13, color: "var(--success)" }}>{pwState.success}</p>
         )}
-        <button type="submit" disabled={pwPending} className="btn btn-outline">
+        <button type="submit" disabled={pwPending} className="btn btn-outline" style={{ alignSelf: "flex-start", padding: "12px 24px" }}>
           {pwPending ? t.common.loading : "Simpan Password Baru"}
         </button>
       </form>
@@ -107,14 +107,14 @@ function Field({
     <div>
       <label
         htmlFor={id}
-        className="text-xs font-medium uppercase tracking-wider text-[color:var(--color-muted)]"
+        style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}
       >
         {label}
       </label>
       <input
         id={id}
         {...rest}
-        className="mt-1 w-full rounded-lg border border-[color:var(--color-line)] px-3 py-2 text-sm disabled:bg-[color:var(--color-cloud-100)]"
+        style={{ width: "100%", background: rest.disabled ? "var(--bg2)" : "var(--bg)", border: "1px solid var(--border)", color: rest.disabled ? "var(--text-muted)" : "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
       />
     </div>
   );

@@ -25,21 +25,25 @@ const ITEMS = [
 
 export default function TrustBadges() {
   return (
-    <section className="bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] rounded-2xl">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[color:var(--color-line)]/60">
-        {ITEMS.map(({ icon: Icon, title, desc }) => (
+    <section style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
+      <div style={{ background: "var(--bg2)", border: "1px solid var(--border)", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
+        {ITEMS.map(({ icon: Icon, title, desc }, idx) => (
           <div
             key={title}
-            className="flex items-start gap-4 px-5 py-5 sm:px-6 sm:py-6"
+            style={{
+              display: "flex", alignItems: "flex-start", gap: 16, padding: "32px 24px",
+              borderRight: idx !== ITEMS.length - 1 ? "1px solid var(--border)" : "none",
+              borderBottom: "none",
+            }}
           >
-            <div className="shrink-0 h-11 w-11 rounded-xl bg-white border border-[color:var(--color-line)] flex items-center justify-center text-[color:var(--color-navy-900)]">
-              <Icon className="h-5 w-5" />
+            <div style={{ width: 48, height: 48, background: "var(--surface)", border: "1px solid var(--gold)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--gold)", flexShrink: 0 }}>
+              <Icon style={{ width: 24, height: 24 }} />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-[color:var(--color-ink)]">
+              <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>
                 {title}
               </h3>
-              <p className="mt-1 text-xs sm:text-[13px] text-[color:var(--color-muted)] leading-snug">
+              <p style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.5 }}>
                 {desc}
               </p>
             </div>

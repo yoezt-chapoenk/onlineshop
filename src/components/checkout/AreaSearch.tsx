@@ -96,12 +96,12 @@ export default function AreaSearch({
   }, []);
 
   return (
-    <div ref={containerRef} className="relative">
-      <label className="label" htmlFor="area_search">
+    <div ref={containerRef} style={{ position: "relative" }}>
+      <label htmlFor="area_search" style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>
         Kota / Kecamatan tujuan
       </label>
-      <div className="relative">
-        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--color-muted)]" />
+      <div style={{ position: "relative" }}>
+        <MapPin style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", width: 16, height: 16, color: "var(--text-muted)" }} />
         <input
           id="area_search"
           type="text"
@@ -109,38 +109,40 @@ export default function AreaSearch({
           onChange={(e) => handleChange(e.target.value)}
           onFocus={() => results.length > 0 && !selected && setOpen(true)}
           placeholder="Ketik nama kota atau kecamatan…"
-          className="input !pl-9 !pr-8"
+          style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px 12px 36px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
           autoComplete="off"
           disabled={disabled}
         />
         {loading && (
-          <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-[color:var(--color-muted)]" />
+          <Loader2 style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", width: 16, height: 16, color: "var(--text-muted)" }} className="animate-spin" />
         )}
         {selected && !loading && (
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[color:var(--color-muted)] hover:text-[color:var(--color-ink)]"
+            style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)", background: "transparent", border: "none", cursor: "pointer", display: "flex" }}
           >
-            <X className="h-4 w-4" />
+            <X style={{ width: 16, height: 16 }} />
           </button>
         )}
       </div>
       {open && results.length > 0 && (
-        <ul className="absolute z-50 mt-1 w-full max-h-60 overflow-auto rounded-xl border border-[color:var(--color-line)] bg-white shadow-lg">
+        <ul style={{ position: "absolute", zIndex: 50, marginTop: 4, width: "100%", maxHeight: 240, overflow: "auto", background: "var(--surface)", border: "1px solid var(--border)", listStyle: "none", padding: 0 }}>
           {results.map((area) => (
             <li key={area.id}>
               <button
                 type="button"
                 onClick={() => handleSelect(area)}
-                className="w-full text-left px-4 py-2.5 text-sm hover:bg-[color:var(--color-cloud-50)] transition-colors flex items-start gap-2"
+                style={{ width: "100%", textAlign: "left", padding: "10px 16px", background: "transparent", border: "none", borderBottom: "1px solid var(--border)", cursor: "pointer", display: "flex", alignItems: "flex-start", gap: 8, transition: "background 0.2s" }}
+                onMouseEnter={(e) => e.currentTarget.style.background = "var(--bg2)"}
+                onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
               >
-                <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0 text-[color:var(--color-navy-500)]" />
+                <MapPin style={{ width: 14, height: 14, marginTop: 2, color: "var(--gold)", flexShrink: 0 }} />
                 <div>
-                  <div className="font-medium text-[color:var(--color-ink)]">
+                  <div style={{ fontWeight: 500, color: "var(--text)", fontSize: 14 }}>
                     {area.label}
                   </div>
-                  <div className="text-xs text-[color:var(--color-muted)]">
+                  <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>
                     Kode Pos: {area.postalCode}
                   </div>
                 </div>
@@ -150,7 +152,7 @@ export default function AreaSearch({
         </ul>
       )}
       {open && !loading && results.length === 0 && query.length >= 3 && (
-        <div className="absolute z-50 mt-1 w-full rounded-xl border border-[color:var(--color-line)] bg-white shadow-lg px-4 py-3 text-sm text-[color:var(--color-muted)]">
+        <div style={{ position: "absolute", zIndex: 50, marginTop: 4, width: "100%", background: "var(--surface)", border: "1px solid var(--border)", padding: "12px 16px", fontSize: 14, color: "var(--text-muted)" }}>
           Tidak ditemukan area yang cocok.
         </div>
       )}

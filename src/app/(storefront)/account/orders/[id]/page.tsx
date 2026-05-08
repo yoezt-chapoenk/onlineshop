@@ -82,11 +82,11 @@ export default async function AccountOrderDetailPage({
   const reviewedProductIds = new Set(reviews?.map((r) => r.product_id) || []);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{data.order_number}</h1>
-          <p className="text-sm text-[color:var(--color-muted)]">
+          <h1 style={{ fontSize: 24, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)" }}>{data.order_number}</h1>
+          <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4 }}>
             {new Date(data.created_at).toLocaleString("id-ID", {
               year: "numeric",
               month: "long",
@@ -100,50 +100,54 @@ export default async function AccountOrderDetailPage({
         <RepeatOrderButton items={data.order_items} />
       </div>
 
-      <section className="card p-6">
-        <h2 className="text-base font-semibold">{t.account.orders}</h2>
-        <table className="mt-4 w-full text-sm">
-          <thead className="text-xs uppercase tracking-wider text-[color:var(--color-muted)]">
-            <tr>
-              <th className="text-left font-medium py-2">Produk</th>
-              <th className="text-center font-medium py-2">Qty</th>
-              <th className="text-right font-medium py-2">Harga</th>
-              <th className="text-right font-medium py-2">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[color:var(--color-line)]">
-            {data.order_items.map((item, idx) => (
-              <tr key={`${item.product_slug}-${idx}`}>
-                <td className="py-2">
-                  <Link
-                    href={`/shop/${item.product_slug}`}
-                    className="font-semibold hover:text-[color:var(--color-navy-900)] hover:underline transition-colors"
-                  >
-                    {item.product_name}
-                  </Link>
-                  {item.variant_label && (
-                    <p className="text-xs text-[color:var(--color-navy-900)]">
-                      {item.variant_label}
-                    </p>
-                  )}
-                  {item.tier_label && (
-                    <p className="text-xs text-[color:var(--color-navy-900)] mt-0.5">
-                      {item.tier_label}
-                    </p>
-                  )}
-                </td>
-                <td className="py-2 text-center">{item.quantity}</td>
-                <td className="py-2 text-right">{formatRupiah(item.unit_price)}</td>
-                <td className="py-2 text-right font-bold">{formatRupiah(item.subtotal)}</td>
+      <section style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 24 }}>
+        <h2 style={{ fontSize: 16, fontWeight: 400, color: "var(--text)" }}>{t.account.orders}</h2>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", marginTop: 16, borderCollapse: "collapse", minWidth: 500 }}>
+            <thead style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", borderBottom: "1px solid var(--border)" }}>
+              <tr>
+                <th style={{ textAlign: "left", fontWeight: 500, paddingBottom: 16 }}>Produk</th>
+                <th style={{ textAlign: "center", fontWeight: 500, paddingBottom: 16 }}>Qty</th>
+                <th style={{ textAlign: "right", fontWeight: 500, paddingBottom: 16 }}>Harga</th>
+                <th style={{ textAlign: "right", fontWeight: 500, paddingBottom: 16 }}>Subtotal</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.order_items.map((item, idx) => (
+                <tr key={`${item.product_slug}-${idx}`} style={{ borderBottom: idx === data.order_items.length - 1 ? "none" : "1px solid var(--border)" }}>
+                  <td style={{ padding: "16px 0" }}>
+                    <Link
+                      href={`/shop/${item.product_slug}`}
+                      style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", textDecoration: "none" }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = "var(--gold)"}
+                      onMouseLeave={(e) => e.currentTarget.style.color = "var(--text)"}
+                    >
+                      {item.product_name}
+                    </Link>
+                    {item.variant_label && (
+                      <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>
+                        {item.variant_label}
+                      </p>
+                    )}
+                    {item.tier_label && (
+                      <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>
+                        {item.tier_label}
+                      </p>
+                    )}
+                  </td>
+                  <td style={{ padding: "16px 0", textAlign: "center", fontSize: 14, color: "var(--text)" }}>{item.quantity}</td>
+                  <td style={{ padding: "16px 0", textAlign: "right", fontSize: 14, color: "var(--text)" }}>{formatRupiah(item.unit_price)}</td>
+                  <td style={{ padding: "16px 0", textAlign: "right", fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{formatRupiah(item.subtotal)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         
         {data.status === "fulfilled" && (
-          <div className="mt-8 space-y-4 border-t border-[color:var(--color-line)] pt-6">
-            <h3 className="text-sm font-bold">Ulasan Produk</h3>
-            <p className="text-xs text-[color:var(--color-muted)]">Pesanan ini telah selesai. Anda dapat memberikan ulasan untuk produk yang dibeli.</p>
+          <div style={{ marginTop: 32, paddingTop: 24, borderTop: "1px solid var(--border)" }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>Ulasan Produk</h3>
+            <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4, marginBottom: 16 }}>Pesanan ini telah selesai. Anda dapat memberikan ulasan untuk produk yang dibeli.</p>
             {data.order_items.map((item, idx) => {
               if (reviewedProductIds.has(item.product_id)) return null;
               return (
@@ -159,66 +163,67 @@ export default async function AccountOrderDetailPage({
         )}
       </section>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <section className="card p-6 text-sm">
-          <h2 className="text-base font-semibold mb-3">Alamat Pengiriman</h2>
-          <p className="font-semibold">{data.customer_name}</p>
-          <p className="text-[color:var(--color-muted)]">{data.customer_phone}</p>
-          <p className="mt-2">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
+        <section style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 24 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 400, color: "var(--text)", marginBottom: 16 }}>Alamat Pengiriman</h2>
+          <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{data.customer_name}</p>
+          <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 2 }}>{data.customer_phone}</p>
+          <p style={{ fontSize: 14, color: "var(--text)", marginTop: 12, lineHeight: 1.5 }}>
             {data.shipping_address}
             <br />
             {data.shipping_district}, {data.shipping_city}
             <br />
             {data.shipping_province} {data.shipping_postal_code}
           </p>
-          <p className="mt-3 text-[color:var(--color-muted)]">
+          <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 16 }}>
             {data.shipping_courier} · {data.shipping_service}
           </p>
           {data.tracking_number && (
-            <div className="mt-3">
-              <p>
-                <span className="text-[color:var(--color-muted)]">{t.account.trackingNumber}: </span>
-                <span className="font-mono">{data.tracking_number}</span>
+            <div style={{ marginTop: 16 }}>
+              <p style={{ fontSize: 13 }}>
+                <span style={{ color: "var(--text-muted)" }}>{t.account.trackingNumber}: </span>
+                <span style={{ fontFamily: "monospace", color: "var(--text)" }}>{data.tracking_number}</span>
               </p>
               <a
                 href={`https://biteship.com/id/track?waybill=${data.tracking_number}&courier=${data.tracking_courier || data.shipping_courier}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn btn-outline !px-3 !py-1.5 text-xs mt-2 inline-flex items-center gap-1.5"
+                className="btn btn-outline"
+                style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 12px", fontSize: 12, marginTop: 12 }}
               >
                 Lacak Pengiriman
-                <ExternalLink className="h-3 w-3" />
+                <ExternalLink style={{ width: 12, height: 12 }} />
               </a>
             </div>
           )}
         </section>
-        <section className="card p-6 text-sm">
-          <h2 className="text-base font-semibold mb-3">{t.common.total}</h2>
-          <dl className="space-y-2">
-            <div className="flex justify-between">
-              <dt className="text-[color:var(--color-muted)]">{t.common.subtotal}</dt>
-              <dd>{formatRupiah(data.subtotal)}</dd>
+        <section style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 24 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 400, color: "var(--text)", marginBottom: 16 }}>{t.common.total}</h2>
+          <dl style={{ display: "flex", flexDirection: "column", gap: 12, margin: 0, fontSize: 14 }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <dt style={{ color: "var(--text-muted)" }}>{t.common.subtotal}</dt>
+              <dd style={{ color: "var(--text)" }}>{formatRupiah(data.subtotal)}</dd>
             </div>
-            <div className="flex justify-between">
-              <dt className="text-[color:var(--color-muted)]">{t.common.shipping}</dt>
-              <dd>{formatRupiah(data.shipping_cost)}</dd>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <dt style={{ color: "var(--text-muted)" }}>{t.common.shipping}</dt>
+              <dd style={{ color: "var(--text)" }}>{formatRupiah(data.shipping_cost)}</dd>
             </div>
-            <div className="flex justify-between border-t border-[color:var(--color-line)] pt-2">
-              <dt className="font-semibold">{t.common.total}</dt>
-              <dd className="font-bold text-[color:var(--color-navy-900)]">
+            <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid var(--border)", paddingTop: 12, marginTop: 4 }}>
+              <dt style={{ fontWeight: 600, color: "var(--text)" }}>{t.common.total}</dt>
+              <dd style={{ fontWeight: 600, color: "var(--gold)" }}>
                 {formatRupiah(data.total)}
               </dd>
             </div>
           </dl>
-          <p className="mt-3 text-xs text-[color:var(--color-muted)]">
+          <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 16 }}>
             Pembayaran: {data.payment_method.toUpperCase()}
           </p>
           {data.status === "pending" && (
-            <div className="mt-4 pt-4 border-t border-[color:var(--color-line)]">
-              <Link href={`/account/payment-confirmation?order=${data.order_number}`} className="btn btn-primary w-full shadow-md hover:-translate-y-0.5 transition-transform">
+            <div style={{ marginTop: 24, paddingTop: 24, borderTop: "1px solid var(--border)" }}>
+              <Link href={`/account/payment-confirmation?order=${data.order_number}`} className="btn btn-primary" style={{ display: "block", textAlign: "center", width: "100%" }}>
                 Konfirmasi Pembayaran
               </Link>
-              <p className="text-xs text-center text-[color:var(--color-muted)] mt-2">
+              <p style={{ fontSize: 12, color: "var(--text-dim)", textAlign: "center", marginTop: 12 }}>
                 Sudah transfer? Silakan unggah bukti di sini.
               </p>
             </div>
@@ -226,9 +231,11 @@ export default async function AccountOrderDetailPage({
         </section>
       </div>
 
-      <Link href="/account/orders" className="text-sm text-[color:var(--color-navy-900)] hover:underline">
-        ← {t.common.back}
-      </Link>
+      <div>
+        <Link href="/account/orders" style={{ fontSize: 13, color: "var(--text-muted)", textDecoration: "none" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--gold)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}>
+          ← {t.common.back}
+        </Link>
+      </div>
     </div>
   );
 }

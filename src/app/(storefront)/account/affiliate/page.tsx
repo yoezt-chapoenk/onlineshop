@@ -35,9 +35,9 @@ export default async function AffiliatePage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Affiliate Program</h1>
+    <div style={{ display: "flex", flexDirection: "column", gap: 32, maxWidth: 900 }}>
+      <div>
+        <h1 style={{ fontSize: 24, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)" }}>Affiliate Program</h1>
       </div>
 
       <AffiliateDashboardClient 

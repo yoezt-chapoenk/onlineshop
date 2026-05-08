@@ -7,9 +7,9 @@ import { t } from "@/lib/i18n";
 export default function ForgotPasswordForm() {
   const [state, action, pending] = useActionState<AuthState, FormData>(forgotPasswordAction, undefined);
   return (
-    <form action={action} className="card p-6 space-y-4">
+    <form action={action} style={{ background: "var(--surface)", padding: 40, border: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 20 }}>
       <div>
-        <label htmlFor="email" className="text-xs font-medium uppercase tracking-wider text-[color:var(--color-muted)]">
+        <label htmlFor="email" style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>
           {t.auth.email}
         </label>
         <input
@@ -18,12 +18,12 @@ export default function ForgotPasswordForm() {
           type="email"
           required
           autoComplete="email"
-          className="mt-1 w-full rounded-lg border border-[color:var(--color-line)] px-3 py-2 text-sm"
+          style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
         />
       </div>
-      {state?.error && <p className="text-sm text-[color:var(--color-error)]">{state.error}</p>}
-      {state?.success && <p className="text-sm text-[color:var(--color-success)]">{state.success}</p>}
-      <button type="submit" disabled={pending} className="btn btn-primary w-full">
+      {state?.error && <p style={{ fontSize: 13, color: "var(--error)" }}>{state.error}</p>}
+      {state?.success && <p style={{ fontSize: 13, color: "var(--success)" }}>{state.success}</p>}
+      <button type="submit" disabled={pending} className="btn btn-primary" style={{ width: "100%", padding: "12px 24px", height: "auto" }}>
         {pending ? t.common.loading : t.auth.sendResetLink}
       </button>
     </form>

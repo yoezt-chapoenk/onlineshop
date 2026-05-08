@@ -9,22 +9,26 @@ export default async function BecomeResellerPage() {
   const status = profile?.reseller_status ?? "none";
 
   return (
-    <div className="space-y-6 max-w-2xl">
-      <h1 className="text-2xl font-bold tracking-tight">{t.account.becomeReseller}</h1>
-      <p className="text-sm text-[color:var(--color-muted)]">{t.account.resellerExplain}</p>
+    <div style={{ display: "flex", flexDirection: "column", gap: 32, maxWidth: 600 }}>
+      <div>
+        <h1 style={{ fontSize: 24, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)" }}>{t.account.becomeReseller}</h1>
+        <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 8 }}>{t.account.resellerExplain}</p>
+      </div>
 
       {status === "pending" && (
-        <div className="card p-4 bg-[color:var(--color-blue-50)] border-[color:var(--color-blue-100)] text-sm">
+        <div style={{ background: "var(--bg2)", padding: 24, border: "1px solid var(--border)", fontSize: 14, color: "var(--text)" }}>
           {t.account.pendingResellerNote}
         </div>
       )}
       {status === "approved" && (
-        <div className="card p-4 bg-[color:var(--color-blue-50)] border-[color:var(--color-blue-100)] text-sm">
+        <div style={{ background: "var(--bg2)", padding: 24, border: "1px solid var(--border)", fontSize: 14, color: "var(--text)" }}>
           {t.account.approvedResellerNote}
         </div>
       )}
       {status === "rejected" && (
-        <div className="card p-4 text-sm">{t.account.rejectedResellerNote}</div>
+        <div style={{ background: "rgba(255, 59, 48, 0.1)", padding: 24, border: "1px solid rgba(255, 59, 48, 0.2)", fontSize: 14, color: "var(--error)" }}>
+          {t.account.rejectedResellerNote}
+        </div>
       )}
 
       {(status === "none" || status === "rejected") && (

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <PageHeader
         eyebrow="Kontak"
         title="Kami siap membantu."
@@ -25,17 +25,17 @@ export default function ContactPage() {
         breadcrumbs={[{ label: "Kontak" }]}
       />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "64px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, width: "100%" }}>
         <div>
-          <h2 className="text-xl font-bold tracking-tight">Hubungi kami</h2>
-          <ul className="mt-6 space-y-4">
-            <li className="card p-5 flex items-start gap-4">
-              <div className="h-11 w-11 rounded-xl bg-[#25D366]/10 text-[#1a8b4a] flex items-center justify-center shrink-0">
-                <MessageCircle className="h-5 w-5" />
+          <h2 style={{ fontSize: 24, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)" }}>Hubungi kami</h2>
+          <ul style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 16, listStyle: "none", padding: 0 }}>
+            <li style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 24, display: "flex", alignItems: "flex-start", gap: 16 }}>
+              <div style={{ width: 48, height: 48, border: "1px solid #25D366", background: "rgba(37, 211, 102, 0.1)", color: "#25D366", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <MessageCircle style={{ width: 20, height: 20 }} />
               </div>
-              <div className="flex-1">
-                <div className="text-sm font-semibold">Dukungan WhatsApp</div>
-                <p className="text-xs text-[color:var(--color-muted)] mt-0.5">
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>Dukungan WhatsApp</div>
+                <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4, lineHeight: 1.5 }}>
                   Cara tercepat menghubungi kami. Rata-rata balas 5 menit
                   pada jam kerja (09.00–18.00 WIB).
                 </p>
@@ -43,50 +43,55 @@ export default function ContactPage() {
                   href={whatsappLink("Halo Juragan Grosir, saya butuh bantuan tentang…")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-3 inline-flex btn !bg-[#25D366] !text-white !border-[#25D366] !py-2 !px-3 text-xs"
+                  className="btn"
+                  style={{ marginTop: 16, display: "inline-flex", background: "#25D366", color: "#fff", border: "1px solid #25D366", padding: "8px 16px", fontSize: 12 }}
                 >
                   Chat dengan kami
                 </a>
               </div>
             </li>
-            <li className="card p-5 flex items-start gap-4">
-              <div className="h-11 w-11 rounded-xl bg-[color:var(--color-cloud-100)] text-[color:var(--color-navy-900)] flex items-center justify-center shrink-0">
-                <Phone className="h-5 w-5" />
+            <li style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 24, display: "flex", alignItems: "flex-start", gap: 16 }}>
+              <div style={{ width: 48, height: 48, border: "1px solid var(--gold)", color: "var(--gold)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Phone style={{ width: 20, height: 20 }} />
               </div>
-              <div className="flex-1">
-                <div className="text-sm font-semibold">Telepon</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>Telepon</div>
                 <a
                   href={`tel:${STORE_PHONE.replace(/\s+/g, "")}`}
-                  className="text-sm text-[color:var(--color-navy-900)] hover:underline"
+                  style={{ fontSize: 14, color: "var(--gold)", textDecoration: "none", transition: "opacity 0.2s" }}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = "0.8"}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
                 >
                   {STORE_PHONE}
                 </a>
               </div>
             </li>
-            <li className="card p-5 flex items-start gap-4">
-              <div className="h-11 w-11 rounded-xl bg-[color:var(--color-cloud-100)] text-[color:var(--color-navy-900)] flex items-center justify-center shrink-0">
-                <Mail className="h-5 w-5" />
+            <li style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 24, display: "flex", alignItems: "flex-start", gap: 16 }}>
+              <div style={{ width: 48, height: 48, border: "1px solid var(--gold)", color: "var(--gold)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Mail style={{ width: 20, height: 20 }} />
               </div>
-              <div className="flex-1">
-                <div className="text-sm font-semibold">Email</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>Email</div>
                 <a
                   href={`mailto:${SUPPORT_EMAIL}`}
-                  className="text-sm text-[color:var(--color-navy-900)] hover:underline"
+                  style={{ fontSize: 14, color: "var(--gold)", textDecoration: "none", transition: "opacity 0.2s" }}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = "0.8"}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
                 >
                   {SUPPORT_EMAIL}
                 </a>
               </div>
             </li>
-            <li className="card p-5 flex items-start gap-4">
-              <div className="h-11 w-11 rounded-xl bg-[color:var(--color-cloud-100)] text-[color:var(--color-navy-900)] flex items-center justify-center shrink-0">
-                <MapPin className="h-5 w-5" />
+            <li style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 24, display: "flex", alignItems: "flex-start", gap: 16 }}>
+              <div style={{ width: 48, height: 48, border: "1px solid var(--gold)", color: "var(--gold)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <MapPin style={{ width: 20, height: 20 }} />
               </div>
-              <div className="flex-1">
-                <div className="text-sm font-semibold">Gudang & kantor</div>
-                <p className="text-sm text-[color:var(--color-muted)] mt-0.5">
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>Gudang & kantor</div>
+                <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.5 }}>
                   {STORE_ADDRESS}
                 </p>
-                <p className="text-xs text-[color:var(--color-muted)] mt-1">
+                <p style={{ fontSize: 13, color: "var(--text-dim)", marginTop: 8 }}>
                   Buka Sen–Sab, 09.00–18.00 WIB. Kunjungan dengan janji temu.
                 </p>
               </div>

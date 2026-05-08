@@ -92,13 +92,13 @@ export default function PaymentConfirmationClient({
 
   if (success) {
     return (
-      <div className="rounded-2xl bg-green-50 border border-green-200 p-8 text-center">
-        <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
-        <h2 className="text-xl font-bold text-green-900 mb-2">Konfirmasi Berhasil Terkirim</h2>
-        <p className="text-green-800 mb-6">
+      <div style={{ background: "rgba(52, 168, 83, 0.1)", border: "1px solid #34a853", padding: 32, textAlign: "center", borderRadius: 8 }}>
+        <CheckCircle2 style={{ width: 64, height: 64, color: "#34a853", margin: "0 auto 16px" }} />
+        <h2 style={{ fontSize: 20, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>Konfirmasi Berhasil Terkirim</h2>
+        <p style={{ color: "var(--text-muted)", marginBottom: 24, fontSize: 14 }}>
           Terima kasih. Kami akan segera memverifikasi pembayaran Anda dan memproses pesanan.
         </p>
-        <button onClick={() => setSuccess(false)} className="btn bg-green-600 text-white hover:bg-green-700">
+        <button onClick={() => setSuccess(false)} className="btn btn-primary">
           Kirim Konfirmasi Lain
         </button>
       </div>
@@ -106,23 +106,23 @@ export default function PaymentConfirmationClient({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 32 }}>
       {/* Form Section */}
-      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <section style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 32 }}>
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div>
-            <label className="block text-sm font-medium text-[color:var(--color-navy-900)] mb-1">
+            <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>
               Pilih Pesanan
             </label>
             {pendingOrders.length > 0 ? (
               <select 
-                className="input w-full"
+                style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
                 value={orderNumber}
                 onChange={handleOrderChange}
               >
                 <option value="">Pilih pesanan (Pending)</option>
                 {pendingOrders.map(o => (
-                  <option key={o.order_number} value={o.order_number}>
+                  <option key={o.order_number} value={o.order_number} style={{ background: "var(--surface)", color: "var(--text)" }}>
                     {o.order_number} - {formatRupiah(o.total)}
                   </option>
                 ))}
@@ -131,7 +131,7 @@ export default function PaymentConfirmationClient({
               <input
                 type="text"
                 placeholder="Contoh: JG-XXXXXX"
-                className="input w-full uppercase"
+                style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)", textTransform: "uppercase" }}
                 value={orderNumber}
                 onChange={e => setOrderNumber(e.target.value)}
               />
@@ -139,53 +139,53 @@ export default function PaymentConfirmationClient({
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-[color:var(--color-navy-900)] mb-1">
+            <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>
               Transfer Dari Bank
             </label>
             <input
               type="text"
               placeholder="Contoh: BCA, Mandiri, dll"
-              className="input w-full"
+              style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
               value={bankName}
               onChange={e => setBankName(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[color:var(--color-navy-900)] mb-1">
+            <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>
               Atas Nama (Pengirim)
             </label>
             <input
               type="text"
               placeholder="Nama pemilik rekening pengirim"
-              className="input w-full"
+              style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
               value={accountName}
               onChange={e => setAccountName(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[color:var(--color-navy-900)] mb-1">
+            <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>
               Nominal Transfer
             </label>
             <input
               type="text"
               placeholder="Contoh: 150000"
-              className="input w-full"
+              style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
               value={amount}
-              onChange={e => setAmount(e.target.value.replace(/\\D/g, ""))}
+              onChange={e => setAmount(e.target.value.replace(/\D/g, ""))}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[color:var(--color-navy-900)] mb-1">
+            <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>
               Bukti Transfer (Foto/Screenshot)
             </label>
             
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp"
-              className="hidden"
+              style={{ display: "none" }}
               ref={fileInputRef}
               onChange={handleFileChange}
             />
@@ -194,15 +194,17 @@ export default function PaymentConfirmationClient({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full flex flex-col items-center justify-center gap-2 border-2 border-dashed border-[color:var(--color-cloud-300)] rounded-xl p-8 hover:bg-[color:var(--color-cloud-100)] transition-colors text-[color:var(--color-muted)]"
+                style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, border: "1px dashed var(--border)", background: "var(--bg)", padding: 32, color: "var(--text-muted)", cursor: "pointer", transition: "background 0.2s" }}
+                onMouseEnter={(e) => e.currentTarget.style.background = "var(--bg2)"}
+                onMouseLeave={(e) => e.currentTarget.style.background = "var(--bg)"}
               >
-                <UploadCloud className="w-8 h-8" />
-                <span className="text-sm">Klik untuk unggah gambar</span>
-                <span className="text-xs">Maksimal 5MB (JPG, PNG)</span>
+                <UploadCloud style={{ width: 32, height: 32 }} />
+                <span style={{ fontSize: 14 }}>Klik untuk unggah gambar</span>
+                <span style={{ fontSize: 12, color: "var(--text-dim)" }}>Maksimal 5MB (JPG, PNG)</span>
               </button>
             ) : (
-              <div className="relative border border-[color:var(--color-cloud-200)] rounded-xl overflow-hidden p-2">
-                <img src={preview} alt="Preview" className="w-full h-48 object-contain rounded-lg bg-[color:var(--color-cloud-50)]" />
+              <div style={{ position: "relative", border: "1px solid var(--border)", padding: 8, background: "var(--bg)" }}>
+                <img src={preview} alt="Preview" style={{ width: "100%", height: 200, objectFit: "contain" }} />
                 <button
                   type="button"
                   onClick={() => {
@@ -210,20 +212,21 @@ export default function PaymentConfirmationClient({
                     setPreview(null);
                     if (fileInputRef.current) fileInputRef.current.value = "";
                   }}
-                  className="absolute top-4 right-4 bg-red-500 text-white rounded-full p-1.5 shadow-lg hover:bg-red-600"
+                  style={{ position: "absolute", top: 16, right: 16, background: "var(--error)", color: "white", border: "none", borderRadius: "50%", padding: 4, cursor: "pointer" }}
                 >
-                  <XCircle className="w-5 h-5" />
+                  <XCircle style={{ width: 20, height: 20 }} />
                 </button>
               </div>
             )}
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p style={{ color: "var(--error)", fontSize: 13 }}>{error}</p>}
 
           <button 
             type="submit" 
             disabled={submitting || !file} 
             className="btn btn-primary w-full"
+            style={{ padding: "12px 24px", height: "auto" }}
           >
             {submitting ? "Mengunggah..." : "Kirim Konfirmasi"}
           </button>
@@ -232,38 +235,34 @@ export default function PaymentConfirmationClient({
 
       {/* History Section */}
       <section>
-        <h2 className="text-lg font-bold mb-4">Riwayat Konfirmasi Anda</h2>
-        <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] overflow-hidden">
+        <h2 style={{ fontSize: 16, fontWeight: 400, color: "var(--text)", marginBottom: 16 }}>Riwayat Konfirmasi Anda</h2>
+        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", overflow: "hidden" }}>
           {history.length === 0 ? (
-            <p className="p-8 text-center text-sm text-[color:var(--color-muted)]">Belum ada riwayat konfirmasi pembayaran.</p>
+            <p style={{ padding: 32, textAlign: "center", fontSize: 14, color: "var(--text-muted)" }}>Belum ada riwayat konfirmasi pembayaran.</p>
           ) : (
-            <div className="divide-y divide-[color:var(--color-line)]">
+            <div style={{ display: "flex", flexDirection: "column" }}>
               {history.map((h, i) => (
-                <div key={i} className="p-4 flex items-start gap-4">
-                  <div className="shrink-0 mt-1">
-                    {h.status === "approved" ? <CheckCircle2 className="w-5 h-5 text-green-500" /> :
-                     h.status === "rejected" ? <XCircle className="w-5 h-5 text-red-500" /> :
-                     <Clock className="w-5 h-5 text-yellow-500" />}
+                <div key={i} style={{ padding: 16, display: "flex", alignItems: "flex-start", gap: 16, borderTop: i === 0 ? "none" : "1px solid var(--border)" }}>
+                  <div style={{ flexShrink: 0, marginTop: 4 }}>
+                    {h.status === "approved" ? <CheckCircle2 style={{ width: 20, height: 20, color: "#34a853" }} /> :
+                     h.status === "rejected" ? <XCircle style={{ width: 20, height: 20, color: "var(--error)" }} /> :
+                     <Clock style={{ width: 20, height: 20, color: "var(--gold)" }} />}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start">
-                      <p className="font-semibold text-sm">{h.order_number}</p>
-                      <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${
-                        h.status === "approved" ? "bg-green-100 text-green-700" :
-                        h.status === "rejected" ? "bg-red-100 text-red-700" :
-                        "bg-yellow-100 text-yellow-700"
-                      }`}>{h.status}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <p style={{ fontWeight: 600, fontSize: 14, color: "var(--text)" }}>{h.order_number}</p>
+                      <span style={{ fontSize: 10, textTransform: "uppercase", fontWeight: 600, padding: "2px 6px", background: h.status === "approved" ? "rgba(52, 168, 83, 0.1)" : h.status === "rejected" ? "rgba(255, 59, 48, 0.1)" : "rgba(201, 169, 110, 0.1)", color: h.status === "approved" ? "#34a853" : h.status === "rejected" ? "var(--error)" : "var(--gold)" }}>{h.status}</span>
                     </div>
-                    <p className="text-xs text-[color:var(--color-muted)] mt-0.5">
+                    <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>
                       {new Date(h.created_at).toLocaleDateString("id-ID", {
                         day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
                       })}
                     </p>
-                    <p className="text-sm mt-1">{h.bank_name} - {h.account_name}</p>
-                    <div className="flex justify-between items-center mt-2">
-                      <p className="font-bold text-[color:var(--color-navy-900)]">{formatRupiah(h.amount)}</p>
-                      <a href={h.receipt_url} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs text-blue-600 hover:underline">
-                        <FileImage className="w-3 h-3" /> Lihat Resi
+                    <p style={{ fontSize: 14, color: "var(--text)", marginTop: 4 }}>{h.bank_name} - {h.account_name}</p>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
+                      <p style={{ fontWeight: 600, color: "var(--text)" }}>{formatRupiah(h.amount)}</p>
+                      <a href={h.receipt_url} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--gold)", textDecoration: "none" }} onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"} onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}>
+                        <FileImage style={{ width: 12, height: 12 }} /> Lihat Resi
                       </a>
                     </div>
                   </div>

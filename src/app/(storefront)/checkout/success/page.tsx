@@ -36,9 +36,11 @@ function CopyButton({ text }: { text: string }) {
     <button
       type="button"
       onClick={copy}
-      className="ml-2 inline-flex items-center gap-1 text-xs text-[color:var(--color-navy-400)] hover:text-[color:var(--color-navy-900)] transition-colors"
+      style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--text)", background: "transparent", border: "none", cursor: "pointer", transition: "opacity 0.2s" }}
+      onMouseEnter={(e) => e.currentTarget.style.opacity = "0.7"}
+      onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
     >
-      {copied ? <Check className="h-3 w-3 text-green-600" /> : <Copy className="h-3 w-3" />}
+      {copied ? <Check style={{ width: 14, height: 14, color: "var(--success)" }} /> : <Copy style={{ width: 14, height: 14 }} />}
       {copied ? "Disalin" : "Salin"}
     </button>
   );
@@ -72,89 +74,89 @@ function SuccessInner() {
   const orderNumber = order?.orderNumber ?? orderNumberParam ?? "—";
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16">
-      <div className="card p-8 sm:p-10 text-center">
-        <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--color-success)]/10 text-[color:var(--color-success)]">
-          <CheckCircle2 className="h-8 w-8" />
+    <div style={{ maxWidth: 800, margin: "0 auto", padding: "64px 24px" }}>
+      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: "40px", textAlign: "center" }}>
+        <div style={{ display: "inline-flex", width: 64, height: 64, alignItems: "center", justifyContent: "center", borderRadius: "50%", background: "rgba(52, 168, 83, 0.1)", color: "#34a853", marginBottom: 20 }}>
+          <CheckCircle2 style={{ width: 32, height: 32 }} />
         </div>
-        <h1 className="mt-5 text-2xl sm:text-3xl font-bold tracking-tight">
+        <h1 style={{ fontSize: 24, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: 8 }}>
           Terima kasih — pesanan Anda dikonfirmasi!
         </h1>
-        <p className="mt-2 text-sm text-[color:var(--color-muted)]">
+        <p style={{ fontSize: 14, color: "var(--text-muted)", marginBottom: 32 }}>
           Nomor pesanan{" "}
-          <span className="font-semibold text-[color:var(--color-ink)]">
+          <span style={{ fontWeight: 600, color: "var(--text)" }}>
             {orderNumber}
           </span>
           . Instruksi pembayaran sudah kami kirim ke email Anda.
         </p>
 
         {order && (
-          <dl className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-5 text-left">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 20, textAlign: "left", marginBottom: 32 }}>
             <div>
-              <dt className="text-xs text-[color:var(--color-muted)]">Item</dt>
-              <dd className="text-sm font-semibold mt-0.5">{order.itemCount}</dd>
+              <div style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 4 }}>Item</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{order.itemCount}</div>
             </div>
             <div>
-              <dt className="text-xs text-[color:var(--color-muted)]">Subtotal</dt>
-              <dd className="text-sm font-semibold mt-0.5">{formatRupiah(order.subtotal)}</dd>
+              <div style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 4 }}>Subtotal</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{formatRupiah(order.subtotal)}</div>
             </div>
             <div>
-              <dt className="text-xs text-[color:var(--color-muted)]">Pengiriman</dt>
-              <dd className="text-sm font-semibold mt-0.5">
+              <div style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 4 }}>Pengiriman</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>
                 {order.shipping}
-                <span className="ml-1 font-normal text-[color:var(--color-muted)]">
+                <span style={{ marginLeft: 4, fontWeight: 400, color: "var(--text-muted)" }}>
                   ({formatRupiah(order.shippingCost)})
                 </span>
-              </dd>
+              </div>
             </div>
             <div>
-              <dt className="text-xs text-[color:var(--color-muted)]">Total</dt>
-              <dd className="text-base font-bold text-[color:var(--color-navy-900)] mt-0.5">
+              <div style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 4 }}>Total</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: "var(--gold)" }}>
                 {formatRupiah(order.grandTotal)}
-              </dd>
+              </div>
             </div>
-          </dl>
+          </div>
         )}
 
         {/* Transfer Instructions */}
         {order?.payment === "transfer" && (
-          <div className="mt-8 bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] rounded-xl p-5 text-left space-y-4">
-            <h3 className="font-bold text-[color:var(--color-navy-900)] text-sm">
+          <div style={{ marginTop: 32, background: "var(--bg2)", border: "1px solid var(--border)", padding: 24, textAlign: "left" }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 16 }}>
               Instruksi Pembayaran Transfer Bank
             </h3>
-            <p className="text-sm text-[color:var(--color-muted)]">
+            <p style={{ fontSize: 14, color: "var(--text-muted)", marginBottom: 16 }}>
               Harap transfer tepat sebesar{" "}
-              <strong className="text-[color:var(--color-ink)]">
+              <strong style={{ color: "var(--gold)" }}>
                 {order ? formatRupiah(order.grandTotal) : "—"}
               </strong>{" "}
               ke salah satu rekening berikut:
             </p>
 
             {banks.length > 0 ? (
-              <div className="space-y-3">
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
                 {banks.map((b, i) => (
                   <div
                     key={i}
-                    className="flex items-center justify-between rounded-lg border border-[color:var(--color-line)] bg-white px-4 py-3"
+                    style={{ display: "flex", alignItems: "center", justifyContent: "space-between", border: "1px solid var(--border)", background: "var(--surface)", padding: "12px 16px" }}
                   >
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-[color:var(--color-navy-400)]">
+                      <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 2 }}>
                         {b.bank}
                       </p>
-                      <p className="mt-0.5 font-mono text-sm font-bold">{b.number}</p>
-                      <p className="text-xs text-[color:var(--color-muted)]">a.n. {b.name}</p>
+                      <p style={{ fontFamily: "monospace", fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{b.number}</p>
+                      <p style={{ fontSize: 12, color: "var(--text-muted)" }}>a.n. {b.name}</p>
                     </div>
                     <CopyButton text={b.number} />
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-[color:var(--color-muted)] italic">
+              <p style={{ fontSize: 12, color: "var(--text-muted)", fontStyle: "italic", marginBottom: 16 }}>
                 Rekening akan dikirim melalui email konfirmasi.
               </p>
             )}
 
-            <p className="text-sm text-[color:var(--color-muted)]">
+            <p style={{ fontSize: 14, color: "var(--text-muted)" }}>
               Setelah transfer, wajib konfirmasi dengan mengirimkan bukti transfer melalui WhatsApp
               agar pesanan segera diproses.
             </p>
@@ -163,43 +165,43 @@ function SuccessInner() {
 
         {/* QRIS Instructions */}
         {order?.payment === "qris" && (
-          <div className="mt-8 bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)] rounded-xl p-5 text-left space-y-4">
-            <h3 className="font-bold text-[color:var(--color-navy-900)] text-sm">
+          <div style={{ marginTop: 32, background: "var(--bg2)", border: "1px solid var(--border)", padding: 24, textAlign: "left" }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 16 }}>
               Instruksi Pembayaran QRIS
             </h3>
             {qrisUrl ? (
-              <div className="flex flex-col items-center gap-3">
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, marginBottom: 16 }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={qrisUrl}
                   alt="QRIS Payment Code"
-                  className="w-48 h-48 object-contain rounded-xl border border-[color:var(--color-line)] bg-white p-2"
+                  style={{ width: 192, height: 192, objectFit: "contain", border: "1px solid var(--border)", background: "#fff", padding: 8 }}
                 />
-                <p className="text-xs text-[color:var(--color-muted)] text-center">
+                <p style={{ fontSize: 12, color: "var(--text-muted)", textAlign: "center" }}>
                   Scan QR di atas untuk membayar sebesar{" "}
-                  <strong className="text-[color:var(--color-ink)]">
+                  <strong style={{ color: "var(--gold)" }}>
                     {order ? formatRupiah(order.grandTotal) : "—"}
                   </strong>
                 </p>
               </div>
             ) : (
-              <p className="text-sm text-[color:var(--color-muted)]">
+              <p style={{ fontSize: 14, color: "var(--text-muted)", marginBottom: 16 }}>
                 Silakan scan QR Code yang dikirimkan ke email Anda untuk membayar sebesar{" "}
-                <strong className="text-[color:var(--color-ink)]">
+                <strong style={{ color: "var(--gold)" }}>
                   {order ? formatRupiah(order.grandTotal) : "—"}
                 </strong>.
               </p>
             )}
-            <p className="text-sm text-[color:var(--color-muted)]">
+            <p style={{ fontSize: 14, color: "var(--text-muted)" }}>
               Setelah berhasil scan, kirimkan tangkapan layar (screenshot) bukti pembayaran melalui
               WhatsApp.
             </p>
           </div>
         )}
 
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <Link href="/shop" className="btn btn-primary">
-            Lanjut belanja <ArrowRight className="h-4 w-4" />
+        <div style={{ marginTop: 40, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}>
+          <Link href="/shop" className="btn btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            Lanjut belanja <ArrowRight style={{ width: 16, height: 16 }} />
           </Link>
           <a
             href={whatsappLink(
@@ -208,8 +210,9 @@ function SuccessInner() {
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-outline"
+            style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
           >
-            <MessageCircle className="h-4 w-4" /> Kirim Bukti Transfer
+            <MessageCircle style={{ width: 16, height: 16 }} /> Kirim Bukti Transfer
           </a>
         </div>
       </div>

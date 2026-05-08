@@ -56,32 +56,32 @@ export default async function AccountOverviewPage() {
   const status = profile?.reseller_status ?? "none";
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">
+    <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+      <h1 style={{ fontSize: 24, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)" }}>
         {t.account.welcome(profile?.full_name ?? authUser?.email ?? "")}
       </h1>
 
       {/* Admin Shortcut Banner */}
       {role === "admin" && (
-        <section className="rounded-2xl border border-[color:var(--color-navy-200)] bg-[color:var(--color-navy-900)] text-white p-5">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                <LayoutDashboard className="h-5 w-5" />
+        <section style={{ background: "var(--gold)", color: "var(--bg)", padding: 24, border: "1px solid var(--border)" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(0,0,0,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <LayoutDashboard style={{ width: 20, height: 20, color: "var(--bg)" }} />
               </div>
               <div>
-                <p className="font-semibold text-sm">Anda login sebagai Admin</p>
-                <p className="text-white/60 text-xs mt-0.5">Kelola toko, produk, pesanan, dan konten dari Dashboard Admin.</p>
+                <p style={{ fontWeight: 600, fontSize: 14 }}>Anda login sebagai Admin</p>
+                <p style={{ color: "rgba(0,0,0,0.6)", fontSize: 12, marginTop: 4 }}>Kelola toko, produk, pesanan, dan konten dari Dashboard Admin.</p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Link href="/admin" className="inline-flex items-center gap-1.5 rounded-lg bg-white text-[color:var(--color-navy-900)] px-4 py-2 text-xs font-bold hover:bg-white/90 transition-colors">
-                <LayoutDashboard className="h-3.5 w-3.5" /> Dashboard Admin
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              <Link href="/admin" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--bg)", color: "var(--text)", padding: "8px 16px", fontSize: 12, fontWeight: 600, textDecoration: "none", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"} onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}>
+                <LayoutDashboard style={{ width: 14, height: 14 }} /> Dashboard Admin
               </Link>
-              <Link href="/admin/orders" className="inline-flex items-center gap-1.5 rounded-lg bg-white/10 text-white px-4 py-2 text-xs font-semibold hover:bg-white/20 transition-colors">
+              <Link href="/admin/orders" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(0,0,0,0.1)", color: "var(--bg)", padding: "8px 16px", fontSize: 12, fontWeight: 600, textDecoration: "none", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = "rgba(0,0,0,0.2)"} onMouseLeave={(e) => e.currentTarget.style.background = "rgba(0,0,0,0.1)"}>
                 Pesanan
               </Link>
-              <Link href="/admin/products" className="inline-flex items-center gap-1.5 rounded-lg bg-white/10 text-white px-4 py-2 text-xs font-semibold hover:bg-white/20 transition-colors">
+              <Link href="/admin/products" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(0,0,0,0.1)", color: "var(--bg)", padding: "8px 16px", fontSize: 12, fontWeight: 600, textDecoration: "none", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = "rgba(0,0,0,0.2)"} onMouseLeave={(e) => e.currentTarget.style.background = "rgba(0,0,0,0.1)"}>
                 Produk
               </Link>
             </div>
@@ -89,48 +89,48 @@ export default async function AccountOverviewPage() {
         </section>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="card p-5">
-          <p className="text-xs uppercase tracking-wider text-[color:var(--color-muted)]">{t.account.role}</p>
-          <p className="mt-2 text-lg font-bold">{ROLE_LABEL[role] ?? role}</p>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 24 }}>
+        <div style={{ background: "var(--surface)", padding: 24, border: "1px solid var(--border)" }}>
+          <p style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>{t.account.role}</p>
+          <p style={{ marginTop: 8, fontSize: 16, fontWeight: 400, color: "var(--text)" }}>{ROLE_LABEL[role] ?? role}</p>
         </div>
-        <div className="card p-5">
-          <p className="text-xs uppercase tracking-wider text-[color:var(--color-muted)]">
+        <div style={{ background: "var(--surface)", padding: 24, border: "1px solid var(--border)" }}>
+          <p style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>
             {t.account.resellerStatus}
           </p>
-          <p className="mt-2 text-lg font-bold">{RESELLER_STATUS_LABEL[status] ?? status}</p>
+          <p style={{ marginTop: 8, fontSize: 16, fontWeight: 400, color: "var(--text)" }}>{RESELLER_STATUS_LABEL[status] ?? status}</p>
         </div>
-        <div className="card p-5">
-          <p className="text-xs uppercase tracking-wider text-[color:var(--color-muted)]">
+        <div style={{ background: "var(--surface)", padding: 24, border: "1px solid var(--border)" }}>
+          <p style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>
             {t.nav.cart}
           </p>
-          <Link href="/cart" className="mt-2 inline-flex items-center gap-1 text-lg font-bold text-[color:var(--color-navy-900)]">
-            <ShoppingBag className="h-5 w-5" /> {t.common.checkout}
+          <Link href="/cart" style={{ marginTop: 8, display: "inline-flex", alignItems: "center", gap: 8, fontSize: 16, fontWeight: 400, color: "var(--gold)", textDecoration: "none" }}>
+            <ShoppingBag style={{ width: 18, height: 18 }} /> {t.common.checkout}
           </Link>
         </div>
       </div>
 
-      <section className="card p-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold">{t.account.orders}</h2>
-          <Link href="/account/orders" className="text-sm text-[color:var(--color-navy-900)] hover:underline">
+      <section style={{ background: "var(--surface)", padding: 24, border: "1px solid var(--border)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 400, color: "var(--text)" }}>{t.account.orders}</h2>
+          <Link href="/account/orders" style={{ fontSize: 13, color: "var(--text-muted)", textDecoration: "none" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--gold)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}>
             {t.common.showMore}
           </Link>
         </div>
         {recentOrders.length === 0 ? (
-          <div className="mt-4 text-sm text-[color:var(--color-muted)]">
+          <div style={{ fontSize: 14, color: "var(--text-muted)", paddingTop: 16, borderTop: "1px solid var(--border)" }}>
             {t.account.noOrdersYet}{" "}
-            <Link href="/shop" className="text-[color:var(--color-navy-900)] hover:underline">
+            <Link href="/shop" style={{ color: "var(--gold)", textDecoration: "none" }}>
               {t.account.startShopping}
             </Link>
           </div>
         ) : (
-          <ul className="mt-4 divide-y divide-[color:var(--color-line)]">
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {recentOrders.map((o) => (
-              <li key={o.id} className="py-3 flex items-center justify-between gap-4">
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold">{o.order_number}</p>
-                  <p className="text-xs text-[color:var(--color-muted)]">
+              <li key={o.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: "16px 0", borderTop: "1px solid var(--border)" }}>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{o.order_number}</p>
+                  <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>
                     {new Date(o.created_at).toLocaleDateString("id-ID", {
                       year: "numeric",
                       month: "long",
@@ -139,13 +139,14 @@ export default async function AccountOverviewPage() {
                     · {ORDER_STATUS_LABEL[o.status] ?? o.status}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-bold">{formatRupiah(o.total)}</p>
+                <div style={{ textAlign: "right" }}>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{formatRupiah(o.total)}</p>
                   <Link
                     href={`/account/orders/${o.id}`}
-                    className="text-xs text-[color:var(--color-navy-900)] hover:underline inline-flex items-center gap-1"
+                    style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4, marginTop: 4 }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = "var(--gold)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}
                   >
-                    {t.account.viewOrder} <ArrowRight className="h-3 w-3" />
+                    {t.account.viewOrder} <ArrowRight style={{ width: 12, height: 12 }} />
                   </Link>
                 </div>
               </li>
@@ -155,15 +156,15 @@ export default async function AccountOverviewPage() {
       </section>
 
       {role !== "reseller" && status !== "approved" && (
-        <section className="card p-6 bg-[color:var(--color-blue-50)] border-[color:var(--color-blue-100)]">
-          <div className="flex items-start gap-4">
-            <div className="h-10 w-10 rounded-full bg-[color:var(--color-navy-900)] text-white flex items-center justify-center shrink-0">
-              <UserPlus className="h-5 w-5" />
+        <section style={{ background: "var(--bg2)", padding: 24, border: "1px solid var(--border)" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
+            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--surface)", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <UserPlus style={{ width: 20, height: 20, color: "var(--text)" }} />
             </div>
-            <div className="min-w-0">
-              <h3 className="text-base font-semibold">{t.account.becomeReseller}</h3>
-              <p className="mt-1 text-sm text-[color:var(--color-muted)]">{t.account.resellerExplain}</p>
-              <Link href="/account/become-reseller" className="btn btn-primary mt-4 inline-flex">
+            <div style={{ minWidth: 0 }}>
+              <h3 style={{ fontSize: 16, fontWeight: 400, color: "var(--text)" }}>{t.account.becomeReseller}</h3>
+              <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4 }}>{t.account.resellerExplain}</p>
+              <Link href="/account/become-reseller" className="btn btn-primary" style={{ display: "inline-flex", marginTop: 16 }}>
                 {t.account.submitResellerApplication}
               </Link>
             </div>

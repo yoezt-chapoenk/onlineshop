@@ -31,10 +31,10 @@ export default async function PaymentConfirmationPage(props: { searchParams: Pro
     .limit(10);
 
   return (
-    <div className="space-y-8 max-w-3xl">
+    <div style={{ display: "flex", flexDirection: "column", gap: 32, maxWidth: 900 }}>
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[color:var(--color-navy-900)]">Konfirmasi Pembayaran</h1>
-        <p className="mt-2 text-sm text-[color:var(--color-muted)]">
+        <h1 style={{ fontSize: 24, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)" }}>Konfirmasi Pembayaran</h1>
+        <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 8 }}>
           Unggah bukti transfer Anda agar pesanan dapat segera kami proses.
         </p>
       </div>

@@ -7,15 +7,15 @@ export const metadata = { title: t.auth.forgotPasswordTitle };
 
 export default function ForgotPasswordPage() {
   return (
-    <div>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <PageHeader
         title={t.auth.forgotPasswordTitle}
         description={t.auth.forgotPasswordSubtitle}
       />
-      <div className="mx-auto max-w-md px-4 sm:px-6 lg:px-8 py-10">
+      <div style={{ maxWidth: 440, margin: "0 auto", padding: "64px 20px" }}>
         <ForgotPasswordForm />
-        <p className="mt-6 text-center text-sm text-[color:var(--color-muted)]">
-          <Link href="/login" className="font-semibold text-[color:var(--color-navy-900)] hover:underline">
+        <p style={{ marginTop: 24, textAlign: "center", fontSize: 13, color: "var(--text-muted)" }}>
+          <Link href="/login" style={{ fontWeight: 600, color: "var(--gold)", textDecoration: "none" }} onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"} onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}>
             {t.common.back} ke {t.auth.loginCta}
           </Link>
         </p>

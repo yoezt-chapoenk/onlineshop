@@ -160,9 +160,9 @@ export default function CheckoutPage() {
 
   if (!isHydrated) {
     return (
-      <div>
+      <div style={{ display: "flex", flexDirection: "column" }}>
         <PageHeader title="Checkout" breadcrumbs={[{ label: "Checkout" }]} />
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 text-sm text-[color:var(--color-muted)]">
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "64px 24px", fontSize: 14, color: "var(--text-muted)" }}>
           Memuat…
         </div>
       </div>
@@ -171,15 +171,15 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div>
+      <div style={{ display: "flex", flexDirection: "column" }}>
         <PageHeader
           title="Checkout"
           description="Keranjang Anda kosong — tambahkan produk sebelum checkout."
           breadcrumbs={[{ label: "Checkout" }]}
         />
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-14 text-center">
-          <Link href="/shop" className="btn btn-primary inline-flex">
-            Lihat Produk <ArrowRight className="h-4 w-4" />
+        <div style={{ maxWidth: 800, margin: "0 auto", padding: "64px 24px", textAlign: "center" }}>
+          <Link href="/shop" className="btn btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            Lihat Produk <ArrowRight style={{ width: 16, height: 16 }} />
           </Link>
         </div>
       </div>
@@ -313,7 +313,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <PageHeader
         title="Checkout"
         description="Selesaikan pembelian dengan aman di website kami."
@@ -325,22 +325,22 @@ export default function CheckoutPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8"
+        style={{ maxWidth: 1200, margin: "0 auto", padding: "64px 24px", display: "grid", gridTemplateColumns: "1fr 380px", gap: 32 }}
       >
-        <div className="space-y-6">
+        <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
           {/* Saved Address Card OR Manual Input Forms */}
           {addressMode === "saved" && savedAddress ? (
-            <section className="card p-6 border-2 border-[color:var(--color-navy-900)] bg-[color:var(--color-navy-900)]/[0.02]">
-              <div className="flex items-start justify-between gap-4">
+            <section style={{ background: "var(--surface)", border: "1px solid var(--gold)", padding: 32 }}>
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
                 <div>
-                  <h2 className="text-base font-semibold flex items-center gap-2">
-                    <Check className="h-4 w-4 text-[color:var(--color-success)]" />
+                  <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", display: "flex", alignItems: "center", gap: 8 }}>
+                    <Check style={{ width: 16, height: 16, color: "var(--success)" }} />
                     Alamat Pengiriman Utama
                   </h2>
-                  <div className="mt-4 text-sm text-[color:var(--color-ink)] space-y-1">
-                    <p className="font-semibold">{savedAddress.fullName}</p>
-                    <p>{savedAddress.phone} • {savedAddress.email}</p>
-                    <p className="pt-2 text-[color:var(--color-muted)]">
+                  <div style={{ marginTop: 16, fontSize: 14, color: "var(--text)", display: "flex", flexDirection: "column", gap: 4 }}>
+                    <p style={{ fontWeight: 600 }}>{savedAddress.fullName}</p>
+                    <p style={{ color: "var(--text-muted)" }}>{savedAddress.phone} • {savedAddress.email}</p>
+                    <p style={{ paddingTop: 8, color: "var(--text-muted)" }}>
                       {savedAddress.address}<br />
                       {savedAddress.district}, {savedAddress.city}, {savedAddress.province} {savedAddress.postalCode}
                     </p>
@@ -349,7 +349,8 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={() => setAddressMode("new")}
-                  className="btn btn-outline shrink-0 !px-3 !py-1.5 text-xs"
+                  className="btn btn-outline"
+                  style={{ flexShrink: 0, padding: "8px 16px", fontSize: 12 }}
                 >
                   Ganti Alamat
                 </button>
@@ -358,7 +359,7 @@ export default function CheckoutPage() {
           ) : (
             <>
               {savedAddress && (
-                <div className="flex justify-end -mb-2">
+                <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: -16 }}>
                   <button
                     type="button"
                     onClick={() => {
@@ -373,28 +374,29 @@ export default function CheckoutPage() {
                       });
                     }}
                     className="text-sm text-[color:var(--color-navy-600)] hover:underline font-medium"
+                    style={{ fontSize: 13, color: "var(--gold)", fontWeight: 500, background: "transparent", border: "none", cursor: "pointer" }}
                   >
                     Batal / Gunakan Alamat Tersimpan
                   </button>
                 </div>
               )}
               {/* Customer Info */}
-              <section className="card p-6">
-                <h2 className="text-base font-semibold">Informasi Pelanggan</h2>
-                <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <section style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 32 }}>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>Informasi Pelanggan</h2>
+                <div style={{ marginTop: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                   <div>
-                    <label className="label" htmlFor="full_name">
+                    <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }} htmlFor="full_name">
                       Nama lengkap
                     </label>
                     <input
                       id="full_name"
                       name="full_name"
                       required
-                      className="input"
+                      style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
                     />
                   </div>
                   <div>
-                    <label className="label" htmlFor="phone">
+                    <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }} htmlFor="phone">
                       Nomor HP / WhatsApp
                     </label>
                     <input
@@ -402,11 +404,11 @@ export default function CheckoutPage() {
                       name="phone"
                       required
                       type="tel"
-                      className="input"
+                      style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
                     />
                   </div>
-                  <div className="sm:col-span-2">
-                    <label className="label" htmlFor="email">
+                  <div style={{ gridColumn: "1 / -1" }}>
+                    <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }} htmlFor="email">
                       Email
                     </label>
                     <input
@@ -414,62 +416,62 @@ export default function CheckoutPage() {
                       name="email"
                       required
                       type="email"
-                      className="input"
+                      style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
                     />
                   </div>
                 </div>
               </section>
 
               {/* Shipping Address */}
-              <section className="card p-6">
-                <h2 className="text-base font-semibold">Alamat Pengiriman</h2>
-                <div className="mt-5 space-y-4">
+              <section style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 32 }}>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>Alamat Pengiriman</h2>
+                <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 16 }}>
                   <AreaSearch
                     onSelect={handleAreaSelect}
                     disabled={submitting}
                   />
                   {selectedArea && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 animate-[fadeIn_200ms_ease-out]">
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
                       <div>
-                        <span className="label">Provinsi</span>
-                        <div className="input bg-[color:var(--color-cloud-50)] text-[color:var(--color-ink)]">
+                        <span style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>Provinsi</span>
+                        <div style={{ width: "100%", background: "var(--bg2)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", fontSize: 14 }}>
                           {selectedArea.province}
                         </div>
                       </div>
                       <div>
-                        <span className="label">Kota / Kabupaten</span>
-                        <div className="input bg-[color:var(--color-cloud-50)] text-[color:var(--color-ink)]">
+                        <span style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>Kota / Kabupaten</span>
+                        <div style={{ width: "100%", background: "var(--bg2)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", fontSize: 14 }}>
                           {selectedArea.city}
                         </div>
                       </div>
                       <div>
-                        <span className="label">Kode Pos</span>
-                        <div className="input bg-[color:var(--color-cloud-50)] text-[color:var(--color-ink)]">
+                        <span style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>Kode Pos</span>
+                        <div style={{ width: "100%", background: "var(--bg2)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", fontSize: 14 }}>
                           {selectedArea.postalCode}
                         </div>
                       </div>
                     </div>
                   )}
                   <div>
-                    <label className="label" htmlFor="address">
+                    <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }} htmlFor="address">
                       Alamat lengkap
                     </label>
                     <textarea
                       id="address"
                       name="address"
                       required
-                      className="input min-h-[90px] resize-y"
+                      style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)", minHeight: 90, resize: "vertical" }}
                       placeholder="Jl. Contoh No. 123, Komplek …"
                     />
                   </div>
                   <div>
-                    <label className="label" htmlFor="notes">
+                    <label style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }} htmlFor="notes">
                       Catatan (opsional)
                     </label>
                     <input
                       id="notes"
                       name="notes"
-                      className="input"
+                      style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", padding: "12px 16px", outline: "none", fontSize: 14, fontFamily: "var(--font-sans)" }}
                       placeholder="Titip ke security depan rumah"
                     />
                   </div>
@@ -479,13 +481,13 @@ export default function CheckoutPage() {
           )}
 
           {/* Shipping Method — live rates */}
-          <section className="card p-6">
-            <h2 className="text-base font-semibold">Metode Pengiriman</h2>
-            <p className="text-xs text-[color:var(--color-muted)] mt-1">
+          <section style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 32 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>Metode Pengiriman</h2>
+            <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 8 }}>
               Tarif kurir real-time dari Biteship berdasarkan tujuan dan total
               berat ({(totals.weightGram / 1000).toFixed(2)} kg).
             </p>
-            <div className="mt-4">
+            <div style={{ marginTop: 24 }}>
               <ShippingRates
                 postalCode={selectedArea?.postalCode ?? null}
                 items={cartItemsForRate}
@@ -497,23 +499,30 @@ export default function CheckoutPage() {
           </section>
 
           {/* Payment Method */}
-          <section className="card p-6">
-            <h2 className="text-base font-semibold">Metode Pembayaran</h2>
-            <p className="text-xs text-[color:var(--color-muted)] mt-1">
+          <section style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 32 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>Metode Pembayaran</h2>
+            <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 8 }}>
               Pemrosesan pembayaran aman.
             </p>
-            <ul className="mt-4 space-y-2.5">
+            <ul style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 10, listStyle: "none", padding: 0 }}>
               {PAYMENT_METHODS.map((m) => {
                 const selected = paymentId === m.id;
                 return (
                   <li key={m.id}>
                     <label
-                      className={clsx(
-                        "flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-colors",
-                        selected
-                          ? "border-[color:var(--color-navy-900)] bg-[color:var(--color-navy-900)]/[0.03]"
-                          : "border-[color:var(--color-line)] hover:border-[color:var(--color-navy-300)]",
-                      )}
+                      style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 12,
+                        border: "1px solid",
+                        borderColor: selected ? "var(--gold)" : "var(--border)",
+                        background: selected ? "var(--bg2)" : "transparent",
+                        padding: 16,
+                        cursor: "pointer",
+                        transition: "all 0.2s"
+                      }}
+                      onMouseEnter={(e) => { if (!selected) e.currentTarget.style.borderColor = "var(--text-muted)"; }}
+                      onMouseLeave={(e) => { if (!selected) e.currentTarget.style.borderColor = "var(--border)"; }}
                     >
                       <input
                         type="radio"
@@ -522,11 +531,11 @@ export default function CheckoutPage() {
                         checked={selected}
                         disabled={submitting}
                         onChange={() => setPaymentId(m.id)}
-                        className="h-4 w-4 mt-0.5 accent-[color:var(--color-navy-900)]"
+                        style={{ width: 16, height: 16, marginTop: 2, accentColor: "var(--gold)" }}
                       />
                       <div>
-                        <div className="text-sm font-semibold">{m.label}</div>
-                        <div className="text-xs text-[color:var(--color-muted)] mt-0.5">
+                        <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{m.label}</div>
+                        <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>
                           {m.desc}
                         </div>
                       </div>
@@ -539,61 +548,61 @@ export default function CheckoutPage() {
         </div>
 
         {/* Order Summary */}
-        <aside className="card p-6 h-fit lg:sticky lg:top-20">
-          <h2 className="text-base font-semibold">Ringkasan Pesanan</h2>
-          <ul className="mt-4 space-y-3 max-h-[280px] overflow-y-auto pr-1">
+        <aside style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 32, height: "fit-content", position: "sticky", top: 80 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>Ringkasan Pesanan</h2>
+          <ul style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 16, maxHeight: 320, overflowY: "auto", listStyle: "none", padding: 0 }}>
             {totals.lineItems.map(({ item, pricing }) => (
               <li
                 key={item.lineId}
-                className="flex items-start justify-between gap-4 text-sm"
+                style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, fontSize: 14 }}
               >
-                <div className="min-w-0">
-                  <div className="font-semibold line-clamp-1">{item.name}</div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: 600, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.name}</div>
                   {item.variantLabel ? (
-                    <div className="text-xs text-[color:var(--color-navy-900)]">
+                    <div style={{ fontSize: 12, color: "var(--gold)" }}>
                       {item.variantLabel}
                     </div>
                   ) : null}
-                  <div className="text-xs text-[color:var(--color-muted)]">
+                  <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
                     {item.quantity} × {formatRupiah(pricing.unitPrice)}
                     {pricing.tierLabel ? ` · ${pricing.tierLabel}` : ""}
                   </div>
                 </div>
-                <div className="font-semibold whitespace-nowrap">
+                <div style={{ fontWeight: 600, color: "var(--text)", whiteSpace: "nowrap" }}>
                   {formatRupiah(pricing.subtotal)}
                 </div>
               </li>
             ))}
           </ul>
-          <dl className="mt-5 pt-5 border-t border-[color:var(--color-line)] space-y-2.5 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-[color:var(--color-muted)]">Subtotal</dt>
-              <dd className="font-semibold">
+          <dl style={{ marginTop: 32, paddingTop: 32, borderTop: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 12, fontSize: 14 }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <dt style={{ color: "var(--text-muted)" }}>Subtotal</dt>
+              <dd style={{ fontWeight: 600, color: "var(--text)" }}>
                 {formatRupiah(totals.subtotal)}
               </dd>
             </div>
-            <div className="flex justify-between">
-              <dt className="text-[color:var(--color-muted)]">
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <dt style={{ color: "var(--text-muted)" }}>
                 Ongkos kirim
                 {selectedRate
                   ? ` (${selectedRate.courierName.toUpperCase() === "JNT" ? "J&T" : selectedRate.courierName.toUpperCase() === "SENTRALCARGO" ? "Central Cargo" : selectedRate.courierName.toUpperCase()} ${selectedRate.courierServiceName})`
                   : ""}
               </dt>
-              <dd className="font-semibold">
+              <dd style={{ fontWeight: 600, color: "var(--text)" }}>
                 {selectedRate ? formatRupiah(shippingCost) : "—"}
               </dd>
             </div>
           </dl>
-          <div className="mt-4 pt-4 border-t border-[color:var(--color-line)] flex justify-between items-baseline">
-            <span className="font-semibold">Total</span>
-            <span className="text-xl font-bold text-[color:var(--color-navy-900)]">
+          <div style={{ marginTop: 24, paddingTop: 24, borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+            <span style={{ fontWeight: 600, color: "var(--text)" }}>Total</span>
+            <span style={{ fontSize: 24, fontWeight: 700, color: "var(--gold)", fontFamily: "var(--font-display)" }}>
               {selectedRate ? formatRupiah(grandTotal) : "—"}
             </span>
           </div>
           {error && (
             <p
               role="alert"
-              className="mt-5 text-sm text-[color:var(--color-error)]"
+              style={{ marginTop: 24, fontSize: 14, color: "var(--error)" }}
             >
               {error}
             </p>
@@ -601,13 +610,14 @@ export default function CheckoutPage() {
           <button
             type="submit"
             disabled={submitting || !selectedRate || !selectedArea}
-            className="btn btn-primary w-full mt-6"
+            className="btn btn-primary"
+            style={{ width: "100%", marginTop: 32, display: "flex", justifyContent: "center", gap: 8 }}
           >
             {submitting ? "Membuat pesanan…" : "Buat pesanan & bayar"}
-            {!submitting && <ArrowRight className="h-4 w-4" />}
+            {!submitting && <ArrowRight style={{ width: 16, height: 16 }} />}
           </button>
-          <div className="mt-4 flex items-start gap-2 text-xs text-[color:var(--color-muted)]">
-            <ShieldCheck className="h-4 w-4 shrink-0 text-[color:var(--color-success)]" />
+          <div style={{ marginTop: 24, display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12, color: "var(--text-muted)" }}>
+            <ShieldCheck style={{ width: 16, height: 16, flexShrink: 0, color: "var(--success)" }} />
             <span>
               Pembayaran Anda diproses dengan aman. Total pesanan dikunci
               di server sebelum pembayaran.
@@ -660,63 +670,64 @@ function PaymentModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyItems: "center", padding: 16 }}>
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(4px)" }} />
 
       {/* Modal */}
       <div
-        className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
-        style={{ animation: "fadeIn 0.3s ease-out" }}
+        style={{ position: "relative", width: "100%", maxWidth: 448, margin: "auto", background: "var(--bg)", border: "1px solid var(--border)", display: "flex", flexDirection: "column", maxHeight: "90vh", overflowY: "auto", animation: "fadeIn 0.3s ease-out" }}
       >
         {/* Header */}
-        <div className="bg-[color:var(--color-navy-900)] text-white px-6 py-5 sticky top-0 z-10">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold">Instruksi Pembayaran</h3>
+        <div style={{ background: "var(--bg2)", borderBottom: "1px solid var(--border)", padding: "20px 24px", position: "sticky", top: 0, zIndex: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>Instruksi Pembayaran</h3>
           </div>
-          <p className="mt-1 text-sm text-white/70">
+          <p style={{ marginTop: 4, fontSize: 13, color: "var(--text-muted)" }}>
             Pesanan #{orderNumber}
           </p>
         </div>
 
-        <div className="px-6 py-5 space-y-5">
+        <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 24 }}>
           {/* Total */}
-          <div className="text-center py-3 rounded-xl bg-[color:var(--color-cloud-100)] border border-[color:var(--color-line)]">
-            <div className="text-xs text-[color:var(--color-muted)] uppercase tracking-wider">Total Pembayaran</div>
-            <div className="text-2xl font-bold text-[color:var(--color-navy-900)] mt-1">
+          <div style={{ textAlign: "center", padding: 24, background: "var(--surface)", border: "1px solid var(--border)" }}>
+            <div style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>Total Pembayaran</div>
+            <div style={{ fontSize: 28, fontWeight: 700, color: "var(--gold)", marginTop: 8, fontFamily: "var(--font-display)" }}>
               {formatRupiah(total)}
             </div>
             <button
               type="button"
               onClick={() => copyText(String(total), "total")}
-              className="mt-1.5 inline-flex items-center gap-1 text-xs text-[color:var(--color-navy-900)] hover:underline"
+              style={{ marginTop: 12, display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--text)", background: "transparent", border: "none", cursor: "pointer", transition: "opacity 0.2s" }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = "0.7"}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
             >
-              {copied === "total" ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              {copied === "total" ? <Check style={{ width: 14, height: 14, color: "var(--success)" }} /> : <Copy style={{ width: 14, height: 14 }} />}
               {copied === "total" ? "Tersalin" : "Salin nominal"}
             </button>
           </div>
 
           {/* QRIS — dynamic image from admin settings */}
           {paymentMethod === "qris" && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-semibold">
-                <QrCode className="h-4 w-4 text-[color:var(--color-navy-900)]" />
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, fontWeight: 600, color: "var(--text)" }}>
+                <QrCode style={{ width: 16, height: 16, color: "var(--gold)" }} />
                 Pembayaran QRIS
               </div>
-              <div className="rounded-xl border border-[color:var(--color-line)] p-4 flex flex-col items-center gap-3">
+              <div style={{ border: "1px solid var(--border)", background: "var(--surface)", padding: 24, display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
                 {qrisUrl ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={qrisUrl}
                     alt="QRIS"
-                    className="h-48 w-48 object-contain rounded-lg"
+                    style={{ width: 192, height: 192, objectFit: "contain", border: "1px solid var(--border)", background: "#fff", padding: 8 }}
                   />
                 ) : (
-                  <div className="h-40 w-40 bg-[color:var(--color-cloud-100)] rounded-lg flex items-center justify-center border-2 border-dashed border-[color:var(--color-line)]">
-                    <QrCode className="h-16 w-16 text-[color:var(--color-muted)]" />
+                  <div style={{ width: 160, height: 160, background: "var(--bg2)", border: "2px dashed var(--border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <QrCode style={{ width: 64, height: 64, color: "var(--text-muted)" }} />
                   </div>
                 )}
-                <p className="text-xs text-[color:var(--color-muted)] text-center">
+                <p style={{ fontSize: 12, color: "var(--text-muted)", textAlign: "center" }}>
                   Scan QR code di atas dengan e-wallet atau m-banking Anda.
                   QR code berlaku selama 24 jam.
                 </p>
@@ -726,27 +737,28 @@ function PaymentModal({
 
           {/* Transfer Bank — dynamic bank list from admin settings */}
           {paymentMethod === "transfer" && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-semibold">
-                <Building2 className="h-4 w-4 text-[color:var(--color-navy-900)]" />
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, fontWeight: 600, color: "var(--text)" }}>
+                <Building2 style={{ width: 16, height: 16, color: "var(--gold)" }} />
                 Transfer Bank
               </div>
               {banks.length > 0 ? (
-                <div className="space-y-2">
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   {banks.map((acc, i) => (
-                    <div key={`${acc.bank}-${i}`} className="rounded-xl border border-[color:var(--color-line)] p-3">
-                      <div className="flex items-center justify-between">
+                    <div key={`${acc.bank}-${i}`} style={{ border: "1px solid var(--border)", background: "var(--surface)", padding: 16 }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <div>
-                          <div className="text-xs text-[color:var(--color-muted)]">{acc.bank}</div>
-                          <div className="font-mono font-semibold tracking-wider">{acc.number}</div>
-                          <div className="text-xs text-[color:var(--color-muted)] mt-0.5">a.n. {acc.name}</div>
+                          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 4 }}>{acc.bank}</div>
+                          <div style={{ fontFamily: "monospace", fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{acc.number}</div>
+                          <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>a.n. {acc.name}</div>
                         </div>
                         <button
                           type="button"
                           onClick={() => copyText(acc.number, `bank-${i}`)}
-                          className="btn btn-outline !px-3 !py-1.5 text-xs"
+                          className="btn btn-outline"
+                          style={{ padding: "8px 16px", fontSize: 12, display: "flex", alignItems: "center", gap: 6 }}
                         >
-                          {copied === `bank-${i}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                          {copied === `bank-${i}` ? <Check style={{ width: 14, height: 14 }} /> : <Copy style={{ width: 14, height: 14 }} />}
                           {copied === `bank-${i}` ? "Tersalin" : "Salin"}
                         </button>
                       </div>
@@ -754,11 +766,11 @@ function PaymentModal({
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-[color:var(--color-muted)] py-4 text-center border border-dashed border-[color:var(--color-line)] rounded-xl">
+                <p style={{ fontSize: 14, color: "var(--text-muted)", padding: "16px 0", textAlign: "center", border: "1px dashed var(--border)" }}>
                   Rekening bank belum dikonfigurasi. Hubungi admin.
                 </p>
               )}
-              <p className="text-xs text-[color:var(--color-muted)]">
+              <p style={{ fontSize: 12, color: "var(--text-muted)" }}>
                 Transfer <strong>sesuai nominal persis</strong> agar verifikasi otomatis.
                 Konfirmasi pembayaran diproses dalam 1×24 jam kerja.
               </p>
@@ -769,12 +781,13 @@ function PaymentModal({
           <button
             type="button"
             onClick={onConfirm}
-            className="btn btn-primary w-full"
+            className="btn btn-primary"
+            style={{ width: "100%", display: "flex", justifyContent: "center", gap: 8 }}
           >
-            Sudah Bayar <ArrowRight className="h-4 w-4" />
+            Sudah Bayar <ArrowRight style={{ width: 16, height: 16 }} />
           </button>
 
-          <p className="text-[10px] text-center text-[color:var(--color-muted)]">
+          <p style={{ fontSize: 11, textAlign: "center", color: "var(--text-muted)", marginTop: -8 }}>
             Klik &quot;Sudah Bayar&quot; setelah Anda melakukan pembayaran.
             Anda juga bisa melihat instruksi ini di halaman detail pesanan.
           </p>

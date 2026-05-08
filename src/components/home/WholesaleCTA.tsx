@@ -3,49 +3,51 @@ import { ArrowRight, Tags, Users, BadgeCheck } from "lucide-react";
 
 export default function WholesaleCTA() {
   return (
-    <section className="rounded-2xl overflow-hidden bg-[color:var(--color-navy-900)] text-white relative">
-      <div className="absolute inset-0 opacity-[0.06] pointer-events-none">
+    <section style={{ position: "relative", background: "var(--bg2)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, opacity: 0.05, pointerEvents: "none" }}>
         <svg
-          className="absolute -top-10 -right-10 h-72 w-72"
+          style={{ position: "absolute", top: -40, right: -40, width: 300, height: 300 }}
           viewBox="0 0 200 200"
         >
           <defs>
             <pattern id="dots" patternUnits="userSpaceOnUse" width="14" height="14">
-              <circle cx="2" cy="2" r="1.5" fill="white" />
+              <circle cx="2" cy="2" r="1.5" fill="var(--text)" />
             </pattern>
           </defs>
           <rect width="200" height="200" fill="url(#dots)" />
         </svg>
       </div>
-      <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-10 p-8 sm:p-12 lg:p-14 items-center">
+      <div style={{ position: "relative", maxWidth: 1200, margin: "0 auto", padding: "80px 24px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48, alignItems: "center" }}>
         <div>
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold)" }}>
             Program Grosir & Reseller
           </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
+          <h2 style={{ marginTop: 16, fontSize: "clamp(28px, 4vw, 40px)", fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)" }}>
             Beli lebih banyak, hemat lebih banyak.
           </h2>
-          <p className="mt-4 text-white/75 max-w-md">
+          <p style={{ marginTop: 24, fontSize: 15, color: "var(--text-muted)", lineHeight: 1.6, maxWidth: 480 }}>
             Harga grosir berlaku mulai 6 pcs. Reseller yang disetujui
             mendapatkan harga eksklusif untuk seluruh katalog, dengan prioritas
             stok dan dukungan akun khusus.
           </p>
-          <div className="mt-7 flex flex-wrap gap-3">
+          <div style={{ marginTop: 32, display: "flex", flexWrap: "wrap", gap: 16 }}>
             <Link
               href="/wholesale"
-              className="btn !bg-white !text-[color:var(--color-navy-900)] !border-white hover:!bg-white/90"
+              className="btn btn-primary"
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "14px 24px", fontSize: 13 }}
             >
-              Jadi Reseller <ArrowRight className="h-4 w-4" />
+              Jadi Reseller <ArrowRight style={{ width: 16, height: 16 }} />
             </Link>
             <Link
               href="/shop"
-              className="btn !border-white/40 !text-white hover:!bg-white/10"
+              className="btn"
+              style={{ display: "inline-flex", alignItems: "center", padding: "14px 24px", fontSize: 13, background: "transparent", border: "1px solid var(--border)", color: "var(--text)" }}
             >
               Lihat Harga Grosir
             </Link>
           </div>
         </div>
-        <ul className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
+        <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 16 }}>
           {[
             {
               icon: Tags,
@@ -65,14 +67,14 @@ export default function WholesaleCTA() {
           ].map(({ icon: Icon, title, desc }) => (
             <li
               key={title}
-              className="flex items-start gap-3 rounded-xl bg-white/5 border border-white/10 p-4"
+              style={{ display: "flex", alignItems: "flex-start", gap: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 24 }}
             >
-              <div className="h-10 w-10 rounded-lg bg-white/10 flex items-center justify-center text-white shrink-0">
-                <Icon className="h-5 w-5" />
+              <div style={{ width: 48, height: 48, background: "var(--bg2)", border: "1px solid var(--gold)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--gold)", flexShrink: 0 }}>
+                <Icon style={{ width: 24, height: 24 }} />
               </div>
               <div>
-                <div className="text-sm font-semibold">{title}</div>
-                <div className="text-xs text-white/70 mt-0.5">{desc}</div>
+                <div style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>{title}</div>
+                <div style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.5 }}>{desc}</div>
               </div>
             </li>
           ))}

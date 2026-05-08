@@ -5,6 +5,7 @@ import { createBrowserClient } from "@supabase/ssr";
 
 export default function GoogleButton({ label = "Lanjutkan dengan Google" }: { label?: string }) {
   const [loading, setLoading] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   async function signInWithGoogle() {
     setLoading(true);
@@ -18,7 +19,6 @@ export default function GoogleButton({ label = "Lanjutkan dengan Google" }: { la
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
-    // No need to setLoading(false) — page will redirect
   }
 
   return (
@@ -26,9 +26,15 @@ export default function GoogleButton({ label = "Lanjutkan dengan Google" }: { la
       type="button"
       onClick={signInWithGoogle}
       disabled={loading}
-      className="w-full flex items-center justify-center gap-3 rounded-lg border border-[color:var(--color-line)] bg-white px-4 py-2.5 text-sm font-medium text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)] transition-colors disabled:opacity-60"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
+        border: "1px solid var(--border)", background: hovered && !loading ? "var(--bg2)" : "var(--surface)",
+        padding: "12px 24px", color: "var(--text)", fontSize: 13, fontFamily: "var(--font-sans)",
+        cursor: loading ? "not-allowed" : "pointer", transition: "all 0.2s", opacity: loading ? 0.6 : 1
+      }}
     >
-      {/* Google logo SVG */}
       <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
         <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
         <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>

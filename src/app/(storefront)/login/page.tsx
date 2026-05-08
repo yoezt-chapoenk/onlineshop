@@ -11,13 +11,13 @@ export default async function LoginPage() {
   const { authUser } = await getCurrentUser();
   if (authUser) redirect("/account");
   return (
-    <div>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <PageHeader title={t.auth.loginTitle} description={t.auth.loginSubtitle} />
-      <div className="mx-auto max-w-md px-4 sm:px-6 lg:px-8 py-10">
+      <div style={{ maxWidth: 440, margin: "0 auto", padding: "64px 20px" }}>
         <LoginForm />
-        <p className="mt-6 text-center text-sm text-[color:var(--color-muted)]">
+        <p style={{ marginTop: 24, textAlign: "center", fontSize: 13, color: "var(--text-muted)" }}>
           {t.auth.noAccount}{" "}
-          <Link href="/register" className="font-semibold text-[color:var(--color-navy-900)] hover:underline">
+          <Link href="/register" style={{ fontWeight: 600, color: "var(--gold)", textDecoration: "none" }} onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"} onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}>
             {t.auth.registerHere}
           </Link>
         </p>

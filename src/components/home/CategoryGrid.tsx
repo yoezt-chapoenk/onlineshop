@@ -10,38 +10,40 @@ interface Props {
 
 export default function CategoryGrid({ categories, products }: Props) {
   return (
-    <section>
-      <div className="flex items-end justify-between gap-4">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+    <section style={{ padding: "80px 24px", maxWidth: 1200, margin: "0 auto" }}>
+      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 40 }}>
+        <h2 style={{ fontSize: 32, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)" }}>
           Belanja per Kategori
         </h2>
         <Link
           href="/collections"
-          className="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--color-navy-900)] hover:underline"
+          style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, color: "var(--gold)", textDecoration: "none", textTransform: "uppercase", letterSpacing: "0.1em" }}
         >
-          Lihat Semua Kategori <ArrowRight className="h-4 w-4" />
+          Lihat Semua <ArrowRight style={{ width: 16, height: 16 }} />
         </Link>
       </div>
-      <div className="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 24 }}>
         {categories.map((c) => {
           const sample = products.find((p) => p.category === c.slug);
           return (
             <Link
               key={c.slug}
               href={`/collections/${c.slug}`}
-              className="card group p-5 flex flex-col gap-3 min-h-[180px] hover:-translate-y-0.5 transition-transform"
+              style={{ display: "flex", flexDirection: "column", gap: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 24, minHeight: 200, textDecoration: "none", transition: "border 0.2s" }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = "var(--gold)"}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--border)"}
             >
-              <div className="flex items-start justify-between">
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
                 <div>
-                  <h3 className="text-base font-semibold text-[color:var(--color-ink)]">
+                  <h3 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>
                     {c.name}
                   </h3>
-                  <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[color:var(--color-navy-900)]">
-                    Lihat Koleksi <ArrowRight className="h-3 w-3" />
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "var(--gold)" }}>
+                    Lihat Koleksi <ArrowRight style={{ width: 12, height: 12 }} />
                   </span>
                 </div>
               </div>
-              <div className="mt-auto self-end -mr-2 -mb-2 opacity-90">
+              <div style={{ marginTop: "auto", alignSelf: "flex-end", opacity: 0.9 }}>
                 {sample && <GlassesArt product={sample} size={110} />}
               </div>
             </Link>

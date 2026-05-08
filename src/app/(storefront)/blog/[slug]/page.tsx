@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const supabase = await getServerSupabase();
-  if (!supabase) return <div className="p-8 text-center">Supabase not configured.</div>;
+  if (!supabase) return <div style={{ padding: 32, textAlign: "center", color: "var(--text-muted)" }}>Supabase not configured.</div>;
 
   const { data } = await supabase
     .from("articles")
@@ -63,34 +63,35 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <div style={{ maxWidth: 800, margin: "0 auto", padding: "64px 24px" }}>
       <Script
         id={`article-jsonld-${slug}`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       
-      <Link href="/blog" className="inline-flex items-center gap-1 text-sm font-medium text-[color:var(--color-navy-400)] hover:text-[color:var(--color-navy-900)] mb-8 transition-colors">
-        <ArrowLeft className="h-4 w-4" /> Kembali ke Blog
+      <Link href="/blog" style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--gold)", textDecoration: "none", marginBottom: 32 }}>
+        <ArrowLeft style={{ width: 16, height: 16 }} /> Kembali ke Blog
       </Link>
 
       <article>
-        <header className="mb-10 text-center">
-          <time className="text-sm font-medium text-[color:var(--color-muted)]">{formatDateTime(data.created_at)}</time>
-          <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[color:var(--color-navy-900)] leading-tight">
+        <header style={{ textAlign: "center", marginBottom: 40 }}>
+          <time style={{ fontSize: 13, color: "var(--text-muted)" }}>{formatDateTime(data.created_at)}</time>
+          <h1 style={{ marginTop: 16, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)", lineHeight: 1.2 }}>
             {data.title}
           </h1>
         </header>
 
         {data.image_url && (
-          <div className="mb-12 aspect-[2/1] w-full overflow-hidden rounded-2xl bg-[color:var(--color-cloud-100)]">
+          <div style={{ marginBottom: 48, aspectRatio: "2/1", width: "100%", overflow: "hidden", background: "var(--bg2)", border: "1px solid var(--border)" }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={data.image_url} alt={data.title} className="h-full w-full object-cover" />
+            <img src={data.image_url} alt={data.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
         )}
 
         <div 
-          className="article-body"
+          className="article-body prose"
+          style={{ color: "var(--text)", lineHeight: 1.8, fontSize: 16 }}
           dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
       </article>

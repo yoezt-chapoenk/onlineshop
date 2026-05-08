@@ -9,7 +9,7 @@ import {
   getRelatedProducts,
 } from "@/lib/data";
 import ProductDetailClient from "./ProductDetailClient";
-import ProductCard from "@/components/products/ProductCard";
+import ProductGrid from "@/components/products/ProductGrid";
 
 export const revalidate = 3600; // revalidate every hour
 
@@ -74,14 +74,13 @@ export default async function ProductPage({ params }: PageProps) {
   };
 
   return (
-    <div style={{ paddingTop: 64, background: "var(--bg)", minHeight: "100vh" }}>
+    <div style={{ background: "var(--bg)", minHeight: "100vh" }}>
       <Script
         id={`product-jsonld-${product.slug}`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      
-      <section style={{ padding: "32px 8%", borderBottom: "1px solid var(--border)" }}>
+      <section style={{ borderBottom: "1px solid var(--border)", padding: "120px 8% 24px" }}>
         <nav aria-label="Breadcrumb">
           <ol style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8, fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
             <li>
@@ -91,22 +90,19 @@ export default async function ProductPage({ params }: PageProps) {
             </li>
             <li style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <ChevronRight style={{ width: 14, height: 14, color: "var(--border)" }} />
-              <Link href="/shop" style={{ color: "inherit", textDecoration: "none", transition: "color 0.2s" }}>
+              <Link href="/shop" style={{ color: "inherit", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--gold)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}>
                 Belanja
               </Link>
             </li>
             <li style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <ChevronRight style={{ width: 14, height: 14, color: "var(--border)" }} />
-              <Link
-                href={`/collections/${product.category}`}
-                style={{ color: "inherit", textDecoration: "none", transition: "color 0.2s" }}
-              >
+              <Link href={`/collections/${product.category}`} style={{ color: "inherit", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--gold)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}>
                 {product.categoryLabel}
               </Link>
             </li>
             <li style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <ChevronRight style={{ width: 14, height: 14, color: "var(--border)" }} />
-              <span style={{ color: "var(--text)", fontWeight: 500 }}>
+              <span style={{ color: "var(--text)" }}>
                 {product.name}
               </span>
             </li>

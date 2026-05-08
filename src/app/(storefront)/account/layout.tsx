@@ -26,38 +26,44 @@ export default async function AccountLayout({
   const { authUser, profile } = await getCurrentUser();
   if (!authUser) redirect("/login");
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8">
-      <aside className="card p-4 h-fit">
-        <div className="px-2 pb-3 mb-3 border-b border-[color:var(--color-line)]">
-          <p className="text-xs uppercase tracking-wider text-[color:var(--color-muted)]">
-            {t.account.welcome("")}
-          </p>
-          <p className="text-sm font-semibold mt-0.5 truncate">{profile?.full_name ?? authUser.email}</p>
-          <p className="text-xs text-[color:var(--color-muted)] truncate">{authUser.email ?? ""}</p>
-        </div>
-        <nav className="flex flex-col gap-0.5">
-          {NAV.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-[color:var(--color-ink)] hover:bg-[color:var(--color-cloud-100)]"
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+      <div style={{ padding: "64px 8%", display: "grid", gap: 32 }} className="lg:grid-cols-[240px_1fr]">
+        <aside style={{ background: "var(--surface)", padding: 24, border: "1px solid var(--border)", height: "fit-content" }}>
+          <div style={{ paddingBottom: 16, marginBottom: 16, borderBottom: "1px solid var(--border)" }}>
+            <p style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>
+              {t.account.welcome("")}
+            </p>
+            <p style={{ fontSize: 15, fontWeight: 500, color: "var(--text)", marginTop: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{profile?.full_name ?? authUser.email}</p>
+            <p style={{ fontSize: 13, color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{authUser.email ?? ""}</p>
+          </div>
+          <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {NAV.map(({ href, label, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 12px", fontSize: 14, color: "var(--text)", textDecoration: "none", transition: "all 0.2s", borderRadius: 6 }}
+                onMouseEnter={(e) => e.currentTarget.style.background = "var(--bg2)"}
+                onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+              >
+                <Icon style={{ width: 16, height: 16, color: "var(--text-muted)" }} />
+                {label}
+              </Link>
+            ))}
+          </nav>
+          <form action={logoutAction} style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
+            <button
+              type="submit"
+              style={{ display: "flex", width: "100%", alignItems: "center", gap: 12, padding: "8px 12px", fontSize: 14, color: "var(--text-muted)", textDecoration: "none", background: "none", border: "none", cursor: "pointer", transition: "all 0.2s", borderRadius: 6 }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,59,48,0.1)"; e.currentTarget.style.color = "rgb(255,59,48)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text-muted)"; }}
             >
-              <Icon className="h-4 w-4" />
-              {label}
-            </Link>
-          ))}
-        </nav>
-        <form action={logoutAction} className="mt-3 pt-3 border-t border-[color:var(--color-line)]">
-          <button
-            type="submit"
-            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-[color:var(--color-muted)] hover:text-[color:var(--color-error)] hover:bg-[color:var(--color-cloud-100)]"
-          >
-            <LogOut className="h-4 w-4" />
-            {t.nav.logout}
-          </button>
-        </form>
-      </aside>
-      <main className="min-w-0">{children}</main>
+              <LogOut style={{ width: 16, height: 16 }} />
+              {t.nav.logout}
+            </button>
+          </form>
+        </aside>
+        <main style={{ minWidth: 0 }}>{children}</main>
+      </div>
     </div>
   );
 }

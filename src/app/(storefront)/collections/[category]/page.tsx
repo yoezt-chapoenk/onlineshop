@@ -35,7 +35,7 @@ export default async function CategoryPage({ params }: PageProps) {
   const list = await getProductsByCategory(category as CategorySlug);
 
   return (
-    <div>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <PageHeader
         eyebrow={cat.name}
         title={cat.name}
@@ -45,13 +45,13 @@ export default async function CategoryPage({ params }: PageProps) {
           { label: cat.name },
         ]}
       />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-sm text-[color:var(--color-muted)] mb-5">
+      <div style={{ padding: "64px 8%" }}>
+        <div style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 32, letterSpacing: "0.1em", textTransform: "uppercase" }}>
           Menampilkan{" "}
-          <span className="font-semibold text-[color:var(--color-ink)]">
+          <span style={{ fontWeight: 600, color: "var(--text)" }}>
             {list.length}
           </span>{" "}
-          produk dalam {cat.name}
+          produk
         </div>
         <ProductGrid products={list} />
       </div>
