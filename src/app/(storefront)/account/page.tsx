@@ -66,7 +66,7 @@ export default async function AccountOverviewPage() {
         <section style={{ background: "var(--gold)", color: "var(--bg)", padding: 24, border: "1px solid var(--border)" }}>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(0,0,0,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <div style={{ width: 40, height: 40, background: "rgba(0,0,0,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                 <LayoutDashboard style={{ width: 20, height: 20, color: "var(--bg)" }} />
               </div>
               <div>
@@ -75,13 +75,13 @@ export default async function AccountOverviewPage() {
               </div>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              <Link href="/admin" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--bg)", color: "var(--text)", padding: "8px 16px", fontSize: 12, fontWeight: 600, textDecoration: "none", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"} onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}>
+              <Link href="/admin" className="btn" style={{ background: "var(--bg)", color: "var(--text)", fontSize: 12, fontWeight: 600, padding: "8px 16px", display: "inline-flex", alignItems: "center", gap: 8 }}>
                 <LayoutDashboard style={{ width: 14, height: 14 }} /> Dashboard Admin
               </Link>
-              <Link href="/admin/orders" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(0,0,0,0.1)", color: "var(--bg)", padding: "8px 16px", fontSize: 12, fontWeight: 600, textDecoration: "none", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = "rgba(0,0,0,0.2)"} onMouseLeave={(e) => e.currentTarget.style.background = "rgba(0,0,0,0.1)"}>
+              <Link href="/admin/orders" className="btn" style={{ background: "rgba(0,0,0,0.15)", color: "var(--bg)", fontSize: 12, fontWeight: 600, padding: "8px 16px", border: "none" }}>
                 Pesanan
               </Link>
-              <Link href="/admin/products" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(0,0,0,0.1)", color: "var(--bg)", padding: "8px 16px", fontSize: 12, fontWeight: 600, textDecoration: "none", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = "rgba(0,0,0,0.2)"} onMouseLeave={(e) => e.currentTarget.style.background = "rgba(0,0,0,0.1)"}>
+              <Link href="/admin/products" className="btn" style={{ background: "rgba(0,0,0,0.15)", color: "var(--bg)", fontSize: 12, fontWeight: 600, padding: "8px 16px", border: "none" }}>
                 Produk
               </Link>
             </div>
@@ -113,7 +113,7 @@ export default async function AccountOverviewPage() {
       <section style={{ background: "var(--surface)", padding: 24, border: "1px solid var(--border)" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <h2 style={{ fontSize: 16, fontWeight: 400, color: "var(--text)" }}>{t.account.orders}</h2>
-          <Link href="/account/orders" style={{ fontSize: 13, color: "var(--text-muted)", textDecoration: "none" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--gold)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}>
+          <Link href="/account/orders" className="link-muted" style={{ fontSize: 13 }}>
             {t.common.showMore}
           </Link>
         </div>
@@ -158,7 +158,7 @@ export default async function AccountOverviewPage() {
       {role !== "reseller" && status !== "approved" && (
         <section style={{ background: "var(--bg2)", padding: 24, border: "1px solid var(--border)" }}>
           <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
-            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--surface)", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <div style={{ width: 40, height: 40, background: "var(--surface)", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <UserPlus style={{ width: 20, height: 20, color: "var(--text)" }} />
             </div>
             <div style={{ minWidth: 0 }}>

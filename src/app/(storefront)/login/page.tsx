@@ -17,7 +17,7 @@ export default async function LoginPage() {
         <LoginForm />
         <p style={{ marginTop: 24, textAlign: "center", fontSize: 13, color: "var(--text-muted)" }}>
           {t.auth.noAccount}{" "}
-          <Link href="/register" style={{ fontWeight: 600, color: "var(--gold)", textDecoration: "none" }} onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"} onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}>
+          <Link href="/register" className="link-gold" style={{ fontWeight: 600 }}>
             {t.auth.registerHere}
           </Link>
         </p>

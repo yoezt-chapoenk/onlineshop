@@ -15,7 +15,7 @@ export default function ForgotPasswordPage() {
       <div style={{ maxWidth: 440, margin: "0 auto", padding: "64px 20px" }}>
         <ForgotPasswordForm />
         <p style={{ marginTop: 24, textAlign: "center", fontSize: 13, color: "var(--text-muted)" }}>
-          <Link href="/login" style={{ fontWeight: 600, color: "var(--gold)", textDecoration: "none" }} onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"} onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}>
+          <Link href="/login" className="link-gold" style={{ fontWeight: 600 }}>
             {t.common.back} ke {t.auth.loginCta}
           </Link>
         </p>

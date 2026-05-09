@@ -41,9 +41,8 @@ export default async function AccountLayout({
               <Link
                 key={href}
                 href={href}
-                style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 12px", fontSize: 14, color: "var(--text)", textDecoration: "none", transition: "all 0.2s", borderRadius: 6 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = "var(--bg2)"}
-                onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                className="link-muted"
+                style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 12px", fontSize: 14, textDecoration: "none", transition: "all 0.2s" }}
               >
                 <Icon style={{ width: 16, height: 16, color: "var(--text-muted)" }} />
                 {label}
@@ -53,9 +52,8 @@ export default async function AccountLayout({
           <form action={logoutAction} style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
             <button
               type="submit"
-              style={{ display: "flex", width: "100%", alignItems: "center", gap: 12, padding: "8px 12px", fontSize: 14, color: "var(--text-muted)", textDecoration: "none", background: "none", border: "none", cursor: "pointer", transition: "all 0.2s", borderRadius: 6 }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,59,48,0.1)"; e.currentTarget.style.color = "rgb(255,59,48)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text-muted)"; }}
+              className="admin-btn-delete"
+              style={{ width: "100%", justifyContent: "flex-start", gap: 12, padding: "8px 12px", fontSize: 14, borderRadius: 0 }}
             >
               <LogOut style={{ width: 16, height: 16 }} />
               {t.nav.logout}
