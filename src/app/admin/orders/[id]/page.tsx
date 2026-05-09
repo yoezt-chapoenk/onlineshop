@@ -77,7 +77,6 @@ export default async function AdminOrderDetailPage({
   const badge = STATUS_BADGE[order.status];
 
   return (
-  return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       <header style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
         <div>
