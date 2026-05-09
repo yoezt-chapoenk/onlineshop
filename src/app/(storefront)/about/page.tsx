@@ -76,14 +76,13 @@ export default function AboutPage() {
             </div>
             <Link
               href="/wholesale"
+            className="btn btn-primary"
               style={{
                 display: "inline-flex", alignItems: "center", gap: 8, marginTop: 40,
-                background: "var(--gold)", color: "var(--bg)", textDecoration: "none",
+                textDecoration: "none",
                 padding: "0 24px", height: 44, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase",
-                fontWeight: 500, transition: "background 0.2s"
+                fontWeight: 500
               }}
-              onMouseEnter={(e) => e.currentTarget.style.background = "var(--gold-light)"}
-              onMouseLeave={(e) => e.currentTarget.style.background = "var(--gold)"}
             >
               Jadi Reseller <ArrowRight style={{ width: 14, height: 14 }} />
             </Link>

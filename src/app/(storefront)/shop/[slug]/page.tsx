@@ -90,13 +90,13 @@ export default async function ProductPage({ params }: PageProps) {
             </li>
             <li style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <ChevronRight style={{ width: 14, height: 14, color: "var(--border)" }} />
-              <Link href="/shop" style={{ color: "inherit", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--gold)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}>
+              <Link href="/shop" className="link-muted" style={{ color: "inherit", textDecoration: "none" }}>
                 Belanja
               </Link>
             </li>
             <li style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <ChevronRight style={{ width: 14, height: 14, color: "var(--border)" }} />
-              <Link href={`/collections/${product.category}`} style={{ color: "inherit", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--gold)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}>
+              <Link href={`/collections/${product.category}`} className="link-muted" style={{ color: "inherit", textDecoration: "none" }}>
                 {product.categoryLabel}
               </Link>
             </li>

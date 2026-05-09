@@ -21,14 +21,11 @@ export default async function CollectionsPage() {
       <div style={{ padding: "64px 8%" }}>
         {categories.map((col, idx) => (
           <Link key={col.slug} href={`/shop`} style={{ textDecoration: 'none', display: 'block' }}>
-            <div style={{
+            <div className="card-hover" style={{
               display: "grid", gridTemplateColumns: "1fr 1fr",
               gap: 0, marginBottom: 2, cursor: "pointer",
-              background: "var(--surface)",
-              transition: "background 0.2s"
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.background = "var(--surface2)"}
-            onMouseLeave={(e) => e.currentTarget.style.background = "var(--surface)"}>
+              background: "var(--surface)"
+            }}>
               
               <div style={{ padding: "64px 8%", display: "flex", alignItems: "center" }}>
                 <div>

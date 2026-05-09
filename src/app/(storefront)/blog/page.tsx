@@ -29,7 +29,7 @@ export default async function BlogIndexPage() {
       <h1 style={{ fontSize: 32, fontWeight: 400, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: 32 }}>Artikel Terbaru</h1>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 32 }}>
         {articles.map((a) => (
-          <Link key={a.slug} href={`/blog/${a.slug}`} style={{ display: "flex", flexDirection: "column", background: "var(--surface)", border: "1px solid var(--border)", textDecoration: "none", overflow: "hidden", transition: "border 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.borderColor = "var(--gold)"} onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--border)"}>
+          <Link key={a.slug} href={`/blog/${a.slug}`} className="blog-card" style={{ display: "flex", flexDirection: "column", background: "var(--surface)", border: "1px solid var(--border)", textDecoration: "none", overflow: "hidden", transition: "border 0.2s" }}>
             {a.image_url ? (
               <div style={{ aspectRatio: "16/9", width: "100%", overflow: "hidden", background: "var(--bg2)", borderBottom: "1px solid var(--border)", position: "relative" }}>
                 <Image src={a.image_url} alt={a.title} fill style={{ objectFit: "cover", transition: "transform 0.5s ease" }} sizes="(max-width: 768px) 100vw, 33vw" />

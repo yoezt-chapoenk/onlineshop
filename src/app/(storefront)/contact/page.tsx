@@ -58,9 +58,8 @@ export default function ContactPage() {
                 <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>Telepon</div>
                 <a
                   href={`tel:${STORE_PHONE.replace(/\s+/g, "")}`}
-                  style={{ fontSize: 14, color: "var(--gold)", textDecoration: "none", transition: "opacity 0.2s" }}
-                  onMouseEnter={(e) => e.currentTarget.style.opacity = "0.8"}
-                  onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+                  className="link-gold"
+                  style={{ fontSize: 14 }}
                 >
                   {STORE_PHONE}
                 </a>
@@ -74,9 +73,8 @@ export default function ContactPage() {
                 <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>Email</div>
                 <a
                   href={`mailto:${SUPPORT_EMAIL}`}
-                  style={{ fontSize: 14, color: "var(--gold)", textDecoration: "none", transition: "opacity 0.2s" }}
-                  onMouseEnter={(e) => e.currentTarget.style.opacity = "0.8"}
-                  onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+                  className="link-gold"
+                  style={{ fontSize: 14 }}
                 >
                   {SUPPORT_EMAIL}
                 </a>

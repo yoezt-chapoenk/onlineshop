@@ -143,8 +143,8 @@ export default async function AccountOverviewPage() {
                   <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{formatRupiah(o.total)}</p>
                   <Link
                     href={`/account/orders/${o.id}`}
-                    style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4, marginTop: 4 }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = "var(--gold)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}
+                    className="link-muted"
+                    style={{ fontSize: 12, display: "inline-flex", alignItems: "center", gap: 4, marginTop: 4 }}
                   >
                     {t.account.viewOrder} <ArrowRight style={{ width: 12, height: 12 }} />
                   </Link>

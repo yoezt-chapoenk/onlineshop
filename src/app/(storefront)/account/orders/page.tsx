@@ -81,9 +81,8 @@ export default async function AccountOrdersPage() {
                   <td style={{ padding: "16px 20px", textAlign: "right" }}>
                     <Link
                       href={`/account/orders/${o.id}`}
-                      style={{ fontSize: 12, color: "var(--gold)", textDecoration: "none" }}
-                      onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"}
-                      onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}
+                      className="link-gold"
+                      style={{ fontSize: 12 }}
                     >
                       {t.account.viewOrder}
                     </Link>

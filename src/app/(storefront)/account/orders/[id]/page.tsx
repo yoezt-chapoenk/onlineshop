@@ -118,9 +118,8 @@ export default async function AccountOrderDetailPage({
                   <td style={{ padding: "16px 0" }}>
                     <Link
                       href={`/shop/${item.product_slug}`}
-                      style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", textDecoration: "none" }}
-                      onMouseEnter={(e) => e.currentTarget.style.color = "var(--gold)"}
-                      onMouseLeave={(e) => e.currentTarget.style.color = "var(--text)"}
+                      className="link-muted"
+                      style={{ fontSize: 14, fontWeight: 600 }}
                     >
                       {item.product_name}
                     </Link>
@@ -232,7 +231,7 @@ export default async function AccountOrderDetailPage({
       </div>
 
       <div>
-        <Link href="/account/orders" style={{ fontSize: 13, color: "var(--text-muted)", textDecoration: "none" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--gold)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}>
+        <Link href="/account/orders" className="link-muted" style={{ fontSize: 13 }}>
           ← {t.common.back}
         </Link>
       </div>

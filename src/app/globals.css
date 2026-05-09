@@ -169,4 +169,16 @@ html.light-mode body::after {
   margin-bottom: 0.375rem;
 }
 
-
+/* Hover utilities for server components (no onMouseEnter needed) */
+.hover-surface:hover { background: var(--surface2) !important; }
+.hover-gold-text:hover { color: var(--gold) !important; }
+.hover-bg2:hover { background: var(--bg2) !important; }
+.hover-opacity:hover { opacity: 0.75; }
+.hover-border-gold:hover { border-color: var(--gold) !important; }
+.link-muted { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+.link-muted:hover { color: var(--gold); }
+.link-gold { color: var(--gold); text-decoration: none; transition: opacity 0.2s; }
+.link-gold:hover { opacity: 0.75; }
+.card-hover { transition: background 0.2s; }
+.card-hover:hover { background: var(--surface2) !important; }
+.blog-card:hover { border-color: var(--gold) !important; }
