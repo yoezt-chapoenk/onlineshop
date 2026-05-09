@@ -13,77 +13,84 @@ export default function AdminPaymentsClient({ pending, history }: { pending: any
   async function handleAction(id: string, orderNumber: string, action: "approved" | "rejected") {
     if (action === "approved" && !confirm(`Terima pembayaran ini dan ubah status pesanan ${orderNumber} menjadi PAID?`)) return;
     if (action === "rejected" && !confirm("Tolak bukti transfer ini?")) return;
-    
     setProcessing(id);
     await processPaymentConfirmation(id, orderNumber, action);
     setProcessing(null);
   }
 
+  const thStyle: React.CSSProperties = { padding: "10px 16px", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.14em", fontWeight: 600, color: "var(--text-muted)", textAlign: "left" };
+  const tdStyle: React.CSSProperties = { padding: "12px 16px", color: "var(--text)" };
+
   return (
-    <div className="space-y-10">
+    <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
+      {/* Pending */}
       <section>
-        <h2 className="text-lg font-bold mb-4">Menunggu Konfirmasi</h2>
-        <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] overflow-hidden">
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text)", marginBottom: 16 }}>Menunggu Konfirmasi</h2>
+        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", overflow: "hidden" }}>
           {pending.length === 0 ? (
-            <p className="p-8 text-center text-[color:var(--color-muted)]">Tidak ada konfirmasi pembayaran baru.</p>
+            <p style={{ padding: "32px 20px", textAlign: "center", color: "var(--text-muted)", fontSize: 14 }}>Tidak ada konfirmasi pembayaran baru.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-[color:var(--color-cloud-100)] text-xs uppercase text-[color:var(--color-muted)]">
-                  <tr>
-                    <th className="px-5 py-3 font-medium">Pesanan</th>
-                    <th className="px-5 py-3 font-medium">Pembeli</th>
-                    <th className="px-5 py-3 font-medium">Info Transfer</th>
-                    <th className="px-5 py-3 font-medium">Nominal</th>
-                    <th className="px-5 py-3 font-medium text-center">Bukti</th>
-                    <th className="px-5 py-3 font-medium text-right">Aksi</th>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ background: "var(--bg2)", borderBottom: "1px solid var(--border)" }}>
+                    <th style={thStyle}>Pesanan</th>
+                    <th style={thStyle}>Pembeli</th>
+                    <th style={thStyle}>Info Transfer</th>
+                    <th style={thStyle}>Nominal</th>
+                    <th style={{ ...thStyle, textAlign: "center" }}>Bukti</th>
+                    <th style={{ ...thStyle, textAlign: "right" }}>Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[color:var(--color-line)]">
+                <tbody>
                   {pending.map((p) => (
-                    <tr key={p.id}>
-                      <td className="px-5 py-3">
-                        <Link href={`/admin/orders/${p.orders?.id || ""}`} className="font-bold text-blue-600 hover:underline">
+                    <tr key={p.id} className="admin-row" style={{ borderBottom: "1px solid var(--border)" }}>
+                      <td style={tdStyle}>
+                        <Link href={`/admin/orders/${p.orders?.id || ""}`} className="link-gold" style={{ fontWeight: 700, fontSize: 13, fontFamily: "monospace" }}>
                           {p.order_number}
                         </Link>
-                        <div className="text-xs text-[color:var(--color-muted)] mt-1">{formatDateTime(p.created_at)}</div>
+                        <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>{formatDateTime(p.created_at)}</div>
                       </td>
-                      <td className="px-5 py-3">
-                        <div className="font-medium">{p.orders?.customer_name}</div>
-                        <div className="text-xs text-[color:var(--color-muted)]">{p.orders?.customer_email}</div>
+                      <td style={tdStyle}>
+                        <div style={{ fontWeight: 500 }}>{p.orders?.customer_name}</div>
+                        <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{p.orders?.customer_email}</div>
                       </td>
-                      <td className="px-5 py-3">
-                        <div className="font-bold">{p.bank_name}</div>
-                        <div className="text-xs text-[color:var(--color-muted)]">a/n {p.account_name}</div>
+                      <td style={tdStyle}>
+                        <div style={{ fontWeight: 700 }}>{p.bank_name}</div>
+                        <div style={{ fontSize: 12, color: "var(--text-muted)" }}>a/n {p.account_name}</div>
                       </td>
-                      <td className="px-5 py-3 font-bold text-[color:var(--color-navy-900)]">
-                        {formatRupiah(p.amount)}
+                      <td style={tdStyle}>
+                        <span style={{ fontWeight: 700 }}>{formatRupiah(p.amount)}</span>
                         {p.amount !== p.orders?.total && (
-                          <div className="text-xs text-red-500 font-normal">Tagihan: {formatRupiah(p.orders?.total)}</div>
+                          <div style={{ fontSize: 11, color: "var(--error)", marginTop: 2 }}>Tagihan: {formatRupiah(p.orders?.total)}</div>
                         )}
                       </td>
-                      <td className="px-5 py-3 text-center">
-                        <a href={p.receipt_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded hover:bg-blue-100 transition-colors">
-                          <ExternalLink className="w-3 h-3" /> Lihat
-                        </a>
+                      <td style={{ ...tdStyle, textAlign: "center" }}>
+                        {p.receipt_url ? (
+                          <a href={p.receipt_url} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ fontSize: 11, padding: "4px 10px", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                            <ExternalLink style={{ width: 12, height: 12 }} /> Lihat
+                          </a>
+                        ) : <span style={{ color: "var(--text-dim)", fontSize: 12 }}>—</span>}
                       </td>
-                      <td className="px-5 py-3 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                      <td style={{ ...tdStyle, textAlign: "right" }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8 }}>
                           <button
                             onClick={() => handleAction(p.id, p.order_number, "rejected")}
                             disabled={processing === p.id}
-                            className="btn bg-red-50 text-red-600 hover:bg-red-100 border-0 !px-3"
+                            className="admin-btn-delete"
+                            style={{ border: "1px solid var(--border)", padding: "4px 10px" }}
                             title="Tolak"
                           >
-                            <XCircle className="w-4 h-4" />
+                            <XCircle style={{ width: 14, height: 14 }} /> Tolak
                           </button>
                           <button
                             onClick={() => handleAction(p.id, p.order_number, "approved")}
                             disabled={processing === p.id}
-                            className="btn bg-green-50 text-green-600 hover:bg-green-100 border-0 !px-3"
-                            title="Terima (Ubah ke PAID)"
+                            className="btn btn-primary"
+                            style={{ fontSize: 12, padding: "4px 10px" }}
+                            title="Terima"
                           >
-                            <CheckCircle2 className="w-4 h-4" /> Terima
+                            <CheckCircle2 style={{ width: 14, height: 14 }} /> Terima
                           </button>
                         </div>
                       </td>
@@ -96,40 +103,37 @@ export default function AdminPaymentsClient({ pending, history }: { pending: any
         </div>
       </section>
 
+      {/* History */}
       <section>
-        <h2 className="text-lg font-bold mb-4">Riwayat Terakhir</h2>
-        <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] overflow-hidden">
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text)", marginBottom: 16 }}>Riwayat Terakhir</h2>
+        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", overflow: "hidden" }}>
           {history.length === 0 ? (
-            <p className="p-8 text-center text-[color:var(--color-muted)]">Belum ada riwayat diproses.</p>
+            <p style={{ padding: "32px 20px", textAlign: "center", color: "var(--text-muted)", fontSize: 14 }}>Belum ada riwayat diproses.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-[color:var(--color-cloud-100)] text-xs uppercase text-[color:var(--color-muted)]">
-                  <tr>
-                    <th className="px-5 py-3 font-medium">Pesanan</th>
-                    <th className="px-5 py-3 font-medium">Pembeli</th>
-                    <th className="px-5 py-3 font-medium">Nominal</th>
-                    <th className="px-5 py-3 font-medium">Status</th>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ background: "var(--bg2)", borderBottom: "1px solid var(--border)" }}>
+                    <th style={thStyle}>Pesanan</th>
+                    <th style={thStyle}>Pembeli</th>
+                    <th style={thStyle}>Nominal</th>
+                    <th style={thStyle}>Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[color:var(--color-line)]">
+                <tbody>
                   {history.map((h) => (
-                    <tr key={h.id}>
-                      <td className="px-5 py-3">
-                        <div className="font-bold">{h.order_number}</div>
-                      </td>
-                      <td className="px-5 py-3">
-                        <div className="font-medium">{h.orders?.customer_name}</div>
-                      </td>
-                      <td className="px-5 py-3 font-medium">
-                        {formatRupiah(h.amount)}
-                      </td>
-                      <td className="px-5 py-3">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                          h.status === "approved" ? "bg-green-100 text-green-800" :
-                          h.status === "rejected" ? "bg-red-100 text-red-800" :
-                          "bg-yellow-100 text-yellow-800"
-                        }`}>
+                    <tr key={h.id} className="admin-row" style={{ borderBottom: "1px solid var(--border)" }}>
+                      <td style={{ ...tdStyle, fontFamily: "monospace", fontSize: 12, fontWeight: 700 }}>{h.order_number}</td>
+                      <td style={{ ...tdStyle, fontWeight: 500 }}>{h.orders?.customer_name}</td>
+                      <td style={{ ...tdStyle, fontWeight: 600 }}>{formatRupiah(h.amount)}</td>
+                      <td style={tdStyle}>
+                        <span style={{
+                          display: "inline-flex", alignItems: "center", padding: "2px 8px",
+                          fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em",
+                          background: h.status === "approved" ? "rgba(126,179,232,0.1)" : h.status === "rejected" ? "rgba(239,68,68,0.1)" : "rgba(201,169,110,0.1)",
+                          color: h.status === "approved" ? "var(--gold)" : h.status === "rejected" ? "var(--error)" : "var(--gold-dim)",
+                          border: `1px solid ${h.status === "approved" ? "var(--gold-dim)" : h.status === "rejected" ? "var(--error)" : "var(--gold-dim)"}`,
+                        }}>
                           {h.status}
                         </span>
                       </td>

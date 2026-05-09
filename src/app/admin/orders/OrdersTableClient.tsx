@@ -150,7 +150,7 @@ export default function OrdersTableClient({ orders }: { orders: OrderRow[] }) {
                     <tr
                       key={o.id}
                       style={{ borderBottom: "1px solid var(--border)", background: selected.has(o.id) ? "rgba(201,169,110,0.05)" : "transparent", transition: "background 0.2s" }}
-                      className="hover:bg-[var(--bg2)]"
+                      className="admin-row"
                     >
                       <td style={{ padding: "12px 16px", textAlign: "center" }}>
                         <input

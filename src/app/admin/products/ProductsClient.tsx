@@ -244,7 +244,7 @@ export default function ProductsClient({ initialProducts, categories }: Props) {
                   <tr
                     key={p.id}
                     style={{ borderBottom: "1px solid var(--border)", transition: "background 0.2s" }}
-                    className="hover:bg-[var(--bg2)]"
+                    className="admin-row"
                   >
                     <td style={{ padding: "12px 16px" }}>
                       <Link
@@ -281,16 +281,15 @@ export default function ProductsClient({ initialProducts, categories }: Props) {
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 4 }}>
                         <Link
                           href={`/admin/products/${p.id}`}
-                          style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "4px 8px", borderRadius: 6, fontSize: 12, color: "var(--text)", textDecoration: "none" }}
-                          className="hover:bg-[var(--bg2)]"
+                          className="admin-btn-edit"
                           title="Edit"
                         >
                           <Pencil style={{ width: 14, height: 14 }} /> Edit
                         </Link>
                         <button
                           type="button"
-                          style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "4px 8px", borderRadius: 6, fontSize: 12, color: "var(--error)", background: "transparent", border: "none", cursor: "pointer", opacity: busyId === p.id ? 0.5 : 1 }}
-                          className="hover:bg-red-500/10"
+                          className="admin-btn-delete"
+                          style={{ opacity: busyId === p.id ? 0.5 : 1 }}
                           onClick={() => handleDelete(p)}
                           disabled={busyId === p.id}
                           title="Hapus"

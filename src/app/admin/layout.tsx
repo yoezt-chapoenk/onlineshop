@@ -70,8 +70,8 @@ export default async function AdminLayout({
               <Link
                 key={href}
                 href={href}
-                className="hover:bg-[var(--bg2)] hover:text-[var(--text)] transition-colors"
-                style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 8, fontSize: 14, fontWeight: 500, color: "var(--text-muted)", textDecoration: "none" }}
+                className="link-muted"
+                style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", fontSize: 14, fontWeight: 500, textDecoration: "none" }}
               >
                 <Icon style={{ width: 16, height: 16 }} />
                 {label}
@@ -81,8 +81,8 @@ export default async function AdminLayout({
           <div style={{ marginTop: "auto", paddingTop: 24, borderTop: "1px solid var(--border)" }}>
             <Link
               href="/"
-              className="hover:text-[var(--text)]"
-              style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "none" }}
+              className="link-muted"
+              style={{ fontSize: 12, textDecoration: "none" }}
             >
               ← Back to storefront
             </Link>

@@ -117,7 +117,7 @@ export default async function EditProductPage({
   };
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <Link href="/admin/products" style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "none", fontWeight: 500 }} className="hover:text-[var(--text)]">
+      <Link href="/admin/products" className="link-muted" style={{ fontSize: 12, textDecoration: "none", fontWeight: 500 }}>
         ← All products
       </Link>
       <h1 style={{ fontSize: 24, fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)" }}>{p.name}</h1>

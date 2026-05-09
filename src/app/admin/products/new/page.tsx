@@ -45,11 +45,11 @@ export default async function NewProductPage() {
     categories = (data ?? []) as { slug: string; name: string }[];
   }
   return (
-    <div className="space-y-4">
-      <Link href="/admin/products" className="text-xs text-[color:var(--color-navy-400)] hover:text-[color:var(--color-navy-900)]">
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <Link href="/admin/products" className="link-muted" style={{ fontSize: 12, fontWeight: 500 }}>
         ← All products
       </Link>
-      <h1 className="text-2xl font-bold text-[color:var(--color-navy-900)]">New product</h1>
+      <h1 style={{ fontSize: 24, fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)" }}>New product</h1>
       <ProductForm initial={EMPTY} categories={categories} mode="create" />
     </div>
   );

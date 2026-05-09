@@ -43,7 +43,7 @@ export default function AffiliateLandingPage() {
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 40 }}>
           <div style={{ textAlign: "center" }}>
-            <div style={{ width: 64, height: 64, margin: "0 auto 24px auto", background: "var(--surface)", border: "1px solid var(--gold)", color: "var(--gold)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 64, height: 64, margin: "0 auto 24px auto", background: "var(--surface)", border: "1px solid var(--gold)", color: "var(--gold)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Users style={{ width: 28, height: 28 }} />
             </div>
             <h3 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 12 }}>1. Mendaftar & Buat Link</h3>
@@ -53,7 +53,7 @@ export default function AffiliateLandingPage() {
           </div>
           
           <div style={{ textAlign: "center" }}>
-            <div style={{ width: 64, height: 64, margin: "0 auto 24px auto", background: "var(--surface)", border: "1px solid var(--gold)", color: "var(--gold)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 64, height: 64, margin: "0 auto 24px auto", background: "var(--surface)", border: "1px solid var(--gold)", color: "var(--gold)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Share2 style={{ width: 28, height: 28 }} />
             </div>
             <h3 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 12 }}>2. Promosikan Link</h3>
@@ -63,7 +63,7 @@ export default function AffiliateLandingPage() {
           </div>
 
           <div style={{ textAlign: "center" }}>
-            <div style={{ width: 64, height: 64, margin: "0 auto 24px auto", background: "var(--surface)", border: "1px solid var(--gold)", color: "var(--gold)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 64, height: 64, margin: "0 auto 24px auto", background: "var(--surface)", border: "1px solid var(--gold)", color: "var(--gold)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Wallet style={{ width: 28, height: 28 }} />
             </div>
             <h3 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 12 }}>3. Dapatkan Komisi</h3>
@@ -81,7 +81,7 @@ export default function AffiliateLandingPage() {
           
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
             <div style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 24, display: "flex", alignItems: "flex-start", gap: 16 }}>
-              <div style={{ color: "var(--success)", flexShrink: 0 }}>
+              <div style={{ color: "var(--gold)", flexShrink: 0 }}>
                 <Banknote style={{ width: 24, height: 24 }} />
               </div>
               <div>

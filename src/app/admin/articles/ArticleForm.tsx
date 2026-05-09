@@ -20,14 +20,15 @@ interface Props {
 }
 
 function slugify(text: string) {
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/[^\w\-]+/g, "")
-    .replace(/\-\-+/g, "-");
+  return text.toString().toLowerCase().trim()
+    .replace(/\s+/g, "-").replace(/[^\w\-]+/g, "").replace(/\-\-+/g, "-");
 }
+
+const inputStyle: React.CSSProperties = {
+  width: "100%", background: "var(--bg)", border: "1px solid var(--border)",
+  color: "var(--text)", padding: "10px 14px", outline: "none", fontSize: 14,
+  fontFamily: "var(--font-sans)", marginTop: 6,
+};
 
 export default function ArticleForm({ initial, mode }: Props) {
   const router = useRouter();
@@ -63,87 +64,74 @@ export default function ArticleForm({ initial, mode }: Props) {
     }
   }
 
+  const tabBtn = (isActive: boolean): React.CSSProperties => ({
+    display: "inline-flex", alignItems: "center", gap: 6,
+    padding: "4px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer",
+    background: isActive ? "var(--surface)" : "transparent",
+    color: isActive ? "var(--text)" : "var(--text-muted)",
+    border: isActive ? "1px solid var(--border)" : "1px solid transparent",
+    fontFamily: "var(--font-sans)",
+  });
+
   return (
-    <form onSubmit={submit} className="space-y-6 max-w-5xl">
-      <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 space-y-4">
-        <label className="block">
+    <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 24, maxWidth: 900 }}>
+      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
+
+        <label style={{ display: "block" }}>
           <span className="label">Judul Artikel</span>
           <input
-            className="input mt-1"
+            style={inputStyle}
             required
             value={v.title}
             onChange={(e) => {
               const newTitle = e.target.value;
               setV((c) => {
                 const next = { ...c, title: newTitle };
-                if (mode === "create" && !isSlugDirty) {
-                  next.slug = slugify(newTitle);
-                }
+                if (mode === "create" && !isSlugDirty) next.slug = slugify(newTitle);
                 return next;
               });
             }}
           />
         </label>
 
-        <label className="block">
+        <label style={{ display: "block" }}>
           <span className="label">Slug (URL)</span>
           <input
-            className="input mt-1"
+            style={inputStyle}
             required
             value={v.slug}
-            onChange={(e) => {
-              setIsSlugDirty(true);
-              setV((c) => ({ ...c, slug: e.target.value }));
-            }}
+            onChange={(e) => { setIsSlugDirty(true); setV((c) => ({ ...c, slug: e.target.value })); }}
           />
         </label>
 
-        <label className="block">
+        <label style={{ display: "block" }}>
           <span className="label">URL Gambar Sampul (Opsional)</span>
           <input
             type="url"
-            className="input mt-1"
+            style={inputStyle}
             value={v.image_url}
             onChange={(e) => setV((c) => ({ ...c, image_url: e.target.value }))}
             placeholder="https://..."
           />
         </label>
 
-        {/* --- Markdown Editor with Live Preview --- */}
+        {/* Markdown editor */}
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <span className="label">Konten</span>
-            <div className="flex items-center gap-1 rounded-lg border border-[color:var(--color-cloud-200)] p-0.5 bg-[color:var(--color-cloud-100)]">
-              <button
-                type="button"
-                onClick={() => setTab("write")}
-                className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-                  tab === "write"
-                    ? "bg-white text-[color:var(--color-navy-900)] shadow-sm"
-                    : "text-[color:var(--color-navy-400)] hover:text-[color:var(--color-navy-900)]"
-                }`}
-              >
-                <PenLine className="h-3 w-3" />
-                Tulis
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+            <span className="label" style={{ margin: 0 }}>Konten</span>
+            <div style={{ display: "flex", gap: 4, background: "var(--bg2)", border: "1px solid var(--border)", padding: 2 }}>
+              <button type="button" onClick={() => setTab("write")} style={tabBtn(tab === "write")}>
+                <PenLine style={{ width: 12, height: 12 }} /> Tulis
               </button>
-              <button
-                type="button"
-                onClick={() => setTab("preview")}
-                className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-                  tab === "preview"
-                    ? "bg-white text-[color:var(--color-navy-900)] shadow-sm"
-                    : "text-[color:var(--color-navy-400)] hover:text-[color:var(--color-navy-900)]"
-                }`}
-              >
-                <Eye className="h-3 w-3" />
-                Preview
+              <button type="button" onClick={() => setTab("preview")} style={tabBtn(tab === "preview")}>
+                <Eye style={{ width: 12, height: 12 }} /> Preview
               </button>
             </div>
           </div>
 
           {tab === "write" ? (
             <textarea
-              className="input font-mono text-sm w-full"
+              style={{ ...inputStyle, fontFamily: "monospace", fontSize: 13, minHeight: 360, resize: "vertical", marginTop: 0 }}
               rows={18}
               required
               value={v.content}
@@ -151,39 +139,33 @@ export default function ArticleForm({ initial, mode }: Props) {
               placeholder={"# Judul Utama\n\nTulis konten artikel Anda di sini...\n\n## Sub Judul\n\nParagraf konten..."}
             />
           ) : (
-            <div className="rounded-xl border border-[color:var(--color-cloud-200)] bg-white p-5 min-h-[18rem] overflow-auto">
+            <div style={{ border: "1px solid var(--border)", background: "var(--bg)", padding: 20, minHeight: 288, overflowY: "auto" }}>
               {v.content.trim() ? (
-                <div
-                  className="article-body"
-                  dangerouslySetInnerHTML={{ __html: previewHtml }}
-                />
+                <div className="article-body" dangerouslySetInnerHTML={{ __html: previewHtml }} />
               ) : (
-                <p className="text-sm text-[color:var(--color-muted)] italic">
-                  Belum ada konten untuk di-preview.
-                </p>
+                <p style={{ fontSize: 13, color: "var(--text-muted)", fontStyle: "italic" }}>Belum ada konten untuk di-preview.</p>
               )}
             </div>
           )}
-
-          <p className="mt-1.5 text-xs text-[color:var(--color-navy-400)]">
+          <p style={{ marginTop: 6, fontSize: 12, color: "var(--text-muted)" }}>
             Mendukung sintaks Markdown: **bold**, *italic*, # Heading, - list, `kode`, dll.
           </p>
         </div>
 
-        <label className="flex items-center gap-2 mt-2 cursor-pointer">
+        <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
           <input
             type="checkbox"
-            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+            style={{ width: 16, height: 16, accentColor: "var(--gold)" }}
             checked={v.is_published}
             onChange={(e) => setV((c) => ({ ...c, is_published: e.target.checked }))}
           />
-          <span className="text-sm font-medium">Publish sekarang</span>
+          <span style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>Publish sekarang</span>
         </label>
       </div>
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && <p style={{ fontSize: 13, color: "var(--error)" }}>{error}</p>}
 
-      <div className="flex gap-3">
+      <div style={{ display: "flex", gap: 12 }}>
         <button type="submit" disabled={saving} className="btn btn-primary">
           {saving ? "Menyimpan..." : "Simpan Artikel"}
         </button>

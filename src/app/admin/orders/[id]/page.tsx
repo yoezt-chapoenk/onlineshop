@@ -82,8 +82,8 @@ export default async function AdminOrderDetailPage({
         <div>
           <Link
             href="/admin/orders"
-            style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "none", fontWeight: 500 }}
-            className="hover:text-[var(--text)]"
+            className="link-muted"
+            style={{ fontSize: 12, textDecoration: "none", fontWeight: 500 }}
           >
             ← All orders
           </Link>

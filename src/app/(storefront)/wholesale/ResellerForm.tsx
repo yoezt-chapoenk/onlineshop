@@ -137,9 +137,7 @@ export default function ResellerForm() {
             {CHANNELS.map((c) => (
               <label
                 key={c}
-                style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 12px", border: "1px solid var(--border)", background: "var(--bg2)", fontSize: 13, cursor: "pointer", transition: "border 0.2s" }}
-                onMouseEnter={(e) => e.currentTarget.style.borderColor = "var(--gold)"}
-                onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--border)"}
+                className="channel-label"
               >
                 <input
                   type="checkbox"

@@ -9,15 +9,11 @@ async function createApiKey(formData: FormData) {
   "use server";
   const name = formData.get("name") as string;
   if (!name) return;
-
   const supabase = getAdminClient();
   if (!supabase) return;
-
-  // Generate a random 32 char hex string
   const keyStr = "jg_live_" + Array.from(crypto.getRandomValues(new Uint8Array(16)))
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
-
   await supabase.from("api_keys").insert({ name, key: keyStr });
   revalidatePath("/admin/api-keys");
 }
@@ -26,54 +22,60 @@ async function deleteApiKey(formData: FormData) {
   "use server";
   const id = formData.get("id") as string;
   if (!id) return;
-
   const supabase = getAdminClient();
   if (!supabase) return;
-
   await supabase.from("api_keys").delete().eq("id", id);
   revalidatePath("/admin/api-keys");
 }
 
+const TH = ({ children, right }: { children: React.ReactNode; right?: boolean }) => (
+  <th style={{ padding: "10px 16px", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.14em", fontWeight: 600, color: "var(--text-muted)", textAlign: right ? "right" : "left" }}>
+    {children}
+  </th>
+);
+
 export default async function ApiKeysPage() {
   const supabase = getAdminClient();
-  if (!supabase) return <div className="p-8">No DB config.</div>;
+  if (!supabase) return <div style={{ padding: 32, color: "var(--text-muted)" }}>No DB config.</div>;
 
   const { data: keys } = await supabase.from("api_keys").select("*").order("created_at", { ascending: false });
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       <header>
-        <h1 className="text-2xl font-bold tracking-tight text-[color:var(--color-navy-900)]">API Keys</h1>
-        <p className="text-sm text-[color:var(--color-navy-400)]">Kelola kunci API untuk AI Agent dan integrasi eksternal.</p>
+        <h1 style={{ fontSize: 24, fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)" }}>API Keys</h1>
+        <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 4 }}>Kelola kunci API untuk AI Agent dan integrasi eksternal.</p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 rounded-2xl border border-[color:var(--color-cloud-200)] bg-white overflow-hidden">
+      <div style={{ display: "grid", gridTemplateColumns: "1fr minmax(0, 320px)", gap: 24 }}>
+        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", overflow: "hidden" }}>
           {(!keys || keys.length === 0) ? (
-            <div className="p-8 text-center text-sm text-[color:var(--color-navy-400)]">Belum ada API Key.</div>
+            <p style={{ padding: "32px 20px", textAlign: "center", color: "var(--text-muted)", fontSize: 14 }}>Belum ada API Key.</p>
           ) : (
-            <table className="w-full text-left text-sm">
-              <thead className="bg-[color:var(--color-cloud-100)] text-xs uppercase tracking-[0.14em] text-[color:var(--color-navy-400)]">
-                <tr>
-                  <th className="px-5 py-4 font-semibold">Nama</th>
-                  <th className="px-5 py-4 font-semibold">Key</th>
-                  <th className="px-5 py-4 font-semibold">Dibuat</th>
-                  <th className="px-5 py-4 text-right font-semibold">Aksi</th>
+            <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ background: "var(--bg2)", borderBottom: "1px solid var(--border)" }}>
+                  <TH>Nama</TH>
+                  <TH>Key</TH>
+                  <TH>Dibuat</TH>
+                  <TH right>Aksi</TH>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[color:var(--color-cloud-200)]">
+              <tbody>
                 {keys.map((k) => (
-                  <tr key={k.id} className="hover:bg-[color:var(--color-cloud-50)]">
-                    <td className="px-5 py-4 font-medium text-[color:var(--color-navy-900)]">{k.name}</td>
-                    <td className="px-5 py-4 font-mono text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                      {k.key}
+                  <tr key={k.id} className="admin-row" style={{ borderBottom: "1px solid var(--border)" }}>
+                    <td style={{ padding: "12px 16px", fontWeight: 500, color: "var(--text)" }}>{k.name}</td>
+                    <td style={{ padding: "12px 16px" }}>
+                      <code style={{ fontSize: 11, fontFamily: "monospace", background: "var(--bg2)", color: "var(--gold)", padding: "2px 6px", border: "1px solid var(--border)" }}>
+                        {k.key}
+                      </code>
                     </td>
-                    <td className="px-5 py-4 text-[color:var(--color-navy-400)]">{formatDateTime(k.created_at)}</td>
-                    <td className="px-5 py-4 text-right">
+                    <td style={{ padding: "12px 16px", color: "var(--text-muted)", fontSize: 12 }}>{formatDateTime(k.created_at)}</td>
+                    <td style={{ padding: "12px 16px", textAlign: "right" }}>
                       <form action={deleteApiKey}>
                         <input type="hidden" name="id" value={k.id} />
-                        <button type="submit" className="p-2 text-[color:var(--color-navy-400)] hover:text-red-600 transition-colors" title="Hapus">
-                          <Trash2 className="h-4 w-4" />
+                        <button type="submit" className="admin-btn-delete" title="Hapus">
+                          <Trash2 style={{ width: 14, height: 14 }} />
                         </button>
                       </form>
                     </td>
@@ -84,23 +86,23 @@ export default async function ApiKeysPage() {
           )}
         </div>
 
-        <div className="rounded-2xl border border-[color:var(--color-cloud-200)] bg-white p-5 h-fit">
-          <h2 className="text-sm font-bold text-[color:var(--color-navy-900)] uppercase tracking-[0.18em] mb-4">Buat Key Baru</h2>
-          <form action={createApiKey} className="space-y-4">
-            <label className="block">
+        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 20, height: "fit-content" }}>
+          <h2 style={{ fontSize: 11, fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.18em", marginBottom: 16 }}>Buat Key Baru</h2>
+          <form action={createApiKey} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <label style={{ display: "block" }}>
               <span className="label">Nama Integrasi</span>
-              <input name="name" required placeholder="Misal: AI Agent Bot" className="input mt-1" />
+              <input name="name" required placeholder="Misal: AI Agent Bot" className="input" style={{ marginTop: 4 }} />
             </label>
-            <button type="submit" className="btn btn-primary w-full">Generate API Key</button>
+            <button type="submit" className="btn btn-primary" style={{ width: "100%" }}>Generate API Key</button>
           </form>
-          
-          <div className="mt-8 text-xs text-[color:var(--color-navy-400)] border-t border-[color:var(--color-cloud-200)] pt-4 space-y-2">
-            <p><strong>Endpoint Publikasi AI Agent:</strong></p>
-            <ul className="list-disc pl-4 space-y-1">
-              <li><code>POST /api/v1/articles</code></li>
-              <li><code>POST /api/v1/products</code></li>
+
+          <div style={{ marginTop: 24, paddingTop: 16, borderTop: "1px solid var(--border)", fontSize: 12, color: "var(--text-muted)" }}>
+            <p style={{ fontWeight: 600, marginBottom: 8 }}>Endpoint AI Agent:</p>
+            <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 4 }}>
+              <li><code style={{ fontSize: 11, color: "var(--gold)" }}>POST /api/v1/articles</code></li>
+              <li><code style={{ fontSize: 11, color: "var(--gold)" }}>POST /api/v1/products</code></li>
             </ul>
-            <p className="mt-2">Gunakan header:<br/><code>Authorization: Bearer &lt;Key&gt;</code></p>
+            <p style={{ marginTop: 8 }}>Header: <code style={{ fontSize: 11, color: "var(--gold)" }}>Authorization: Bearer &lt;Key&gt;</code></p>
           </div>
         </div>
       </div>

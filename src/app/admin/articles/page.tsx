@@ -20,15 +20,11 @@ export default function AdminArticlesPage() {
   async function load() {
     setLoading(true);
     const res = await fetch("/api/admin/articles");
-    if (res.ok) {
-      setArticles(await res.json());
-    }
+    if (res.ok) setArticles(await res.json());
     setLoading(false);
   }
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
 
   async function remove(id: string) {
     if (!confirm("Hapus artikel ini?")) return;
@@ -37,51 +33,55 @@ export default function AdminArticlesPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-wrap items-center justify-between gap-4">
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      <header style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: 12 }}>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[color:var(--color-navy-900)]">Artikel</h1>
-          <p className="text-sm text-[color:var(--color-navy-400)]">Kelola konten blog untuk SEO.</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)" }}>Artikel</h1>
+          <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 4 }}>Kelola konten blog untuk SEO.</p>
         </div>
-        <Link href="/admin/articles/new" className="btn btn-primary inline-flex items-center gap-2">
-          <Plus className="h-4 w-4" /> Tulis Artikel
+        <Link href="/admin/articles/new" className="btn btn-primary" style={{ fontSize: 12, padding: "6px 12px", display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <Plus style={{ width: 14, height: 14 }} /> Tulis Artikel
         </Link>
       </header>
 
-      <div className="rounded-2xl border border-[color:var(--color-cloud-200)] bg-white overflow-hidden">
+      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", overflow: "hidden" }}>
         {loading ? (
-          <div className="p-8 text-center text-sm text-[color:var(--color-navy-400)]">Memuat...</div>
+          <p style={{ padding: "32px 20px", textAlign: "center", color: "var(--text-muted)", fontSize: 14 }}>Memuat...</p>
         ) : articles.length === 0 ? (
-          <div className="p-8 text-center text-sm text-[color:var(--color-navy-400)]">Belum ada artikel.</div>
+          <p style={{ padding: "32px 20px", textAlign: "center", color: "var(--text-muted)", fontSize: 14 }}>Belum ada artikel.</p>
         ) : (
-          <table className="w-full text-left text-sm">
-            <thead className="bg-[color:var(--color-cloud-100)] text-xs uppercase tracking-[0.14em] text-[color:var(--color-navy-400)]">
-              <tr>
-                <th className="px-5 py-4 font-semibold">Judul</th>
-                <th className="px-5 py-4 font-semibold">Status</th>
-                <th className="px-5 py-4 font-semibold">Tanggal</th>
-                <th className="px-5 py-4 text-right font-semibold">Aksi</th>
+          <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "var(--bg2)", borderBottom: "1px solid var(--border)", textAlign: "left", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--text-muted)" }}>
+                <th style={{ padding: "10px 16px", fontWeight: 600 }}>Judul</th>
+                <th style={{ padding: "10px 16px", fontWeight: 600 }}>Status</th>
+                <th style={{ padding: "10px 16px", fontWeight: 600 }}>Tanggal</th>
+                <th style={{ padding: "10px 16px", fontWeight: 600, textAlign: "right" }}>Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[color:var(--color-cloud-200)]">
+            <tbody>
               {articles.map((a) => (
-                <tr key={a.id} className="hover:bg-[color:var(--color-cloud-50)]">
-                  <td className="px-5 py-4 font-medium text-[color:var(--color-navy-900)]">{a.title}</td>
-                  <td className="px-5 py-4">
-                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                      a.is_published ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-                    }`}>
+                <tr key={a.id} className="admin-row" style={{ borderBottom: "1px solid var(--border)" }}>
+                  <td style={{ padding: "12px 16px", fontWeight: 500, color: "var(--text)" }}>{a.title}</td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span style={{
+                      display: "inline-flex", alignItems: "center", padding: "2px 8px",
+                      fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em",
+                      background: a.is_published ? "rgba(126,179,232,0.1)" : "rgba(122,144,176,0.1)",
+                      color: a.is_published ? "var(--gold)" : "var(--text-muted)",
+                      border: `1px solid ${a.is_published ? "var(--gold-dim)" : "var(--border)"}`,
+                    }}>
                       {a.is_published ? "Published" : "Draft"}
                     </span>
                   </td>
-                  <td className="px-5 py-4 text-[color:var(--color-navy-400)]">{formatDateTime(a.created_at)}</td>
-                  <td className="px-5 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <Link href={`/admin/articles/${a.id}`} className="p-2 text-[color:var(--color-navy-400)] hover:text-blue-600 transition-colors" title="Edit">
-                        <Edit2 className="h-4 w-4" />
+                  <td style={{ padding: "12px 16px", color: "var(--text-muted)", fontSize: 12 }}>{formatDateTime(a.created_at)}</td>
+                  <td style={{ padding: "12px 16px", textAlign: "right" }}>
+                    <div style={{ display: "flex", justifyContent: "flex-end", gap: 4 }}>
+                      <Link href={`/admin/articles/${a.id}`} className="admin-btn-edit" title="Edit">
+                        <Edit2 style={{ width: 14, height: 14 }} /> Edit
                       </Link>
-                      <button onClick={() => remove(a.id)} className="p-2 text-[color:var(--color-navy-400)] hover:text-red-600 transition-colors" title="Delete">
-                        <Trash2 className="h-4 w-4" />
+                      <button onClick={() => remove(a.id)} className="admin-btn-delete" title="Hapus">
+                        <Trash2 style={{ width: 14, height: 14 }} />
                       </button>
                     </div>
                   </td>
