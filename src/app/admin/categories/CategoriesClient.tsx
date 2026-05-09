@@ -83,69 +83,73 @@ export default function CategoriesClient({ initial }: { initial: Category[] }) {
   }
 
   return (
-    <div className="space-y-4">
-      {error ? <p className="text-sm text-[color:var(--color-error)]">{error}</p> : null}
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      {error ? <p style={{ fontSize: 14, color: "var(--error)" }}>{error}</p> : null}
 
-      <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-xs uppercase tracking-[0.14em] text-[color:var(--color-navy-400)] bg-[color:var(--color-cloud-100)]">
-              <th className="px-4 py-3">Slug</th>
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Description</th>
-              <th className="px-4 py-3 w-24">Order</th>
-              <th className="px-4 py-3 w-40">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {list.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-[color:var(--color-navy-400)]">
-                  No categories yet.
-                </td>
+      <div style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", overflow: "hidden" }}>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ textAlign: "left", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--text-muted)", background: "var(--bg2)", borderBottom: "1px solid var(--border)" }}>
+                <th style={{ padding: "12px 16px" }}>Slug</th>
+                <th style={{ padding: "12px 16px" }}>Name</th>
+                <th style={{ padding: "12px 16px" }}>Description</th>
+                <th style={{ padding: "12px 16px", width: 96 }}>Order</th>
+                <th style={{ padding: "12px 16px", width: 160 }}>Actions</th>
               </tr>
-            ) : (
-              list.map((c) => (
-                <tr key={c.slug} className="border-t border-[color:var(--color-cloud-200)]">
-                  <td className="px-4 py-2 font-mono text-xs">{c.slug}</td>
-                  <td className="px-4 py-2">
-                    <input className="input !py-1.5 text-sm" value={c.name} onChange={(e) => update(c.slug, { name: e.target.value })} />
-                  </td>
-                  <td className="px-4 py-2">
-                    <input className="input !py-1.5 text-sm" value={c.description} onChange={(e) => update(c.slug, { description: e.target.value })} />
-                  </td>
-                  <td className="px-4 py-2">
-                    <input type="number" className="input !py-1.5 text-sm w-20" value={c.sort_order} onChange={(e) => update(c.slug, { sort_order: Number(e.target.value) })} />
-                  </td>
-                  <td className="px-4 py-2 flex gap-2">
-                    <button type="button" className="btn btn-primary text-xs" onClick={() => save(c)} disabled={pending}>Save</button>
-                    <button type="button" className="text-xs text-[color:var(--color-error)] hover:underline" onClick={() => remove(c.slug)} disabled={pending}>Delete</button>
+            </thead>
+            <tbody>
+              {list.length === 0 ? (
+                <tr>
+                  <td colSpan={5} style={{ padding: "32px 16px", textAlign: "center", color: "var(--text-muted)" }}>
+                    No categories yet.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                list.map((c) => (
+                  <tr key={c.slug} style={{ borderBottom: "1px solid var(--border)" }}>
+                    <td style={{ padding: "12px 16px", fontFamily: "monospace", fontSize: 12, color: "var(--text)" }}>{c.slug}</td>
+                    <td style={{ padding: "12px 16px" }}>
+                      <input style={{ width: "100%", padding: "6px 12px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 6, fontSize: 14 }} value={c.name} onChange={(e) => update(c.slug, { name: e.target.value })} />
+                    </td>
+                    <td style={{ padding: "12px 16px" }}>
+                      <input style={{ width: "100%", padding: "6px 12px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 6, fontSize: 14 }} value={c.description} onChange={(e) => update(c.slug, { description: e.target.value })} />
+                    </td>
+                    <td style={{ padding: "12px 16px" }}>
+                      <input type="number" style={{ width: 80, padding: "6px 12px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 6, fontSize: 14 }} value={c.sort_order} onChange={(e) => update(c.slug, { sort_order: Number(e.target.value) })} />
+                    </td>
+                    <td style={{ padding: "12px 16px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <button type="button" className="btn btn-primary" style={{ padding: "4px 8px", fontSize: 12 }} onClick={() => save(c)} disabled={pending}>Save</button>
+                        <button type="button" style={{ background: "transparent", border: "none", color: "var(--error)", fontSize: 12, cursor: "pointer", textDecoration: "underline" }} onClick={() => remove(c.slug)} disabled={pending}>Delete</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <form onSubmit={add} className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
-        <label className="block">
-          <span className="label">Slug</span>
-          <input className="input mt-1" required value={draft.slug} onChange={(e) => setDraft((d) => ({ ...d, slug: e.target.value }))} placeholder="eyeglasses" />
+      <form onSubmit={add} style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 20, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 16, alignItems: "flex-end" }}>
+        <label style={{ display: "block" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>Slug</span>
+          <input style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }} required value={draft.slug} onChange={(e) => setDraft((d) => ({ ...d, slug: e.target.value }))} placeholder="eyeglasses" />
         </label>
-        <label className="block">
-          <span className="label">Name</span>
-          <input className="input mt-1" required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} />
+        <label style={{ display: "block" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>Name</span>
+          <input style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }} required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} />
         </label>
-        <label className="block md:col-span-2">
-          <span className="label">Description</span>
-          <input className="input mt-1" required value={draft.description} onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))} />
+        <label style={{ display: "block", gridColumn: "span 2" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>Description</span>
+          <input style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }} required value={draft.description} onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))} />
         </label>
-        <label className="block">
-          <span className="label">Sort order</span>
-          <input type="number" className="input mt-1" value={draft.sort_order} onChange={(e) => setDraft((d) => ({ ...d, sort_order: Number(e.target.value) }))} />
+        <label style={{ display: "block" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>Sort order</span>
+          <input type="number" style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }} value={draft.sort_order} onChange={(e) => setDraft((d) => ({ ...d, sort_order: Number(e.target.value) }))} />
         </label>
-        <button type="submit" className="btn btn-primary md:col-span-5" disabled={pending}>+ Add category</button>
+        <button type="submit" className="btn btn-primary" style={{ gridColumn: "1 / -1" }} disabled={pending}>+ Add category</button>
       </form>
     </div>
   );

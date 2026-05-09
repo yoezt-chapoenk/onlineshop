@@ -56,7 +56,7 @@ export default async function EditProductPage({
   const supabase = getAdminClient();
   if (!supabase) {
     return (
-      <div className="rounded-2xl border border-[color:var(--color-blue-200)] bg-[color:var(--color-blue-50)] p-6 text-sm">
+      <div style={{ borderRadius: 16, border: "1px solid var(--gold)", background: "rgba(201,169,110,0.1)", padding: 24, fontSize: 14, color: "var(--text)" }}>
         Supabase isn&apos;t configured.
       </div>
     );
@@ -116,11 +116,11 @@ export default async function EditProductPage({
       })),
   };
   return (
-    <div className="space-y-4">
-      <Link href="/admin/products" className="text-xs text-[color:var(--color-navy-400)] hover:text-[color:var(--color-navy-900)]">
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <Link href="/admin/products" style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "none", fontWeight: 500 }} className="hover:text-[var(--text)]">
         ← All products
       </Link>
-      <h1 className="text-2xl font-bold text-[color:var(--color-navy-900)]">{p.name}</h1>
+      <h1 style={{ fontSize: 24, fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)" }}>{p.name}</h1>
       <ProductForm initial={initial} categories={(categories ?? []) as { slug: string; name: string }[]} mode="edit" />
     </div>
   );

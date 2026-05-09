@@ -73,20 +73,20 @@ export default function OrdersTableClient({ orders }: { orders: OrderRow[] }) {
   };
 
   return (
-    <div className="relative">
+    <div style={{ position: "relative" }}>
       {/* Floating Action Bar */}
       {selected.size > 0 && (
-        <div className="sticky top-4 z-10 mb-4 mx-auto max-w-fit rounded-full bg-white border border-[color:var(--color-navy-900)] shadow-lg px-4 py-3 flex flex-wrap items-center gap-4 animate-in slide-in-from-top-4 fade-in">
-          <div className="text-sm font-semibold text-[color:var(--color-navy-900)]">
+        <div style={{ position: "sticky", top: 16, zIndex: 10, marginBottom: 16, marginInline: "auto", width: "fit-content", borderRadius: 999, background: "var(--surface)", border: "1px solid var(--gold)", boxShadow: "0 10px 25px -5px rgba(0,0,0,0.3)", padding: "12px 16px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 16, animation: "fadeIn 0.3s ease-out" }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>
             {selected.size} order{selected.size > 1 ? "s" : ""} selected
           </div>
-          <div className="h-5 w-px bg-[color:var(--color-cloud-200)]" />
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-[color:var(--color-navy-400)]">Change status to:</span>
+          <div style={{ height: 20, width: 1, background: "var(--border)" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Change status to:</span>
             <select
               value={targetStatus}
               onChange={(e) => setTargetStatus(e.target.value)}
-              className="input !py-1.5 !pl-3 !pr-8 text-xs min-w-[120px]"
+              style={{ padding: "6px 24px 6px 12px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 6, fontSize: 12, minWidth: 120 }}
               disabled={pending}
             >
               {ORDER_STATUSES.map((s) => (
@@ -98,7 +98,8 @@ export default function OrdersTableClient({ orders }: { orders: OrderRow[] }) {
           </div>
           <button
             type="button"
-            className="btn btn-primary text-xs !py-1.5"
+            className="btn btn-primary"
+            style={{ fontSize: 12, padding: "6px 12px" }}
             onClick={handleBulkUpdate}
             disabled={pending}
           >
@@ -108,37 +109,37 @@ export default function OrdersTableClient({ orders }: { orders: OrderRow[] }) {
       )}
 
       {error && (
-        <div className="mb-4 text-sm text-[color:var(--color-error)] text-center">
+        <div style={{ marginBottom: 16, fontSize: 14, color: "var(--error)", textAlign: "center" }}>
           {error}
         </div>
       )}
 
-      <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+      <div style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", overflow: "hidden" }}>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
             <thead>
-              <tr className="text-left text-xs uppercase tracking-[0.14em] text-[color:var(--color-navy-400)] bg-[color:var(--color-cloud-100)]">
-                <th className="px-4 py-3 w-10 text-center">
+              <tr style={{ textAlign: "left", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--text-muted)", background: "var(--bg2)", borderBottom: "1px solid var(--border)" }}>
+                <th style={{ padding: "12px 16px", width: 40, textAlign: "center" }}>
                   <input
                     type="checkbox"
                     checked={orders.length > 0 && selected.size === orders.length}
                     onChange={toggleAll}
-                    className="rounded border-[color:var(--color-cloud-300)] text-[color:var(--color-navy-900)] focus:ring-[color:var(--color-navy-900)]"
+                    style={{ accentColor: "var(--gold)" }}
                   />
                 </th>
-                <th className="px-4 py-3">Order #</th>
-                <th className="px-4 py-3">Customer</th>
-                <th className="px-4 py-3">Items</th>
-                <th className="px-4 py-3">Total</th>
-                <th className="px-4 py-3">Payment</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Created</th>
+                <th style={{ padding: "12px 16px" }}>Order #</th>
+                <th style={{ padding: "12px 16px" }}>Customer</th>
+                <th style={{ padding: "12px 16px" }}>Items</th>
+                <th style={{ padding: "12px 16px" }}>Total</th>
+                <th style={{ padding: "12px 16px" }}>Payment</th>
+                <th style={{ padding: "12px 16px" }}>Status</th>
+                <th style={{ padding: "12px 16px" }}>Created</th>
               </tr>
             </thead>
             <tbody>
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-[color:var(--color-navy-400)]">
+                  <td colSpan={8} style={{ padding: "32px 16px", textAlign: "center", color: "var(--text-muted)" }}>
                     No orders match the current filter.
                   </td>
                 </tr>
@@ -148,36 +149,35 @@ export default function OrdersTableClient({ orders }: { orders: OrderRow[] }) {
                   return (
                     <tr
                       key={o.id}
-                      className={`border-t border-[color:var(--color-cloud-200)] hover:bg-[color:var(--color-cloud-50)] transition-colors ${
-                        selected.has(o.id) ? "bg-[color:var(--color-blue-50)]" : ""
-                      }`}
+                      style={{ borderBottom: "1px solid var(--border)", background: selected.has(o.id) ? "rgba(201,169,110,0.05)" : "transparent", transition: "background 0.2s" }}
+                      className="hover:bg-[var(--bg2)]"
                     >
-                      <td className="px-4 py-3 text-center">
+                      <td style={{ padding: "12px 16px", textAlign: "center" }}>
                         <input
                           type="checkbox"
                           checked={selected.has(o.id)}
                           onChange={() => toggleRow(o.id)}
-                          className="rounded border-[color:var(--color-cloud-300)] text-[color:var(--color-navy-900)] focus:ring-[color:var(--color-navy-900)]"
+                          style={{ accentColor: "var(--gold)" }}
                         />
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs">
-                        <Link href={`/admin/orders/${o.id}`} className="text-[color:var(--color-blue-600)] hover:underline">
+                      <td style={{ padding: "12px 16px", fontFamily: "monospace", fontSize: 12 }}>
+                        <Link href={`/admin/orders/${o.id}`} style={{ color: "var(--gold)", textDecoration: "none", fontWeight: 600 }}>
                           {o.order_number}
                         </Link>
                       </td>
-                      <td className="px-4 py-3">
-                        <div>{o.customer_name}</div>
-                        <div className="text-xs text-[color:var(--color-navy-400)]">{o.customer_email}</div>
+                      <td style={{ padding: "12px 16px" }}>
+                        <div style={{ color: "var(--text)", fontWeight: 500 }}>{o.customer_name}</div>
+                        <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{o.customer_email}</div>
                       </td>
-                      <td className="px-4 py-3">{o.item_count}</td>
-                      <td className="px-4 py-3 font-semibold">{money(o.total)}</td>
-                      <td className="px-4 py-3 uppercase text-xs">{o.payment_method}</td>
-                      <td className="px-4 py-3">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${badge.className}`}>
+                      <td style={{ padding: "12px 16px", color: "var(--text)" }}>{o.item_count}</td>
+                      <td style={{ padding: "12px 16px", fontWeight: 600, color: "var(--text)" }}>{money(o.total)}</td>
+                      <td style={{ padding: "12px 16px", textTransform: "uppercase", fontSize: 12, color: "var(--text)" }}>{o.payment_method}</td>
+                      <td style={{ padding: "12px 16px" }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", padding: "2px 8px", borderRadius: 999, fontSize: 12, fontWeight: 500, background: "var(--bg2)", color: "var(--text)" }}>
                           {badge.label}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs text-[color:var(--color-navy-400)]">
+                      <td style={{ padding: "12px 16px", fontSize: 12, color: "var(--text-muted)" }}>
                         {formatDateTime(o.created_at)}
                       </td>
                     </tr>

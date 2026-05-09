@@ -19,58 +19,58 @@ export default function AdminAffiliatesClient({ pendingWithdrawals, topAffiliate
   }
 
   return (
-    <div className="space-y-10">
+    <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
       <section>
-        <h2 className="text-lg font-bold mb-4">Pengajuan Pencairan Dana (Withdrawals)</h2>
-        <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] overflow-hidden">
+        <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--text)", marginBottom: 16 }}>Pengajuan Pencairan Dana (Withdrawals)</h2>
+        <div style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", overflow: "hidden" }}>
           {pendingWithdrawals.length === 0 ? (
-            <p className="p-8 text-center text-[color:var(--color-muted)]">Belum ada pengajuan pencairan dana.</p>
+            <p style={{ padding: 32, textAlign: "center", color: "var(--text-muted)" }}>Belum ada pengajuan pencairan dana.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-[color:var(--color-cloud-100)] text-xs uppercase text-[color:var(--color-muted)]">
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", fontSize: 14, textAlign: "left", borderCollapse: "collapse" }}>
+                <thead style={{ background: "var(--bg2)", fontSize: 12, textTransform: "uppercase", color: "var(--text-muted)", borderBottom: "1px solid var(--border)" }}>
                   <tr>
-                    <th className="px-5 py-3 font-medium">Tanggal</th>
-                    <th className="px-5 py-3 font-medium">Agen</th>
-                    <th className="px-5 py-3 font-medium">Rekening Tujuan</th>
-                    <th className="px-5 py-3 font-medium">Nominal</th>
-                    <th className="px-5 py-3 font-medium text-right">Aksi</th>
+                    <th style={{ padding: "12px 20px", fontWeight: 500 }}>Tanggal</th>
+                    <th style={{ padding: "12px 20px", fontWeight: 500 }}>Agen</th>
+                    <th style={{ padding: "12px 20px", fontWeight: 500 }}>Rekening Tujuan</th>
+                    <th style={{ padding: "12px 20px", fontWeight: 500 }}>Nominal</th>
+                    <th style={{ padding: "12px 20px", fontWeight: 500, textAlign: "right" }}>Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[color:var(--color-line)]">
+                <tbody>
                   {pendingWithdrawals.map((w) => (
-                    <tr key={w.id}>
-                      <td className="px-5 py-3">{formatDate(w.created_at)}</td>
-                      <td className="px-5 py-3">
-                        <div className="font-medium">{w.affiliate.full_name}</div>
-                        <div className="text-xs text-[color:var(--color-muted)]">{w.affiliate.email}</div>
-                        <div className="text-xs text-[color:var(--color-navy-700)] mt-0.5">Kode: {w.affiliate.affiliate_code}</div>
+                    <tr key={w.id} style={{ borderBottom: "1px solid var(--border)" }}>
+                      <td style={{ padding: "12px 20px", color: "var(--text)" }}>{formatDate(w.created_at)}</td>
+                      <td style={{ padding: "12px 20px" }}>
+                        <div style={{ fontWeight: 600, color: "var(--text)" }}>{w.affiliate.full_name}</div>
+                        <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{w.affiliate.email}</div>
+                        <div style={{ fontSize: 12, color: "var(--gold)", marginTop: 2 }}>Kode: {w.affiliate.affiliate_code}</div>
                       </td>
-                      <td className="px-5 py-3">
-                        <div className="font-bold">{w.bank_name}</div>
-                        <div>{w.account_number}</div>
-                        <div className="text-xs text-[color:var(--color-muted)]">{w.account_name}</div>
+                      <td style={{ padding: "12px 20px" }}>
+                        <div style={{ fontWeight: 700, color: "var(--text)" }}>{w.bank_name}</div>
+                        <div style={{ color: "var(--text)" }}>{w.account_number}</div>
+                        <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{w.account_name}</div>
                       </td>
-                      <td className="px-5 py-3 font-bold text-red-600">
+                      <td style={{ padding: "12px 20px", fontWeight: 700, color: "var(--gold)" }}>
                         {formatRupiah(w.amount)}
                       </td>
-                      <td className="px-5 py-3 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                      <td style={{ padding: "12px 20px", textAlign: "right" }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8 }}>
                           <button
                             onClick={() => handleAction(w.id, "rejected")}
                             disabled={processing === w.id}
-                            className="btn bg-red-50 text-red-600 hover:bg-red-100 border-0 !px-3"
+                            style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600, background: "rgba(255,80,80,0.1)", color: "#f87171", border: "none", cursor: "pointer" }}
                             title="Tolak"
                           >
-                            <XCircle className="w-4 h-4" /> Tolak
+                            <XCircle style={{ width: 16, height: 16 }} /> Tolak
                           </button>
                           <button
                             onClick={() => handleAction(w.id, "completed")}
                             disabled={processing === w.id}
-                            className="btn bg-green-50 text-green-600 hover:bg-green-100 border-0 !px-3"
+                            style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600, background: "rgba(52,211,153,0.1)", color: "#34d399", border: "none", cursor: "pointer" }}
                             title="Tandai Sudah Transfer"
                           >
-                            <CheckCircle2 className="w-4 h-4" /> Sudah Transfer
+                            <CheckCircle2 style={{ width: 16, height: 16 }} /> Sudah Transfer
                           </button>
                         </div>
                       </td>
@@ -84,31 +84,31 @@ export default function AdminAffiliatesClient({ pendingWithdrawals, topAffiliate
       </section>
 
       <section>
-        <h2 className="text-lg font-bold mb-4">Daftar Agen Affiliate</h2>
-        <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] overflow-hidden">
+        <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--text)", marginBottom: 16 }}>Daftar Agen Affiliate</h2>
+        <div style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", overflow: "hidden" }}>
           {topAffiliates.length === 0 ? (
-            <p className="p-8 text-center text-[color:var(--color-muted)]">Belum ada agen affiliate yang terdaftar.</p>
+            <p style={{ padding: 32, textAlign: "center", color: "var(--text-muted)" }}>Belum ada agen affiliate yang terdaftar.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-[color:var(--color-cloud-100)] text-xs uppercase text-[color:var(--color-muted)]">
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", fontSize: 14, textAlign: "left", borderCollapse: "collapse" }}>
+                <thead style={{ background: "var(--bg2)", fontSize: 12, textTransform: "uppercase", color: "var(--text-muted)", borderBottom: "1px solid var(--border)" }}>
                   <tr>
-                    <th className="px-5 py-3 font-medium">Agen</th>
-                    <th className="px-5 py-3 font-medium">Kode Referral</th>
-                    <th className="px-5 py-3 font-medium text-right">Saldo Saat Ini</th>
+                    <th style={{ padding: "12px 20px", fontWeight: 500 }}>Agen</th>
+                    <th style={{ padding: "12px 20px", fontWeight: 500 }}>Kode Referral</th>
+                    <th style={{ padding: "12px 20px", fontWeight: 500, textAlign: "right" }}>Saldo Saat Ini</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[color:var(--color-line)]">
+                <tbody>
                   {topAffiliates.map((a) => (
-                    <tr key={a.id}>
-                      <td className="px-5 py-3">
-                        <div className="font-medium">{a.full_name}</div>
-                        <div className="text-xs text-[color:var(--color-muted)]">{a.email}</div>
+                    <tr key={a.id} style={{ borderBottom: "1px solid var(--border)" }}>
+                      <td style={{ padding: "12px 20px" }}>
+                        <div style={{ fontWeight: 600, color: "var(--text)" }}>{a.full_name}</div>
+                        <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{a.email}</div>
                       </td>
-                      <td className="px-5 py-3 font-mono text-[color:var(--color-navy-700)]">
+                      <td style={{ padding: "12px 20px", fontFamily: "monospace", color: "var(--gold)" }}>
                         {a.affiliate_code}
                       </td>
-                      <td className="px-5 py-3 text-right font-medium">
+                      <td style={{ padding: "12px 20px", textAlign: "right", fontWeight: 600, color: "var(--text)" }}>
                         {formatRupiah(a.balance)}
                       </td>
                     </tr>

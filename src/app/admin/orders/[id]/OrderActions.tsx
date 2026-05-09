@@ -67,16 +67,16 @@ export default function OrderActions({
   }
 
   return (
-    <aside className="space-y-4">
-      <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5">
-        <h2 className="text-sm font-bold text-[color:var(--color-navy-900)] uppercase tracking-[0.18em] mb-3">
+    <aside style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 20 }}>
+        <h2 style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.18em", marginBottom: 16 }}>
           Fulfillment
         </h2>
-        <div className="space-y-3 text-sm">
-          <label className="block">
-            <span className="label">Status</span>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 14 }}>
+          <label style={{ display: "block" }}>
+            <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>Status</span>
             <select
-              className="input mt-1"
+              style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }}
               value={status}
               onChange={(e) => setStatus(e.target.value as OrderStatus)}
               disabled={pending}
@@ -88,30 +88,30 @@ export default function OrderActions({
               ))}
             </select>
           </label>
-          <label className="block">
-            <span className="label">Tracking courier</span>
+          <label style={{ display: "block" }}>
+            <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>Tracking courier</span>
             <input
-              className="input mt-1"
+              style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }}
               value={courier}
               onChange={(e) => setCourier(e.target.value)}
               placeholder="JNE / J&T / SiCepat"
               disabled={pending}
             />
           </label>
-          <label className="block">
-            <span className="label">Tracking number</span>
+          <label style={{ display: "block" }}>
+            <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>Tracking number</span>
             <input
-              className="input mt-1"
+              style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }}
               value={number}
               onChange={(e) => setNumber(e.target.value)}
               placeholder="AWB / receipt"
               disabled={pending}
             />
           </label>
-          <label className="block">
-            <span className="label">Admin note (internal)</span>
+          <label style={{ display: "block" }}>
+            <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>Admin note (internal)</span>
             <textarea
-              className="input mt-1"
+              style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }}
               rows={3}
               value={note}
               onChange={(e) => setNote(e.target.value)}
@@ -119,14 +119,15 @@ export default function OrderActions({
             />
           </label>
           {error ? (
-            <p className="text-xs text-[color:var(--color-error)]">{error}</p>
+            <p style={{ fontSize: 12, color: "var(--error)" }}>{error}</p>
           ) : null}
           {savedAt ? (
-            <p className="text-xs text-[color:var(--color-navy-400)]">Saved.</p>
+            <p style={{ fontSize: 12, color: "var(--text-muted)" }}>Saved.</p>
           ) : null}
           <button
             type="button"
-            className="btn btn-primary w-full"
+            className="btn btn-primary"
+            style={{ width: "100%", marginTop: 8 }}
             onClick={save}
             disabled={pending}
           >
@@ -135,22 +136,23 @@ export default function OrderActions({
         </div>
       </div>
 
-      <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 text-sm space-y-2">
-        <h2 className="text-sm font-bold text-[color:var(--color-navy-900)] uppercase tracking-[0.18em]">
+      <div style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 20, fontSize: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+        <h2 style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.18em", marginBottom: 4 }}>
           Payment
         </h2>
-        <div className="flex justify-between">
-          <span className="text-[color:var(--color-navy-400)]">Method</span>
-          <span className="uppercase">{payment_method}</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ color: "var(--text-muted)" }}>Method</span>
+          <span style={{ textTransform: "uppercase", fontWeight: 600, color: "var(--text)" }}>{payment_method}</span>
         </div>
-        <div className="flex justify-between">
-          <span className="text-[color:var(--color-navy-400)]">Total weight</span>
-          <span>{weight_gram} g</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ color: "var(--text-muted)" }}>Total weight</span>
+          <span style={{ color: "var(--text)" }}>{weight_gram} g</span>
         </div>
-        <div className="pt-3 flex flex-wrap gap-2">
+        <div style={{ marginTop: 12, paddingTop: 16, borderTop: "1px solid var(--border)", display: "flex", flexWrap: "wrap", gap: 8 }}>
           <button
             type="button"
-            className="btn btn-outline text-xs"
+            className="btn btn-outline"
+            style={{ fontSize: 12, flex: 1, justifyContent: "center" }}
             onClick={() => window.print()}
           >
             Print invoice
@@ -159,7 +161,8 @@ export default function OrderActions({
             href={`/api/admin/orders/${orderId}/packing-slip`}
             target="_blank"
             rel="noreferrer"
-            className="btn btn-outline text-xs"
+            className="btn btn-outline"
+            style={{ fontSize: 12, flex: 1, justifyContent: "center", textAlign: "center" }}
           >
             Packing slip
           </a>

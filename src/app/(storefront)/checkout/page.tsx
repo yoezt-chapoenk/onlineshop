@@ -373,8 +373,7 @@ export default function CheckoutPage() {
                         postalCode: savedAddress.postalCode
                       });
                     }}
-                    className="text-sm text-[color:var(--color-navy-600)] hover:underline font-medium"
-                    style={{ fontSize: 13, color: "var(--gold)", fontWeight: 500, background: "transparent", border: "none", cursor: "pointer" }}
+                    style={{ fontSize: 13, color: "var(--gold)", fontWeight: 500, background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline" }}
                   >
                     Batal / Gunakan Alamat Tersimpan
                   </button>

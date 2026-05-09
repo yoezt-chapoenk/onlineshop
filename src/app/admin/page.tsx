@@ -112,15 +112,15 @@ function StatCard({
   hint?: string;
 }) {
   return (
-    <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5">
-      <div className="text-xs uppercase tracking-[0.18em] text-[color:var(--color-navy-500)]">
+    <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 16, padding: 20 }}>
+      <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.18em", color: "var(--text-muted)", fontWeight: 600 }}>
         {label}
       </div>
-      <div className="mt-2 text-2xl font-bold text-[color:var(--color-navy-900)]">
+      <div style={{ marginTop: 8, fontSize: 24, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-display)" }}>
         {value}
       </div>
       {hint ? (
-        <div className="mt-1 text-xs text-[color:var(--color-navy-400)]">{hint}</div>
+        <div style={{ marginTop: 4, fontSize: 12, color: "var(--text-dim)" }}>{hint}</div>
       ) : null}
     </div>
   );
@@ -130,28 +130,28 @@ export default async function AdminOverviewPage() {
   const { configured, stats, recent, bestSellers, lowStock } = await loadOverview();
 
   return (
-    <div className="space-y-8">
-      <header className="flex flex-wrap items-end justify-between gap-3">
+    <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+      <header style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: 12 }}>
         <div>
-          <h1 className="text-2xl font-bold text-[color:var(--color-navy-900)]">
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-display)" }}>
             Overview
           </h1>
-          <p className="text-sm text-[color:var(--color-navy-400)]">
+          <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 4 }}>
             Snapshot of sales, fulfillment queue, and stock health.
           </p>
         </div>
       </header>
 
       {!configured && (
-        <div className="rounded-2xl border border-[color:var(--color-blue-200)] bg-[color:var(--color-blue-50)] p-4 text-sm text-[color:var(--color-navy-900)]">
+        <div style={{ borderRadius: 16, border: "1px solid var(--gold)", background: "rgba(201,169,110,0.1)", padding: 16, fontSize: 14, color: "var(--text)" }}>
           Supabase isn&apos;t configured in this environment. Set{" "}
-          <code className="text-xs">NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
-          <code className="text-xs">SUPABASE_SERVICE_ROLE_KEY</code> to populate
+          <code style={{ fontSize: 12, background: "var(--bg2)", padding: "2px 4px", borderRadius: 4 }}>NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
+          <code style={{ fontSize: 12, background: "var(--bg2)", padding: "2px 4px", borderRadius: 4 }}>SUPABASE_SERVICE_ROLE_KEY</code> to populate
           this dashboard with real data.
         </div>
       )}
 
-      <section className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+      <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
         <StatCard label="Total sales" value={money(stats.totalSales)} hint="Excludes cancelled/refunded" />
         <StatCard label="Total orders" value={String(stats.totalOrders)} />
         <StatCard label="Pending payment" value={String(stats.pendingPayments)} />
@@ -159,51 +159,51 @@ export default async function AdminOverviewPage() {
         <StatCard label="Low stock" value={String(stats.lowStock)} hint="≤ 10 units" />
       </section>
 
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-bold text-[color:var(--color-navy-900)] uppercase tracking-[0.18em]">
+      <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
+        <div style={{ gridColumn: "1 / -1", borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+            <h2 style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.18em" }}>
               Recent orders
             </h2>
             <Link
               href="/admin/orders"
-              className="text-xs font-semibold text-[color:var(--color-blue-600)] hover:underline"
+              style={{ fontSize: 12, fontWeight: 600, color: "var(--gold)", textDecoration: "none" }}
             >
               View all →
             </Link>
           </div>
           {recent.length === 0 ? (
-            <p className="text-sm text-[color:var(--color-navy-400)]">No orders yet.</p>
+            <p style={{ fontSize: 14, color: "var(--text-muted)" }}>No orders yet.</p>
           ) : (
-            <div className="overflow-x-auto -mx-5 px-5">
-              <table className="w-full text-sm">
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
                 <thead>
-                  <tr className="text-left text-xs uppercase tracking-[0.14em] text-[color:var(--color-navy-400)]">
-                    <th className="py-2 pr-2">Order</th>
-                    <th className="py-2 pr-2">Customer</th>
-                    <th className="py-2 pr-2">Total</th>
-                    <th className="py-2 pr-2">Status</th>
-                    <th className="py-2">When</th>
+                  <tr style={{ textAlign: "left", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--text-muted)", borderBottom: "1px solid var(--border)" }}>
+                    <th style={{ padding: "8px 12px 8px 0" }}>Order</th>
+                    <th style={{ padding: "8px 12px" }}>Customer</th>
+                    <th style={{ padding: "8px 12px" }}>Total</th>
+                    <th style={{ padding: "8px 12px" }}>Status</th>
+                    <th style={{ padding: "8px 0 8px 12px" }}>When</th>
                   </tr>
                 </thead>
                 <tbody>
                   {recent.map((o) => {
                     const badge = STATUS_BADGE[o.status];
                     return (
-                      <tr key={o.id} className="border-t border-[color:var(--color-cloud-200)]">
-                        <td className="py-2.5 pr-2 font-mono text-xs">
-                          <Link href={`/admin/orders/${o.id}`} className="text-[color:var(--color-blue-600)] hover:underline">
+                      <tr key={o.id} style={{ borderBottom: "1px solid var(--border)" }}>
+                        <td style={{ padding: "10px 12px 10px 0", fontFamily: "monospace", fontSize: 12 }}>
+                          <Link href={`/admin/orders/${o.id}`} style={{ color: "var(--gold)", textDecoration: "none", fontWeight: 600 }}>
                             {o.order_number}
                           </Link>
                         </td>
-                        <td className="py-2.5 pr-2">{o.customer_name}</td>
-                        <td className="py-2.5 pr-2 font-medium">{money(o.total)}</td>
-                        <td className="py-2.5 pr-2">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${badge.className}`}>
+                        <td style={{ padding: "10px 12px", color: "var(--text)" }}>{o.customer_name}</td>
+                        <td style={{ padding: "10px 12px", fontWeight: 500, color: "var(--text)" }}>{money(o.total)}</td>
+                        <td style={{ padding: "10px 12px" }}>
+                          <span style={{ display: "inline-flex", alignItems: "center", padding: "2px 8px", borderRadius: 999, fontSize: 12, fontWeight: 500, background: "var(--bg2)", color: "var(--text)" }}>
                             {badge.label}
                           </span>
                         </td>
-                        <td className="py-2.5 text-xs text-[color:var(--color-navy-400)]">
+                        <td style={{ padding: "10px 0 10px 12px", fontSize: 12, color: "var(--text-muted)" }}>
                           {formatDateTime(o.created_at)}
                         </td>
                       </tr>
@@ -215,26 +215,26 @@ export default async function AdminOverviewPage() {
           )}
         </div>
 
-        <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5">
-          <h2 className="text-sm font-bold text-[color:var(--color-navy-900)] uppercase tracking-[0.18em] mb-3">
+        <div style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 20 }}>
+          <h2 style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.18em", marginBottom: 12 }}>
             Best sellers
           </h2>
           {bestSellers.length === 0 ? (
-            <p className="text-sm text-[color:var(--color-navy-400)]">No data yet.</p>
+            <p style={{ fontSize: 14, color: "var(--text-muted)" }}>No data yet.</p>
           ) : (
-            <ol className="space-y-2.5">
+            <ol style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 10 }}>
               {bestSellers.map((b, i) => (
                 <li
                   key={b.product_name}
-                  className="flex items-center justify-between gap-3 text-sm"
+                  style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, fontSize: 14 }}
                 >
-                  <span className="flex items-center gap-2 min-w-0">
-                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[color:var(--color-blue-100)] text-[10px] font-bold text-[color:var(--color-navy-900)]">
+                  <span style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+                    <span style={{ display: "inline-flex", height: 20, width: 20, alignItems: "center", justifyContent: "center", borderRadius: "50%", background: "var(--bg2)", fontSize: 10, fontWeight: 700, color: "var(--text)" }}>
                       {i + 1}
                     </span>
-                    <span className="truncate">{b.product_name}</span>
+                    <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--text)" }}>{b.product_name}</span>
                   </span>
-                  <span className="font-semibold text-[color:var(--color-navy-900)]">
+                  <span style={{ fontWeight: 600, color: "var(--text)" }}>
                     {b.total_qty}
                   </span>
                 </li>
@@ -244,40 +244,40 @@ export default async function AdminOverviewPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-bold text-[color:var(--color-navy-900)] uppercase tracking-[0.18em]">
+      <section style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+          <h2 style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.18em" }}>
             Low-stock products
           </h2>
           <Link
             href="/admin/products"
-            className="text-xs font-semibold text-[color:var(--color-blue-600)] hover:underline"
+            style={{ fontSize: 12, fontWeight: 600, color: "var(--gold)", textDecoration: "none" }}
           >
             Manage products →
           </Link>
         </div>
         {lowStock.length === 0 ? (
-          <p className="text-sm text-[color:var(--color-navy-400)]">All products are healthy.</p>
+          <p style={{ fontSize: 14, color: "var(--text-muted)" }}>All products are healthy.</p>
         ) : (
-          <div className="overflow-x-auto -mx-5 px-5">
-            <table className="w-full text-sm">
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
               <thead>
-                <tr className="text-left text-xs uppercase tracking-[0.14em] text-[color:var(--color-navy-400)]">
-                  <th className="py-2 pr-2">Product</th>
-                  <th className="py-2 pr-2">SKU</th>
-                  <th className="py-2">Stock</th>
+                <tr style={{ textAlign: "left", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--text-muted)", borderBottom: "1px solid var(--border)" }}>
+                  <th style={{ padding: "8px 12px 8px 0" }}>Product</th>
+                  <th style={{ padding: "8px 12px" }}>SKU</th>
+                  <th style={{ padding: "8px 0 8px 12px" }}>Stock</th>
                 </tr>
               </thead>
               <tbody>
                 {lowStock.map((p) => (
-                  <tr key={p.id} className="border-t border-[color:var(--color-cloud-200)]">
-                    <td className="py-2.5 pr-2">
-                      <Link href={`/admin/products/${p.id}`} className="text-[color:var(--color-blue-600)] hover:underline">
+                  <tr key={p.id} style={{ borderBottom: "1px solid var(--border)" }}>
+                    <td style={{ padding: "10px 12px 10px 0" }}>
+                      <Link href={`/admin/products/${p.id}`} style={{ color: "var(--gold)", textDecoration: "none", fontWeight: 500 }}>
                         {p.name}
                       </Link>
                     </td>
-                    <td className="py-2.5 pr-2 font-mono text-xs">{p.sku}</td>
-                    <td className="py-2.5 font-semibold">{p.stock}</td>
+                    <td style={{ padding: "10px 12px", fontFamily: "monospace", fontSize: 12, color: "var(--text)" }}>{p.sku}</td>
+                    <td style={{ padding: "10px 0 10px 12px", fontWeight: 600, color: p.stock <= 0 ? "var(--error)" : "var(--gold)" }}>{p.stock}</td>
                   </tr>
                 ))}
               </tbody>

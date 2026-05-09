@@ -102,19 +102,19 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
   const groups = Array.from(new Set(TEXT_FIELDS.map((f) => f.group)));
 
   return (
-    <form onSubmit={submit} className="space-y-6">
+    <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       {groups.map((group) => (
-        <section key={group} className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 space-y-3">
-          <h2 className="text-sm font-bold text-[color:var(--color-navy-900)] uppercase tracking-[0.18em]">{group}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <section key={group} style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
+          <h2 style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.18em" }}>{group}</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
             {TEXT_FIELDS.filter((f) => f.group === group).map((f) => (
-              <label key={f.key} className="block">
-                <span className="label">{f.label}</span>
+              <label key={f.key} style={{ display: "block" }}>
+                <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>{f.label}</span>
                 {f.key === "seo_default_description" || f.key === "store_address" ? (
-                  <textarea className="input mt-1" rows={3} value={(v[f.key] as string) ?? ""} onChange={(e) => updateText(f.key, e.target.value)} />
+                  <textarea style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }} rows={3} value={(v[f.key] as string) ?? ""} onChange={(e) => updateText(f.key, e.target.value)} />
                 ) : (
                   <input
-                    className="input mt-1"
+                    style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }}
                     type={f.type ?? "text"}
                     value={(v[f.key] as string|number) ?? ""}
                     onChange={(e) => updateText(f.key, e.target.value, f.parseAsNumber)}
@@ -127,15 +127,15 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
       ))}
 
       {/* Payment Settings */}
-      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 space-y-4">
-        <h2 className="text-sm font-bold text-[color:var(--color-navy-900)] uppercase tracking-[0.18em]">Pembayaran</h2>
+      <section style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
+        <h2 style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.18em" }}>Pembayaran</h2>
 
         {/* QRIS */}
-        <div className="space-y-2">
-          <label className="block">
-            <span className="label">QRIS Image URL</span>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <label style={{ display: "block" }}>
+            <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 8, display: "block" }}>QRIS Image URL</span>
             <input
-              className="input mt-1"
+              style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }}
               type="url"
               placeholder="https://example.com/qris.png"
               value={v.payment_qris_url ?? ""}
@@ -143,16 +143,16 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
             />
           </label>
           {v.payment_qris_url && (
-            <div className="mt-2 flex items-start gap-3">
-              <div className="h-28 w-28 rounded-lg border border-[color:var(--color-cloud-200)] overflow-hidden bg-white flex items-center justify-center">
+            <div style={{ marginTop: 8, display: "flex", alignItems: "flex-start", gap: 12 }}>
+              <div style={{ height: 112, width: 112, borderRadius: 8, border: "1px solid var(--border)", overflow: "hidden", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={v.payment_qris_url}
                   alt="QRIS Preview"
-                  className="h-full w-full object-contain"
+                  style={{ height: "100%", width: "100%", objectFit: "contain" }}
                 />
               </div>
-              <p className="text-xs text-[color:var(--color-muted)]">
+              <p style={{ fontSize: 12, color: "var(--text-muted)" }}>
                 Preview QR code yang akan ditampilkan di halaman checkout.
               </p>
             </div>
@@ -160,20 +160,21 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
         </div>
 
         {/* Bank accounts */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="label">Rekening Bank (Transfer Manual)</span>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)" }}>Rekening Bank (Transfer Manual)</span>
             <button
               type="button"
               onClick={addBank}
-              className="btn btn-outline !px-3 !py-1.5 text-xs"
+              className="btn btn-outline"
+              style={{ padding: "6px 12px", fontSize: 12, display: "inline-flex", alignItems: "center", gap: 6 }}
             >
-              <Plus className="h-3 w-3" /> Tambah Bank
+              <Plus style={{ width: 14, height: 14 }} /> Tambah Bank
             </button>
           </div>
 
           {v.payment_banks.length === 0 && (
-            <p className="text-sm text-[color:var(--color-muted)] py-3 text-center border border-dashed border-[color:var(--color-cloud-200)] rounded-xl">
+            <p style={{ fontSize: 14, color: "var(--text-muted)", padding: "12px 0", textAlign: "center", border: "1px dashed var(--border)", borderRadius: 8 }}>
               Belum ada rekening bank. Klik &quot;Tambah Bank&quot; untuk menambahkan.
             </p>
           )}
@@ -181,30 +182,30 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
           {v.payment_banks.map((bank, index) => (
             <div
               key={index}
-              className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end"
+              style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto", gap: 12, alignItems: "flex-end" }}
             >
-              <label className="block">
-                {index === 0 && <span className="text-xs text-[color:var(--color-muted)]">Nama Bank</span>}
+              <label style={{ display: "block" }}>
+                {index === 0 && <span style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4, display: "block" }}>Nama Bank</span>}
                 <input
-                  className="input mt-0.5"
+                  style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }}
                   placeholder="BCA"
                   value={bank.bank}
                   onChange={(e) => updateBank(index, "bank", e.target.value)}
                 />
               </label>
-              <label className="block">
-                {index === 0 && <span className="text-xs text-[color:var(--color-muted)]">Nomor Rekening</span>}
+              <label style={{ display: "block" }}>
+                {index === 0 && <span style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4, display: "block" }}>Nomor Rekening</span>}
                 <input
-                  className="input mt-0.5"
+                  style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }}
                   placeholder="1234567890"
                   value={bank.number}
                   onChange={(e) => updateBank(index, "number", e.target.value)}
                 />
               </label>
-              <label className="block">
-                {index === 0 && <span className="text-xs text-[color:var(--color-muted)]">Atas Nama</span>}
+              <label style={{ display: "block" }}>
+                {index === 0 && <span style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4, display: "block" }}>Atas Nama</span>}
                 <input
-                  className="input mt-0.5"
+                  style={{ width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8 }}
                   placeholder="Juragan Grosir"
                   value={bank.name}
                   onChange={(e) => updateBank(index, "name", e.target.value)}
@@ -213,20 +214,20 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
               <button
                 type="button"
                 onClick={() => removeBank(index)}
-                className="h-10 w-10 flex items-center justify-center rounded-lg border border-[color:var(--color-line)] text-[color:var(--color-error)] hover:bg-[color:var(--color-error)]/5 transition"
+                style={{ height: 42, width: 42, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 8, border: "1px solid var(--border)", color: "var(--error)", background: "var(--surface)", cursor: "pointer" }}
                 title="Hapus"
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 style={{ width: 16, height: 16 }} />
               </button>
             </div>
           ))}
         </div>
       </section>
 
-      {error ? <p className="text-sm text-[color:var(--color-error)]">{error}</p> : null}
-      {savedAt ? <p className="text-sm text-[color:var(--color-navy-700)]">Saved.</p> : null}
+      {error ? <p style={{ fontSize: 14, color: "var(--error)" }}>{error}</p> : null}
+      {savedAt ? <p style={{ fontSize: 14, color: "var(--text-muted)" }}>Saved.</p> : null}
 
-      <div className="sticky bottom-0 bg-[color:var(--color-cloud-100)] py-3 border-t border-[color:var(--color-cloud-200)] -mx-5 sm:-mx-8 px-5 sm:px-8">
+      <div style={{ position: "sticky", bottom: 0, background: "var(--bg)", padding: "16px 0", borderTop: "1px solid var(--border)", zIndex: 10 }}>
         <button type="submit" className="btn btn-primary" disabled={pending}>
           {pending ? "Saving…" : "Save settings"}
         </button>

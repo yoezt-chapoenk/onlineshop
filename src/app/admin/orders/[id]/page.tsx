@@ -77,115 +77,119 @@ export default async function AdminOrderDetailPage({
   const badge = STATUS_BADGE[order.status];
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-wrap items-start justify-between gap-3">
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      <header style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
         <div>
           <Link
             href="/admin/orders"
-            className="text-xs text-[color:var(--color-navy-400)] hover:text-[color:var(--color-navy-900)]"
+            style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "none", fontWeight: 500 }}
+            className="hover:text-[var(--text)]"
           >
             ← All orders
           </Link>
-          <h1 className="mt-1 text-2xl font-bold text-[color:var(--color-navy-900)]">
-            <span className="font-mono text-base">{order.order_number}</span>
+          <h1 style={{ marginTop: 4, fontSize: 24, fontWeight: 700, color: "var(--text)" }}>
+            <span style={{ fontFamily: "monospace", fontSize: 16 }}>{order.order_number}</span>
           </h1>
-          <p className="text-sm text-[color:var(--color-navy-400)]">
+          <p style={{ fontSize: 14, color: "var(--text-muted)" }}>
             Created {formatDateTime(order.created_at)}
           </p>
         </div>
-        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge.className}`}>
+        <span style={{ display: "inline-flex", alignItems: "center", padding: "4px 12px", borderRadius: 999, fontSize: 12, fontWeight: 600, background: "var(--bg2)", color: "var(--text)" }}>
           {badge.label}
         </span>
       </header>
 
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 space-y-4">
-          <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5">
-            <h2 className="text-sm font-bold text-[color:var(--color-navy-900)] uppercase tracking-[0.18em] mb-3">
-              Items
-            </h2>
-            <div className="overflow-x-auto -mx-5 px-5">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-xs uppercase tracking-[0.14em] text-[color:var(--color-navy-400)]">
-                    <th className="py-2 pr-2">Product</th>
-                    <th className="py-2 pr-2">SKU</th>
-                    <th className="py-2 pr-2">Qty</th>
-                    <th className="py-2 pr-2">Unit price</th>
-                    <th className="py-2">Subtotal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {order.order_items.map((it) => (
-                    <tr key={it.id} className="border-t border-[color:var(--color-cloud-200)]">
-                      <td className="py-2.5 pr-2">
-                        <div>{it.product_name}</div>
-                        {it.tier_label ? (
-                          <div className="text-xs text-[color:var(--color-blue-600)]">
-                            {it.tier_label}
-                          </div>
-                        ) : null}
-                      </td>
-                      <td className="py-2.5 pr-2 font-mono text-xs">{it.product_sku}</td>
-                      <td className="py-2.5 pr-2">{it.quantity}</td>
-                      <td className="py-2.5 pr-2">{money(it.unit_price)}</td>
-                      <td className="py-2.5 font-medium">{money(it.subtotal)}</td>
+      <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 16 }}>
+        <div style={{ gridColumn: "1 / -1", display: "grid", gridTemplateColumns: "1fr", gap: 16 }} className="lg:grid-cols-[2fr_1fr]">
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 20 }}>
+              <h2 style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.18em", marginBottom: 12 }}>
+                Items
+              </h2>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ textAlign: "left", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--text-muted)", borderBottom: "1px solid var(--border)" }}>
+                      <th style={{ padding: "8px 12px 8px 0" }}>Product</th>
+                      <th style={{ padding: "8px 12px" }}>SKU</th>
+                      <th style={{ padding: "8px 12px" }}>Qty</th>
+                      <th style={{ padding: "8px 12px" }}>Unit price</th>
+                      <th style={{ padding: "8px 0 8px 12px" }}>Subtotal</th>
                     </tr>
-                  ))}
-                </tbody>
-                <tfoot className="text-sm">
-                  <tr className="border-t border-[color:var(--color-cloud-200)]">
-                    <td colSpan={4} className="py-2 pr-2 text-right text-[color:var(--color-navy-400)]">Subtotal</td>
-                    <td className="py-2">{money(order.subtotal)}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={4} className="py-2 pr-2 text-right text-[color:var(--color-navy-400)]">
-                      Shipping ({order.shipping_courier} {order.shipping_service})
-                    </td>
-                    <td className="py-2">{money(order.shipping_cost)}</td>
-                  </tr>
-                  <tr className="border-t border-[color:var(--color-cloud-200)]">
-                    <td colSpan={4} className="py-2 pr-2 text-right font-bold text-[color:var(--color-navy-900)]">Total</td>
-                    <td className="py-2 font-bold text-[color:var(--color-navy-900)]">{money(order.total)}</td>
-                  </tr>
-                </tfoot>
-              </table>
+                  </thead>
+                  <tbody>
+                    {order.order_items.map((it) => (
+                      <tr key={it.id} style={{ borderBottom: "1px solid var(--border)" }}>
+                        <td style={{ padding: "10px 12px 10px 0" }}>
+                          <div style={{ color: "var(--text)", fontWeight: 500 }}>{it.product_name}</div>
+                          {it.tier_label ? (
+                            <div style={{ fontSize: 12, color: "var(--gold)" }}>
+                              {it.tier_label}
+                            </div>
+                          ) : null}
+                        </td>
+                        <td style={{ padding: "10px 12px", fontFamily: "monospace", fontSize: 12, color: "var(--text)" }}>{it.product_sku}</td>
+                        <td style={{ padding: "10px 12px", color: "var(--text)" }}>{it.quantity}</td>
+                        <td style={{ padding: "10px 12px", color: "var(--text)" }}>{money(it.unit_price)}</td>
+                        <td style={{ padding: "10px 0 10px 12px", fontWeight: 600, color: "var(--text)" }}>{money(it.subtotal)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot style={{ fontSize: 14 }}>
+                    <tr style={{ borderTop: "1px solid var(--border)" }}>
+                      <td colSpan={4} style={{ padding: "10px 12px 10px 0", textAlign: "right", color: "var(--text-muted)" }}>Subtotal</td>
+                      <td style={{ padding: "10px 0 10px 12px", color: "var(--text)" }}>{money(order.subtotal)}</td>
+                    </tr>
+                    <tr>
+                      <td colSpan={4} style={{ padding: "4px 12px 4px 0", textAlign: "right", color: "var(--text-muted)" }}>
+                        Shipping ({order.shipping_courier} {order.shipping_service})
+                      </td>
+                      <td style={{ padding: "4px 0 4px 12px", color: "var(--text)" }}>{money(order.shipping_cost)}</td>
+                    </tr>
+                    <tr style={{ borderTop: "1px solid var(--border)" }}>
+                      <td colSpan={4} style={{ padding: "10px 12px 10px 0", textAlign: "right", fontWeight: 700, color: "var(--text)" }}>Total</td>
+                      <td style={{ padding: "10px 0 10px 12px", fontWeight: 700, color: "var(--text)" }}>{money(order.total)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
             </div>
-          </div>
 
-          <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5">
-            <h2 className="text-sm font-bold text-[color:var(--color-navy-900)] uppercase tracking-[0.18em] mb-3">
-              Shipping address
-            </h2>
-            <div className="text-sm space-y-1">
-              <div className="font-medium">{order.customer_name}</div>
-              <div>{order.shipping_address}</div>
-              <div>
-                {order.shipping_district}, {order.shipping_city},{" "}
-                {order.shipping_province} {order.shipping_postal_code}
-              </div>
-              <div className="text-[color:var(--color-navy-400)]">
-                {order.customer_phone} · {order.customer_email}
-              </div>
-              {order.shipping_notes ? (
-                <div className="pt-2 text-[color:var(--color-navy-400)]">
-                  <span className="font-medium text-[color:var(--color-navy-900)]">Notes: </span>
-                  {order.shipping_notes}
+            <div style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 20 }}>
+              <h2 style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.18em", marginBottom: 12 }}>
+                Shipping address
+              </h2>
+              <div style={{ fontSize: 14, display: "flex", flexDirection: "column", gap: 4 }}>
+                <div style={{ fontWeight: 600, color: "var(--text)" }}>{order.customer_name}</div>
+                <div style={{ color: "var(--text)" }}>{order.shipping_address}</div>
+                <div style={{ color: "var(--text)" }}>
+                  {order.shipping_district}, {order.shipping_city},{" "}
+                  {order.shipping_province} {order.shipping_postal_code}
                 </div>
-              ) : null}
+                <div style={{ color: "var(--text-muted)", marginTop: 4 }}>
+                  {order.customer_phone} · {order.customer_email}
+                </div>
+                {order.shipping_notes ? (
+                  <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px dashed var(--border)", color: "var(--text-muted)" }}>
+                    <span style={{ fontWeight: 600, color: "var(--text)" }}>Notes: </span>
+                    {order.shipping_notes}
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
-        </div>
 
-        <OrderActions
-          orderId={order.id}
-          status={order.status}
-          tracking_courier={order.tracking_courier ?? ""}
-          tracking_number={order.tracking_number ?? ""}
-          admin_note={order.admin_note ?? ""}
-          payment_method={order.payment_method}
-          weight_gram={order.weight_gram}
-        />
+          <OrderActions
+            orderId={order.id}
+            status={order.status}
+            tracking_courier={order.tracking_courier ?? ""}
+            tracking_number={order.tracking_number ?? ""}
+            admin_note={order.admin_note ?? ""}
+            payment_method={order.payment_method}
+            weight_gram={order.weight_gram}
+          />
+        </div>
       </section>
     </div>
   );

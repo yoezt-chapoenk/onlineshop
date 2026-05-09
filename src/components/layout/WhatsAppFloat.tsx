@@ -1,7 +1,6 @@
 "use client";
 
 import { whatsappLink } from "@/lib/constants";
-
 import { MessageCircle } from "lucide-react";
 
 export default function WhatsAppFloat() {
@@ -15,10 +14,18 @@ export default function WhatsAppFloat() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat dengan kami"
-      className="fixed bottom-5 right-5 z-50 inline-flex items-center gap-2 px-4 py-3 rounded-full bg-[color:var(--color-navy-900)] text-white shadow-lg hover:shadow-xl hover:scale-[1.03] transition-transform"
+      style={{
+        position: "fixed", bottom: 20, right: 20, zIndex: 50,
+        display: "inline-flex", alignItems: "center", gap: 8,
+        padding: "12px 20px", borderRadius: 999,
+        background: "var(--gold)", color: "var(--bg)", textDecoration: "none",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.15)", transition: "transform 0.2s"
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+      onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
     >
-      <MessageCircle className="w-5 h-5" />
-      <span className="hidden sm:inline text-sm font-semibold">Chat dengan kami</span>
+      <MessageCircle style={{ width: 20, height: 20 }} />
+      <span style={{ fontSize: 14, fontWeight: 600, fontFamily: "var(--font-sans)" }}>Chat dengan kami</span>
     </a>
   );
 }

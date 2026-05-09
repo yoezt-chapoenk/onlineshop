@@ -66,37 +66,43 @@ export default async function AdminOrdersPage({
   const activeStatus = params.status ?? "all";
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-wrap items-end justify-between gap-3">
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      <header style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: 12 }}>
         <div>
-          <h1 className="text-2xl font-bold text-[color:var(--color-navy-900)]">Orders</h1>
-          <p className="text-sm text-[color:var(--color-navy-400)]">
+          <h1 style={{ fontSize: 24, fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)" }}>Orders</h1>
+          <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 4 }}>
             {orders.length} order{orders.length === 1 ? "" : "s"} shown
           </p>
         </div>
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a
           href="/api/admin/orders/export/"
-          className="btn btn-outline text-xs"
+          className="btn btn-outline"
+          style={{ fontSize: 12, padding: "6px 12px" }}
         >
           Export CSV
         </a>
       </header>
 
       {!configured && (
-        <div className="rounded-2xl border border-[color:var(--color-blue-200)] bg-[color:var(--color-blue-50)] p-4 text-sm">
+        <div style={{ borderRadius: 16, border: "1px solid var(--gold)", background: "rgba(201,169,110,0.1)", padding: 16, fontSize: 14, color: "var(--text)" }}>
           Supabase isn&apos;t configured. Connect it to manage real orders.
         </div>
       )}
 
       <form
         method="GET"
-        className="flex flex-wrap gap-2 items-center bg-white border border-[color:var(--color-cloud-200)] rounded-2xl p-3"
+        style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 16, padding: 12 }}
       >
-        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6, fontSize: 12 }}>
           <Link
             href="/admin/orders"
-            className={`px-3 py-1.5 rounded-full border font-medium ${activeStatus === "all" ? "bg-[color:var(--color-navy-900)] text-white border-[color:var(--color-navy-900)]" : "border-[color:var(--color-cloud-200)] text-[color:var(--color-navy-700)] hover:bg-[color:var(--color-cloud-100)]"}`}
+            style={{ 
+              padding: "6px 12px", borderRadius: 999, border: "1px solid", fontWeight: 500, textDecoration: "none",
+              ...(activeStatus === "all" 
+                ? { background: "var(--gold)", color: "var(--bg)", borderColor: "var(--gold)" } 
+                : { background: "transparent", color: "var(--text)", borderColor: "var(--border)" })
+            }}
           >
             All
           </Link>
@@ -106,7 +112,12 @@ export default async function AdminOrdersPage({
               <Link
                 key={s}
                 href={`/admin/orders?status=${s}`}
-                className={`px-3 py-1.5 rounded-full border font-medium capitalize ${active ? "bg-[color:var(--color-navy-900)] text-white border-[color:var(--color-navy-900)]" : "border-[color:var(--color-cloud-200)] text-[color:var(--color-navy-700)] hover:bg-[color:var(--color-cloud-100)]"}`}
+                style={{ 
+                  padding: "6px 12px", borderRadius: 999, border: "1px solid", fontWeight: 500, textTransform: "capitalize", textDecoration: "none",
+                  ...(active 
+                    ? { background: "var(--gold)", color: "var(--bg)", borderColor: "var(--gold)" } 
+                    : { background: "transparent", color: "var(--text)", borderColor: "var(--border)" })
+                }}
               >
                 {s}
               </Link>
@@ -118,10 +129,10 @@ export default async function AdminOrdersPage({
           name="q"
           defaultValue={params.q ?? ""}
           placeholder="Search by order #, name, or email"
-          className="input ml-auto !py-2 text-sm w-full sm:w-72"
+          style={{ width: "100%", maxWidth: 280, marginLeft: "auto", padding: "8px 12px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8, fontSize: 14 }}
         />
         {params.status ? <input type="hidden" name="status" value={params.status} /> : null}
-        <button type="submit" className="btn btn-primary text-xs">
+        <button type="submit" className="btn btn-primary" style={{ fontSize: 12, padding: "8px 16px" }}>
           Search
         </button>
       </form>

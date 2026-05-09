@@ -55,48 +55,53 @@ export default function ResellerAppsClient({ initial }: { initial: Application[]
   }
 
   return (
-    <div className="space-y-3">
-      {error ? <p className="text-sm text-[color:var(--color-error)]">{error}</p> : null}
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {error ? <p style={{ fontSize: 14, color: "var(--error)" }}>{error}</p> : null}
       {items.length === 0 ? (
-        <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-8 text-center text-sm text-[color:var(--color-navy-400)]">
+        <div style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 32, textAlign: "center", fontSize: 14, color: "var(--text-muted)" }}>
           No applications yet.
         </div>
       ) : (
         items.map((a) => (
-          <div key={a.id} className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5">
-            <div className="flex flex-wrap items-start justify-between gap-3">
+          <div key={a.id} style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 20 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
               <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-[color:var(--color-navy-900)]">{a.business_name}</h3>
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium capitalize ${STATUS_BADGE[a.status] ?? STATUS_BADGE.new}`}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <h3 style={{ fontWeight: 700, color: "var(--text)" }}>{a.business_name}</h3>
+                  <span style={{ display: "inline-flex", alignItems: "center", padding: "2px 8px", borderRadius: 999, fontSize: 12, fontWeight: 500, textTransform: "capitalize", background: "var(--bg2)", color: "var(--text)" }}>
                     {a.status}
                   </span>
                 </div>
-                <div className="text-sm text-[color:var(--color-navy-700)]">
+                <div style={{ fontSize: 14, color: "var(--text)", marginTop: 2 }}>
                   {a.contact_name} · {a.email} · {a.phone}
                 </div>
-                <div className="text-xs text-[color:var(--color-navy-400)] mt-1">
+                <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>
                   {a.city} · {a.monthly_volume} · {formatDateTime(a.created_at)}
                 </div>
                 {a.notes ? (
-                  <p className="mt-3 text-sm text-[color:var(--color-navy-700)]">{a.notes}</p>
+                  <p style={{ marginTop: 12, fontSize: 14, color: "var(--text)" }}>{a.notes}</p>
                 ) : null}
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {STATUSES.map((s) => (
                   <button
                     key={s}
                     type="button"
                     onClick={() => setStatus(a.id, s)}
                     disabled={pending}
-                    className={`text-xs px-3 py-1.5 rounded-full border font-medium capitalize ${a.status === s ? "bg-[color:var(--color-navy-900)] text-white border-[color:var(--color-navy-900)]" : "border-[color:var(--color-cloud-200)] text-[color:var(--color-navy-700)] hover:bg-[color:var(--color-cloud-100)]"}`}
+                    style={{
+                      fontSize: 12, padding: "6px 12px", borderRadius: 999, border: "1px solid", fontWeight: 500, textTransform: "capitalize", cursor: "pointer",
+                      ...(a.status === s
+                        ? { background: "var(--gold)", color: "var(--bg)", borderColor: "var(--gold)" }
+                        : { background: "transparent", color: "var(--text)", borderColor: "var(--border)" })
+                    }}
                   >
                     {s}
                   </button>
                 ))}
                 <button
                   type="button"
-                  className="text-xs px-3 py-1.5 rounded-full border border-[color:var(--color-cloud-200)] text-[color:var(--color-navy-700)] hover:bg-[color:var(--color-cloud-100)]"
+                  style={{ fontSize: 12, padding: "6px 12px", borderRadius: 999, border: "1px solid var(--border)", color: "var(--text)", background: "transparent", cursor: "pointer" }}
                   onClick={() => setOpenId(openId === a.id ? null : a.id)}
                 >
                   Note
@@ -104,7 +109,7 @@ export default function ResellerAppsClient({ initial }: { initial: Application[]
               </div>
             </div>
             {openId === a.id ? (
-              <div className="mt-3">
+              <div style={{ marginTop: 12 }}>
                 <textarea
                   className="input"
                   rows={3}
@@ -115,7 +120,7 @@ export default function ResellerAppsClient({ initial }: { initial: Application[]
               </div>
             ) : null}
             {a.reviewed_at ? (
-              <div className="mt-2 text-xs text-[color:var(--color-navy-400)]">
+              <div style={{ marginTop: 8, fontSize: 12, color: "var(--text-muted)" }}>
                 Last reviewed {formatDateTime(a.reviewed_at)}
               </div>
             ) : null}

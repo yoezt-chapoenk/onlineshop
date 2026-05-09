@@ -200,9 +200,13 @@ export default function ProductForm({ initial, categories, mode }: Props) {
     });
   }
 
+  const sectionStyle: React.CSSProperties = { borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 20 };
+  const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: 6, display: "block" };
+  const inputStyle: React.CSSProperties = { width: "100%", padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--border)", color: "var(--text)", borderRadius: 8, fontSize: 14 };
+
   return (
-    <form onSubmit={submit} className="space-y-6">
-      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      <section style={{ ...sectionStyle, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
         <label className="block">
           <span className="label">Name</span>
           <input className="input mt-1" required value={v.name} onChange={(e) => {
@@ -246,7 +250,7 @@ export default function ProductForm({ initial, categories, mode }: Props) {
         </label>
       </section>
 
-      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+      <section style={{ ...sectionStyle, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16 }}>
         <label className="block">
           <span className="label">Retail price (Rp)</span>
           <input type="number" min={0} className="input mt-1" required value={v.retail_price} onChange={(e) => update("retail_price", Number(e.target.value))} />
@@ -281,7 +285,7 @@ export default function ProductForm({ initial, categories, mode }: Props) {
         </label>
       </section>
 
-      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 grid grid-cols-2 md:grid-cols-3 gap-4">
+      <section style={{ ...sectionStyle, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16 }}>
         <label className="block">
           <span className="label">Gender</span>
           <select className="input mt-1" value={v.gender} onChange={(e) => update("gender", e.target.value)}>
@@ -315,7 +319,7 @@ export default function ProductForm({ initial, categories, mode }: Props) {
         </label>
       </section>
 
-      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 flex flex-wrap gap-4 text-sm">
+      <section style={{ ...sectionStyle, display: "flex", flexWrap: "wrap", gap: 16, fontSize: 14, color: "var(--text)" }}>
         <label className="inline-flex items-center gap-2">
           <input type="checkbox" checked={v.is_featured} onChange={(e) => update("is_featured", e.target.checked)} /> Featured
         </label>
@@ -327,43 +331,43 @@ export default function ProductForm({ initial, categories, mode }: Props) {
         </label>
       </section>
 
-      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold uppercase tracking-[0.18em]">Wholesale price tiers</h2>
-          <button type="button" className="btn btn-outline text-xs" onClick={addTier}>+ Add tier</button>
+      <section style={{ ...sectionStyle, display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <h2 style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.18em", color: "var(--text)" }}>Wholesale price tiers</h2>
+          <button type="button" className="btn btn-outline" style={{ fontSize: 12, padding: "4px 10px" }} onClick={addTier}>+ Add tier</button>
         </div>
         {v.price_tiers.length === 0 ? (
-          <p className="text-sm text-[color:var(--color-navy-400)]">No tiers configured.</p>
+          <p style={{ fontSize: 14, color: "var(--text-muted)" }}>No tiers configured.</p>
         ) : (
-          <div className="space-y-2">
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {v.price_tiers.map((t, i) => (
-              <div key={i} className="grid grid-cols-12 gap-2 items-end text-sm">
-                <label className="col-span-2 block">
-                  <span className="label">Min qty</span>
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 8, alignItems: "flex-end", fontSize: 14 }}>
+                <label style={{ gridColumn: "span 2", display: "block" }}>
+                  <span style={labelStyle}>Min qty</span>
                   <input type="number" min={1} className="input mt-1" value={t.min_qty} onChange={(e) => {
                     const tiers = [...v.price_tiers];
                     tiers[i] = { ...tiers[i], min_qty: Number(e.target.value) };
                     update("price_tiers", tiers);
                   }} />
                 </label>
-                <label className="col-span-2 block">
-                  <span className="label">Max qty</span>
+                <label style={{ gridColumn: "span 2", display: "block" }}>
+                  <span style={labelStyle}>Max qty</span>
                   <input type="number" min={1} className="input mt-1" placeholder="∞" value={t.max_qty ?? ""} onChange={(e) => {
                     const tiers = [...v.price_tiers];
                     tiers[i] = { ...tiers[i], max_qty: e.target.value === "" ? null : Number(e.target.value) };
                     update("price_tiers", tiers);
                   }} />
                 </label>
-                <label className="col-span-3 block">
-                  <span className="label">Unit price</span>
+                <label style={{ gridColumn: "span 3", display: "block" }}>
+                  <span style={labelStyle}>Unit price</span>
                   <input type="number" min={0} className="input mt-1" value={t.unit_price} onChange={(e) => {
                     const tiers = [...v.price_tiers];
                     tiers[i] = { ...tiers[i], unit_price: Number(e.target.value) };
                     update("price_tiers", tiers);
                   }} />
                 </label>
-                <label className="col-span-4 block">
-                  <span className="label">Label</span>
+                <label style={{ gridColumn: "span 4", display: "block" }}>
+                  <span style={labelStyle}>Label</span>
                   <input className="input mt-1" value={t.label} onChange={(e) => {
                     const tiers = [...v.price_tiers];
                     tiers[i] = { ...tiers[i], label: e.target.value };
@@ -372,7 +376,7 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                 </label>
                 <button
                   type="button"
-                  className="col-span-1 text-xs text-[color:var(--color-error)] hover:underline pb-2.5"
+                  style={{ gridColumn: "span 1", fontSize: 12, color: "var(--error)", background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline", alignSelf: "flex-end", paddingBottom: 10 }}
                   onClick={() => update("price_tiers", v.price_tiers.filter((_, j) => j !== i))}
                 >
                   Remove
@@ -383,22 +387,22 @@ export default function ProductForm({ initial, categories, mode }: Props) {
         )}
       </section>
 
-      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 space-y-3">
-        <div className="flex items-center justify-between">
+      <section style={{ ...sectionStyle, display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-[0.18em]">Gambar Produk</h2>
-            <p className="text-xs text-[color:var(--color-navy-400)] mt-0.5">
+            <h2 style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.18em", color: "var(--text)" }}>Gambar Produk</h2>
+            <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>
               Gambar pertama dipakai di kartu &amp; OG image. Maks 5MB per
               file. Format JPG/PNG/WEBP/GIF.
             </p>
           </div>
-          <label className="btn btn-outline text-xs cursor-pointer">
+          <label className="btn btn-outline" style={{ fontSize: 12, padding: "4px 10px", cursor: "pointer", whiteSpace: "nowrap" }}>
             {uploading ? "Mengunggah…" : "+ Tambah gambar"}
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp,image/gif"
               multiple
-              className="hidden"
+              style={{ display: "none" }}
               disabled={uploading}
               onChange={(e) => {
                 handleImageUpload(e.target.files);
@@ -408,35 +412,35 @@ export default function ProductForm({ initial, categories, mode }: Props) {
           </label>
         </div>
         {uploadError && (
-          <p className="text-xs text-[color:var(--color-error)]">{uploadError}</p>
+          <p style={{ fontSize: 12, color: "var(--error)" }}>{uploadError}</p>
         )}
         {v.image_urls.length === 0 ? (
-          <p className="text-sm text-[color:var(--color-navy-400)]">
+          <p style={{ fontSize: 14, color: "var(--text-muted)" }}>
             Belum ada gambar. Storefront akan menampilkan ilustrasi SVG bawaan.
           </p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 12 }}>
             {v.image_urls.map((url, i) => (
               <div
                 key={url + i}
-                className="relative rounded-xl overflow-hidden border border-[color:var(--color-cloud-200)] bg-[color:var(--color-cloud-50)]"
+                style={{ position: "relative", borderRadius: 12, overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg2)" }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={url}
                   alt={`Gambar ${i + 1}`}
-                  className="w-full aspect-square object-cover"
+                  style={{ width: "100%", aspectRatio: "1", objectFit: "cover", display: "block" }}
                 />
                 {i === 0 && (
-                  <span className="absolute top-1 left-1 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[color:var(--color-navy-900)] text-white">
+                  <span style={{ position: "absolute", top: 4, left: 4, fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", padding: "2px 6px", borderRadius: 4, background: "var(--gold)", color: "var(--bg)" }}>
                     Utama
                   </span>
                 )}
-                <div className="absolute bottom-0 inset-x-0 flex items-center justify-between bg-black/60 text-white text-xs px-1.5 py-1">
-                  <div className="flex gap-1">
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(0,0,0,0.65)", color: "#fff", fontSize: 12, padding: "4px 6px" }}>
+                  <div style={{ display: "flex", gap: 4 }}>
                     <button
                       type="button"
-                      className="px-1 disabled:opacity-40"
+                      style={{ padding: "0 4px", background: "transparent", border: "none", color: "#fff", cursor: "pointer" }}
                       onClick={() => moveImage(i, -1)}
                       disabled={i === 0}
                       title="Move up"
@@ -445,7 +449,7 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                     </button>
                     <button
                       type="button"
-                      className="px-1 disabled:opacity-40"
+                      style={{ padding: "0 4px", background: "transparent", border: "none", color: "#fff", cursor: "pointer" }}
                       onClick={() => moveImage(i, 1)}
                       disabled={i === v.image_urls.length - 1}
                       title="Move down"
@@ -455,7 +459,7 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                   </div>
                   <button
                     type="button"
-                    className="hover:underline"
+                    style={{ background: "transparent", border: "none", color: "#fff", cursor: "pointer", textDecoration: "underline", fontSize: 12 }}
                     onClick={() => removeImage(i)}
                   >
                     Hapus
@@ -467,27 +471,27 @@ export default function ProductForm({ initial, categories, mode }: Props) {
         )}
       </section>
 
-      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold uppercase tracking-[0.18em]">Specs</h2>
-          <button type="button" className="btn btn-outline text-xs" onClick={addSpec}>+ Add spec</button>
+      <section style={{ ...sectionStyle, display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <h2 style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.18em", color: "var(--text)" }}>Specs</h2>
+          <button type="button" className="btn btn-outline" style={{ fontSize: 12, padding: "4px 10px" }} onClick={addSpec}>+ Add spec</button>
         </div>
         {v.specs.length === 0 ? (
-          <p className="text-sm text-[color:var(--color-navy-400)]">No specs.</p>
+          <p style={{ fontSize: 14, color: "var(--text-muted)" }}>No specs.</p>
         ) : (
-          <div className="space-y-2">
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {v.specs.map((s, i) => (
-              <div key={i} className="grid grid-cols-12 gap-2 items-end text-sm">
-                <label className="col-span-4 block">
-                  <span className="label">Label</span>
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 8, alignItems: "flex-end", fontSize: 14 }}>
+                <label style={{ gridColumn: "span 4", display: "block" }}>
+                  <span style={labelStyle}>Label</span>
                   <input className="input mt-1" value={s.label} onChange={(e) => {
                     const specs = [...v.specs];
                     specs[i] = { ...specs[i], label: e.target.value };
                     update("specs", specs);
                   }} />
                 </label>
-                <label className="col-span-7 block">
-                  <span className="label">Value</span>
+                <label style={{ gridColumn: "span 7", display: "block" }}>
+                  <span style={labelStyle}>Value</span>
                   <input className="input mt-1" value={s.value} onChange={(e) => {
                     const specs = [...v.specs];
                     specs[i] = { ...specs[i], value: e.target.value };
@@ -496,7 +500,7 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                 </label>
                 <button
                   type="button"
-                  className="col-span-1 text-xs text-[color:var(--color-error)] hover:underline pb-2.5"
+                  style={{ gridColumn: "span 1", fontSize: 12, color: "var(--error)", background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline", alignSelf: "flex-end", paddingBottom: 10 }}
                   onClick={() => update("specs", v.specs.filter((_, j) => j !== i))}
                 >
                   Remove
@@ -507,27 +511,27 @@ export default function ProductForm({ initial, categories, mode }: Props) {
         )}
       </section>
 
-      <section className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5 space-y-3">
-        <div className="flex items-center justify-between">
+      <section style={{ ...sectionStyle, display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-[0.18em]">Variants</h2>
-            <p className="text-xs text-[color:var(--color-navy-400)] mt-0.5">
+            <h2 style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.18em", color: "var(--text)" }}>Variants</h2>
+            <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>
               Kosongkan jika produk tanpa varian. Jika diisi, stok per
               varian menggantikan stok utama dan pelanggan wajib memilih.
             </p>
           </div>
-          <button type="button" className="btn btn-outline text-xs" onClick={addVariant}>
+          <button type="button" className="btn btn-outline" style={{ fontSize: 12, padding: "4px 10px", whiteSpace: "nowrap" }} onClick={addVariant}>
             + Add variant
           </button>
         </div>
         {v.variants.length === 0 ? (
-          <p className="text-sm text-[color:var(--color-navy-400)]">No variants configured.</p>
+          <p style={{ fontSize: 14, color: "var(--text-muted)" }}>No variants configured.</p>
         ) : (
-          <div className="space-y-2">
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {v.variants.map((vr, i) => (
-              <div key={vr.id ?? i} className="grid grid-cols-12 gap-2 items-end text-sm">
-                <label className="col-span-2 block">
-                  <span className="label">SKU</span>
+              <div key={vr.id ?? i} style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 8, alignItems: "flex-end", fontSize: 14 }}>
+                <label style={{ gridColumn: "span 2", display: "block" }}>
+                  <span style={labelStyle}>SKU</span>
                   <input
                     className="input mt-1"
                     value={vr.sku}
@@ -538,8 +542,8 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                     }}
                   />
                 </label>
-                <label className="col-span-2 block">
-                  <span className="label">Warna</span>
+                <label style={{ gridColumn: "span 2", display: "block" }}>
+                  <span style={labelStyle}>Warna</span>
                   <input
                     className="input mt-1"
                     value={vr.color ?? ""}
@@ -550,8 +554,8 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                     }}
                   />
                 </label>
-                <label className="col-span-2 block">
-                  <span className="label">Tipe</span>
+                <label style={{ gridColumn: "span 2", display: "block" }}>
+                  <span style={labelStyle}>Tipe</span>
                   <input
                     className="input mt-1"
                     value={vr.variant_type ?? ""}
@@ -562,8 +566,8 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                     }}
                   />
                 </label>
-                <label className="col-span-2 block">
-                  <span className="label">Ukuran</span>
+                <label style={{ gridColumn: "span 2", display: "block" }}>
+                  <span style={labelStyle}>Ukuran</span>
                   <input
                     className="input mt-1"
                     value={vr.size ?? ""}
@@ -574,8 +578,8 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                     }}
                   />
                 </label>
-                <label className="col-span-1 block">
-                  <span className="label">Stok</span>
+                <label style={{ gridColumn: "span 1", display: "block" }}>
+                  <span style={labelStyle}>Stok</span>
                   <input
                     type="number"
                     min={0}
@@ -588,8 +592,8 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                     }}
                   />
                 </label>
-                <label className="col-span-2 block">
-                  <span className="label">Override harga</span>
+                <label style={{ gridColumn: "span 2", display: "block" }}>
+                  <span style={labelStyle}>Override harga</span>
                   <input
                     type="number"
                     min={0}
@@ -607,9 +611,9 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                     }}
                   />
                 </label>
-                <div className="col-span-12 flex gap-2">
-                  <label className="flex-1 block">
-                    <span className="label">Image URL</span>
+                <div style={{ gridColumn: "span 12", display: "flex", gap: 8 }}>
+                  <label style={{ flex: 1, display: "block" }}>
+                    <span style={labelStyle}>Image URL</span>
                     <input
                       className="input mt-1 text-xs"
                       placeholder="https://..."
@@ -623,7 +627,7 @@ export default function ProductForm({ initial, categories, mode }: Props) {
                   </label>
                   <button
                     type="button"
-                    className="text-xs text-[color:var(--color-error)] hover:underline self-end pb-2.5 shrink-0"
+                    style={{ fontSize: 12, color: "var(--error)", background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline", alignSelf: "flex-end", paddingBottom: 10, flexShrink: 0 }}
                     onClick={() =>
                       update(
                         "variants",
@@ -642,17 +646,19 @@ export default function ProductForm({ initial, categories, mode }: Props) {
         )}
       </section>
 
-      {error ? <p className="text-sm text-[color:var(--color-error)]">{error}</p> : null}
+      {error ? <p style={{ fontSize: 14, color: "var(--error)" }}>{error}</p> : null}
 
-      <div className="flex flex-wrap gap-2 sticky bottom-0 bg-[color:var(--color-cloud-100)] py-3 border-t border-[color:var(--color-cloud-200)] -mx-5 sm:-mx-8 px-5 sm:px-8">
-        <button type="submit" className="btn btn-primary" disabled={pending}>
-          {pending ? "Saving…" : mode === "create" ? "Create product" : "Save changes"}
-        </button>
-        {mode === "edit" && (
-          <button type="button" className="btn btn-ghost text-[color:var(--color-error)]" onClick={remove} disabled={pending}>
-            Delete
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, position: "sticky", bottom: 0, background: "var(--bg)", paddingBlock: 12, borderTop: "1px solid var(--border)", marginInline: -20 }}>
+        <div style={{ paddingInline: 20, display: "flex", gap: 8 }}>
+          <button type="submit" className="btn btn-primary" disabled={pending}>
+            {pending ? "Saving…" : mode === "create" ? "Create product" : "Save changes"}
           </button>
-        )}
+          {mode === "edit" && (
+            <button type="button" style={{ background: "transparent", border: "1px solid var(--error)", color: "var(--error)", borderRadius: 8, padding: "8px 16px", cursor: "pointer", fontWeight: 600 }} onClick={remove} disabled={pending}>
+              Delete
+            </button>
+          )}
+        </div>
       </div>
     </form>
   );

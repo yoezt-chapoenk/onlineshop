@@ -48,40 +48,47 @@ export default async function AdminLayout({
     redirect("/login");
   }
   return (
-    <div className="min-h-screen bg-[color:var(--color-cloud-100)]">
-      <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] min-h-screen">
-        <aside className="lg:sticky lg:top-0 lg:h-screen bg-[color:var(--color-navy-900)] text-white px-5 py-6 flex flex-col gap-2">
+    <div style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
+      <div style={{ display: "grid", minHeight: "100vh" }} className="lg:grid-cols-[240px_1fr]">
+        <aside style={{ 
+          position: "sticky", top: 0, height: "100vh", 
+          background: "var(--surface)", borderRight: "1px solid var(--border)", 
+          padding: "24px 20px", display: "flex", flexDirection: "column", gap: 8,
+          overflowY: "auto"
+        }}>
           <Link
             href="/admin"
-            className="text-lg font-bold tracking-tight mb-3 block"
+            style={{ fontSize: 18, fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: 12, textDecoration: "none", display: "block" }}
           >
             Juragan Grosir
-            <span className="block text-[10px] font-medium uppercase tracking-[0.2em] text-white/70">
+            <span style={{ display: "block", fontSize: 10, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.2em", color: "var(--gold)", marginTop: 4 }}>
               Admin
             </span>
           </Link>
-          <nav className="flex flex-col gap-0.5">
+          <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {NAV.map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
                 href={href}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+                className="hover:bg-[var(--bg2)] hover:text-[var(--text)] transition-colors"
+                style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 8, fontSize: 14, fontWeight: 500, color: "var(--text-muted)", textDecoration: "none" }}
               >
-                <Icon className="h-4 w-4" />
+                <Icon style={{ width: 16, height: 16 }} />
                 {label}
               </Link>
             ))}
           </nav>
-          <div className="mt-auto pt-6 border-t border-white/10">
+          <div style={{ marginTop: "auto", paddingTop: 24, borderTop: "1px solid var(--border)" }}>
             <Link
               href="/"
-              className="text-xs text-white/60 hover:text-white"
+              className="hover:text-[var(--text)]"
+              style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "none" }}
             >
               ← Back to storefront
             </Link>
           </div>
         </aside>
-        <main className="px-5 sm:px-8 py-6 sm:py-8">{children}</main>
+        <main style={{ padding: "24px 32px" }}>{children}</main>
       </div>
     </div>
   );

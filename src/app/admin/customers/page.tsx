@@ -41,47 +41,47 @@ export default async function AdminCustomersPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       <header>
-        <h1 className="text-2xl font-bold text-[color:var(--color-navy-900)]">Customers</h1>
-        <p className="text-sm text-[color:var(--color-navy-400)]">
+        <h1 style={{ fontSize: 24, fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)" }}>Customers</h1>
+        <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 4 }}>
           {rows.length} customer{rows.length === 1 ? "" : "s"}
         </p>
       </header>
       {!configured && (
-        <div className="rounded-2xl border border-[color:var(--color-blue-200)] bg-[color:var(--color-blue-50)] p-4 text-sm">
+        <div style={{ borderRadius: 16, border: "1px solid var(--gold)", background: "rgba(201,169,110,0.1)", padding: 16, fontSize: 14, color: "var(--text)" }}>
           Supabase isn&apos;t configured.
         </div>
       )}
-      <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+      <div style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", overflow: "hidden" }}>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
             <thead>
-              <tr className="text-left text-xs uppercase tracking-[0.14em] text-[color:var(--color-navy-400)] bg-[color:var(--color-cloud-100)]">
-                <th className="px-4 py-3">Name</th>
-                <th className="px-4 py-3">Email</th>
-                <th className="px-4 py-3">Phone</th>
-                <th className="px-4 py-3">Orders</th>
-                <th className="px-4 py-3">Total spent</th>
-                <th className="px-4 py-3">Joined</th>
+              <tr style={{ textAlign: "left", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--text-muted)", background: "var(--bg2)", borderBottom: "1px solid var(--border)" }}>
+                <th style={{ padding: "12px 16px" }}>Name</th>
+                <th style={{ padding: "12px 16px" }}>Email</th>
+                <th style={{ padding: "12px 16px" }}>Phone</th>
+                <th style={{ padding: "12px 16px" }}>Orders</th>
+                <th style={{ padding: "12px 16px" }}>Total spent</th>
+                <th style={{ padding: "12px 16px" }}>Joined</th>
               </tr>
             </thead>
             <tbody>
               {rows.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-[color:var(--color-navy-400)]">No customers yet.</td>
+                  <td colSpan={6} style={{ padding: "32px 16px", textAlign: "center", color: "var(--text-muted)" }}>No customers yet.</td>
                 </tr>
               ) : (
                 rows.map((c) => (
-                  <tr key={c.id} className="border-t border-[color:var(--color-cloud-200)]">
-                    <td className="px-4 py-3 font-medium">{c.full_name}</td>
-                    <td className="px-4 py-3">{c.email}</td>
-                    <td className="px-4 py-3">{c.phone ?? "—"}</td>
-                    <td className="px-4 py-3">{c.order_count}</td>
-                    <td className="px-4 py-3 font-semibold">
+                  <tr key={c.id} style={{ borderBottom: "1px solid var(--border)" }}>
+                    <td style={{ padding: "12px 16px", fontWeight: 600, color: "var(--text)" }}>{c.full_name}</td>
+                    <td style={{ padding: "12px 16px", color: "var(--text)" }}>{c.email}</td>
+                    <td style={{ padding: "12px 16px", color: "var(--text)" }}>{c.phone ?? "—"}</td>
+                    <td style={{ padding: "12px 16px", color: "var(--text)" }}>{c.order_count}</td>
+                    <td style={{ padding: "12px 16px", fontWeight: 600, color: "var(--gold)" }}>
                       {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(c.total_spent)}
                     </td>
-                    <td className="px-4 py-3 text-xs text-[color:var(--color-navy-400)]">{formatDateTime(c.created_at)}</td>
+                    <td style={{ padding: "12px 16px", fontSize: 12, color: "var(--text-muted)" }}>{formatDateTime(c.created_at)}</td>
                   </tr>
                 ))
               )}

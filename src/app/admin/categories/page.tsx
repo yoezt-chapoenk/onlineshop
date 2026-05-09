@@ -24,15 +24,15 @@ export default async function AdminCategoriesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       <header>
-        <h1 className="text-2xl font-bold text-[color:var(--color-navy-900)]">Categories</h1>
-        <p className="text-sm text-[color:var(--color-navy-400)]">
+        <h1 style={{ fontSize: 24, fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)" }}>Categories</h1>
+        <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 4 }}>
           Used to group products on /shop and /collections.
         </p>
       </header>
       {!configured && (
-        <div className="rounded-2xl border border-[color:var(--color-blue-200)] bg-[color:var(--color-blue-50)] p-4 text-sm">
+        <div style={{ borderRadius: 16, border: "1px solid var(--gold)", background: "rgba(201,169,110,0.1)", padding: 16, fontSize: 14, color: "var(--text)" }}>
           Supabase isn&apos;t configured.
         </div>
       )}

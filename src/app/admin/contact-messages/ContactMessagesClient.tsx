@@ -40,30 +40,35 @@ export default function ContactMessagesClient({ initial }: { initial: Message[] 
   }
 
   return (
-    <div className="space-y-3">
-      {error ? <p className="text-sm text-[color:var(--color-error)]">{error}</p> : null}
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {error ? <p style={{ fontSize: 14, color: "var(--error)" }}>{error}</p> : null}
       {initial.length === 0 ? (
-        <div className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-8 text-center text-sm text-[color:var(--color-navy-400)]">
+        <div style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 32, textAlign: "center", fontSize: 14, color: "var(--text-muted)" }}>
           No messages yet.
         </div>
       ) : (
         initial.map((m) => (
-          <div key={m.id} className="rounded-2xl bg-white border border-[color:var(--color-cloud-200)] p-5">
-            <div className="flex flex-wrap items-start justify-between gap-3">
+          <div key={m.id} style={{ borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)", padding: 20 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
               <div>
-                <h3 className="font-bold text-[color:var(--color-navy-900)]">{m.subject}</h3>
-                <div className="text-sm text-[color:var(--color-navy-700)]">{m.name} · {m.email}</div>
-                <div className="text-xs text-[color:var(--color-navy-400)] mt-0.5">{formatDateTime(m.created_at)}</div>
-                <p className="mt-3 text-sm whitespace-pre-wrap text-[color:var(--color-navy-700)]">{m.message}</p>
+                <h3 style={{ fontWeight: 700, color: "var(--text)" }}>{m.subject}</h3>
+                <div style={{ fontSize: 14, color: "var(--text)", marginTop: 2 }}>{m.name} · {m.email}</div>
+                <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>{formatDateTime(m.created_at)}</div>
+                <p style={{ marginTop: 12, fontSize: 14, whiteSpace: "pre-wrap", color: "var(--text)" }}>{m.message}</p>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {STATUSES.map((s) => (
                   <button
                     key={s}
                     type="button"
                     onClick={() => setStatus(m.id, s)}
                     disabled={pending}
-                    className={`text-xs px-3 py-1.5 rounded-full border font-medium capitalize ${m.status === s ? "bg-[color:var(--color-navy-900)] text-white border-[color:var(--color-navy-900)]" : "border-[color:var(--color-cloud-200)] text-[color:var(--color-navy-700)] hover:bg-[color:var(--color-cloud-100)]"}`}
+                    style={{
+                      fontSize: 12, padding: "6px 12px", borderRadius: 999, border: "1px solid", fontWeight: 500, textTransform: "capitalize", cursor: "pointer",
+                      ...(m.status === s
+                        ? { background: "var(--gold)", color: "var(--bg)", borderColor: "var(--gold)" }
+                        : { background: "transparent", color: "var(--text)", borderColor: "var(--border)" })
+                    }}
                   >
                     {s}
                   </button>
