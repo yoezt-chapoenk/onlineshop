@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { formatDateTime } from "@/lib/admin/format";
@@ -83,9 +84,8 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
         </header>
 
         {data.image_url && (
-          <div style={{ marginBottom: 48, aspectRatio: "2/1", width: "100%", overflow: "hidden", background: "var(--bg2)", border: "1px solid var(--border)" }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={data.image_url} alt={data.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <div style={{ marginBottom: 48, aspectRatio: "2/1", width: "100%", overflow: "hidden", background: "var(--bg2)", border: "1px solid var(--border)", position: "relative" }}>
+            <Image src={data.image_url} alt={data.title} fill style={{ objectFit: "cover" }} sizes="(max-width: 1024px) 100vw, 800px" priority />
           </div>
         )}
 

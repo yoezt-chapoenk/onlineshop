@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Minus, Plus, ShoppingCart, Star } from "lucide-react";
 import { useMemo, useState, useEffect } from "react";
 import clsx from "clsx";
@@ -169,11 +170,13 @@ export default function ProductDetailClient({ product }: Props) {
             minHeight: 400
           }}>
             {activeImage ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={activeImage}
                 alt={product.name}
-                className="max-h-[300px] object-contain transition-opacity duration-300"
+                width={560}
+                height={300}
+                style={{ maxHeight: 300, objectFit: "contain", transition: "opacity 0.3s" }}
+                priority
               />
             ) : (
               <GlassesPlaceholder color={mappedColor} shape={product.frame} width={280} height={140} />
@@ -205,12 +208,12 @@ export default function ProductDetailClient({ product }: Props) {
                       padding: 0, overflow: "hidden"
                     }}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={url}
                       alt={`${product.name} ${i + 1}`}
-                      loading="lazy"
-                      className="h-full w-full object-cover"
+                      width={120}
+                      height={120}
+                      style={{ height: "100%", width: "100%", objectFit: "cover" }}
                     />
                   </button>
                 ))
