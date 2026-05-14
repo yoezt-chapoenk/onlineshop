@@ -204,3 +204,27 @@ html.light-mode body::after {
 .card-hover { transition: background 0.2s; }
 .card-hover:hover { background: var(--surface2) !important; }
 .blog-card:hover { border-color: var(--gold) !important; }
+
+/* Product card — hover lift + quick-view overlay, pure CSS so the card can
+   stay a Server Component. */
+.product-card { cursor: pointer; }
+.product-card-media {
+  position: relative;
+  background: var(--surface);
+  padding: 40px 32px 32px;
+  overflow: hidden;
+  transition: transform 0.35s ease;
+}
+.product-card:hover .product-card-media { transform: translateY(-4px); }
+.product-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.product-card:hover .product-card-overlay { opacity: 1; }
+.product-card:hover .product-card-cta { color: var(--gold) !important; }

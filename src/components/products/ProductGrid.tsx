@@ -1,8 +1,8 @@
-import type { Product } from "@/lib/types";
+import type { ProductSummary } from "@/lib/types";
 import ProductCard from "./ProductCard";
 
 interface Props {
-  products: Product[];
+  products: ProductSummary[];
   className?: string;
 }
 

@@ -7,6 +7,7 @@ import type {
   Category,
   PriceTier,
   Product,
+  ProductSummary,
   ProductVariant,
 } from "@/lib/types";
 
@@ -143,6 +144,120 @@ const PRODUCT_SELECT = `
   product_variants ( id, sku, color, variant_type, size, stock, price_override, image_url, sort_order )
 `;
 
+/**
+ * Lighter column set for list views. Drops `description`, `short_description`,
+ * `specs`, `gender`, `style`, and the full `product_variants` join — list
+ * pages only need a `hasVariants` boolean, which we compute from a count.
+ * `image_urls` is selected but the mapper keeps only the first entry.
+ */
+const PRODUCT_SUMMARY_SELECT = `
+  id, slug, sku, name,
+  category_slug, category_label, frame,
+  retail_price, promotional_price, reseller_price,
+  min_wholesale_qty, stock, weight_gram,
+  is_featured, is_best_seller, is_new_arrival,
+  rating, review_count, frame_color, lens_color, image_urls,
+  product_price_tiers ( min_qty, max_qty, unit_price, label ),
+  product_variants ( count )
+`;
+
+interface ProductSummaryRow {
+  id: string;
+  slug: string;
+  sku: string;
+  name: string;
+  category_slug: Product["category"];
+  category_label: string;
+  frame: Product["frame"];
+  retail_price: number;
+  promotional_price: number | null;
+  reseller_price: number | null;
+  min_wholesale_qty: number;
+  stock: number;
+  weight_gram: number;
+  is_featured: boolean;
+  is_best_seller: boolean;
+  is_new_arrival: boolean;
+  rating: number;
+  review_count: number;
+  frame_color: Product["frameColor"];
+  lens_color: NonNullable<Product["lensColor"]> | null;
+  image_urls: string[] | null;
+  product_price_tiers?: PriceTierRow[];
+  product_variants?: { count: number }[] | { count: number } | null;
+}
+
+function rowToSummary(row: ProductSummaryRow): ProductSummary {
+  const tiers: PriceTier[] = (row.product_price_tiers ?? [])
+    .map((t) => ({
+      minQty: t.min_qty,
+      maxQty: t.max_qty,
+      unitPrice: t.unit_price,
+      label: t.label,
+    }))
+    .sort((a, b) => a.minQty - b.minQty);
+
+  // Supabase returns the count as either `[{count}]` or `{count}` depending
+  // on whether the relation is many or one — normalize both shapes.
+  const variantCount = Array.isArray(row.product_variants)
+    ? row.product_variants[0]?.count ?? 0
+    : row.product_variants?.count ?? 0;
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    sku: row.sku,
+    name: row.name,
+    category: row.category_slug,
+    categoryLabel: row.category_label,
+    frame: row.frame,
+    retailPrice: row.retail_price,
+    promotionalPrice: row.promotional_price ?? undefined,
+    resellerPrice: row.reseller_price ?? undefined,
+    priceTiers: tiers,
+    minWholesaleQty: row.min_wholesale_qty,
+    stock: row.stock,
+    weightGram: row.weight_gram,
+    isFeatured: row.is_featured,
+    isBestSeller: row.is_best_seller,
+    isNewArrival: row.is_new_arrival,
+    rating: Number(row.rating),
+    reviewCount: row.review_count,
+    frameColor: row.frame_color,
+    lensColor: row.lens_color ?? undefined,
+    hasVariants: variantCount > 0,
+    imageUrl: row.image_urls?.[0],
+  };
+}
+
+function productToSummary(p: Product): ProductSummary {
+  return {
+    id: p.id,
+    slug: p.slug,
+    sku: p.sku,
+    name: p.name,
+    category: p.category,
+    categoryLabel: p.categoryLabel,
+    frame: p.frame,
+    retailPrice: p.retailPrice,
+    promotionalPrice: p.promotionalPrice,
+    resellerPrice: p.resellerPrice,
+    priceTiers: p.priceTiers,
+    minWholesaleQty: p.minWholesaleQty,
+    stock: p.stock,
+    weightGram: p.weightGram,
+    isFeatured: p.isFeatured,
+    isBestSeller: p.isBestSeller,
+    isNewArrival: p.isNewArrival,
+    rating: p.rating,
+    reviewCount: p.reviewCount,
+    frameColor: p.frameColor,
+    lensColor: p.lensColor,
+    hasVariants: (p.variants?.length ?? 0) > 0,
+    imageUrl: p.imageUrls?.[0],
+  };
+}
+
 export async function getProducts(): Promise<Product[]> {
   const supabase = getPublicClient();
   if (!supabase) return seedProducts;
@@ -233,4 +348,86 @@ export async function getCategories(): Promise<Category[]> {
 export async function getAllProductSlugs(): Promise<string[]> {
   const products = await getProducts();
   return products.map((p) => p.slug);
+}
+
+/**
+ * List-view fetchers. Use these for storefront grids (home, shop, category,
+ * related-products rail) so we don't ship `description`, `specs`, and the
+ * full `variants` array down the RSC wire for every card on the page.
+ */
+export async function getProductSummaries(): Promise<ProductSummary[]> {
+  const supabase = getPublicClient();
+  if (!supabase) return seedProducts.map(productToSummary);
+  const { data, error } = await supabase
+    .from("products")
+    .select(PRODUCT_SUMMARY_SELECT)
+    .order("name", { ascending: true });
+  if (error || !data) {
+    console.warn(
+      "[data] getProductSummaries fell back to seed:",
+      error?.message,
+    );
+    return seedProducts.map(productToSummary);
+  }
+  return (data as unknown as ProductSummaryRow[]).map(rowToSummary);
+}
+
+/**
+ * Featured products for the homepage rail. Pushes the filter down to the
+ * database so we don't fetch the entire catalog just to slice 4 items.
+ */
+export async function getFeaturedSummaries(
+  limit = 4,
+): Promise<ProductSummary[]> {
+  const supabase = getPublicClient();
+  if (!supabase) {
+    return seedProducts
+      .filter((p) => p.isFeatured || p.isNewArrival)
+      .slice(0, limit)
+      .map(productToSummary);
+  }
+  const { data, error } = await supabase
+    .from("products")
+    .select(PRODUCT_SUMMARY_SELECT)
+    .or("is_featured.eq.true,is_new_arrival.eq.true")
+    .order("is_new_arrival", { ascending: false })
+    .order("name", { ascending: true })
+    .limit(limit);
+  if (error || !data) {
+    return seedProducts
+      .filter((p) => p.isFeatured || p.isNewArrival)
+      .slice(0, limit)
+      .map(productToSummary);
+  }
+  return (data as unknown as ProductSummaryRow[]).map(rowToSummary);
+}
+
+export async function getProductSummariesByCategory(
+  slug: Product["category"],
+): Promise<ProductSummary[]> {
+  const supabase = getPublicClient();
+  if (!supabase) {
+    return seedProducts
+      .filter((p) => p.category === slug)
+      .map(productToSummary);
+  }
+  const { data, error } = await supabase
+    .from("products")
+    .select(PRODUCT_SUMMARY_SELECT)
+    .eq("category_slug", slug)
+    .order("name", { ascending: true });
+  if (error || !data) {
+    return seedProducts
+      .filter((p) => p.category === slug)
+      .map(productToSummary);
+  }
+  return (data as unknown as ProductSummaryRow[]).map(rowToSummary);
+}
+
+export async function getRelatedProductSummaries(
+  product: Pick<Product, "id" | "category">,
+  limit = 4,
+): Promise<ProductSummary[]> {
+  const all = await getProductSummariesByCategory(product.category);
+  return all.filter((p) => p.id !== product.id).slice(0, limit);
 }

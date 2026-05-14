@@ -8,12 +8,20 @@ import {
   useMemo,
   useState,
 } from "react";
-import type { CartItem, Product, ProductVariant } from "@/lib/types";
+import type {
+  CartItem,
+  ProductCartInput,
+  ProductVariant,
+} from "@/lib/types";
 
 interface CartContextValue {
   items: CartItem[];
   itemCount: number;
-  addItem: (product: Product, quantity?: number, variant?: ProductVariant) => void;
+  addItem: (
+    product: ProductCartInput,
+    quantity?: number,
+    variant?: ProductVariant,
+  ) => void;
   updateQuantity: (lineId: string, quantity: number) => void;
   removeItem: (lineId: string) => void;
   clear: () => void;
@@ -129,7 +137,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items, isHydrated]);
 
   const addItem = useCallback(
-    (product: Product, quantity = 1, variant?: ProductVariant) => {
+    (product: ProductCartInput, quantity = 1, variant?: ProductVariant) => {
       const id = lineIdFor(product.id, variant?.id);
       const maxStock = variant ? variant.stock : product.stock;
       setItems((current) => {
@@ -171,7 +179,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           frameColor: product.frameColor,
           lensColor: product.lensColor,
           category: product.category,
-          imageUrl: product.imageUrls?.[0],
+          imageUrl: product.imageUrl ?? product.imageUrls?.[0],
         };
         return [...current, newItem];
       });

@@ -6,7 +6,7 @@ import { ChevronRight, Home } from "lucide-react";
 import {
   getAllProductSlugs,
   getProductBySlug,
-  getRelatedProducts,
+  getRelatedProductSummaries,
 } from "@/lib/data";
 import ProductDetailClient from "./ProductDetailClient";
 import ProductCard from "@/components/products/ProductCard";
@@ -43,7 +43,7 @@ export default async function ProductPage({ params }: PageProps) {
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const related = await getRelatedProducts(product, 4);
+  const related = await getRelatedProductSummaries(product, 4);
 
   const jsonLd = {
     "@context": "https://schema.org",

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import PageHeader from "@/components/ui/PageHeader";
 import ProductGrid from "@/components/products/ProductGrid";
-import { getCategories, getProductsByCategory } from "@/lib/data";
+import { getCategories, getProductSummariesByCategory } from "@/lib/data";
 import type { CategorySlug } from "@/lib/types";
 
 interface PageProps {
@@ -32,7 +32,7 @@ export default async function CategoryPage({ params }: PageProps) {
   const categories = await getCategories();
   const cat = categories.find((c) => c.slug === category);
   if (!cat) notFound();
-  const list = await getProductsByCategory(category as CategorySlug);
+  const list = await getProductSummariesByCategory(category as CategorySlug);
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>

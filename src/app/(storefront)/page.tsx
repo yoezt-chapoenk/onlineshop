@@ -3,13 +3,12 @@ import CollectionsSection from "@/components/home/CollectionsSection";
 import NewsletterSection from "@/components/home/NewsletterSection";
 import ProductCard from "@/components/products/ProductCard";
 import Link from "next/link";
-import { getProducts } from "@/lib/data";
+import { getFeaturedSummaries } from "@/lib/data";
 
 export const revalidate = 3600; // revalidate every hour
 
 export default async function HomePage() {
-  const products = await getProducts();
-  const featured = products.filter((p) => p.isFeatured || p.isNewArrival).slice(0, 4);
+  const featured = await getFeaturedSummaries(4);
 
   return (
     <div style={{ minHeight: "100vh" }}>

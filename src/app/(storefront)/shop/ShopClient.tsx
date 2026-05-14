@@ -1,13 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { SlidersHorizontal, X } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import ProductCard from "@/components/products/ProductCard";
-import type { Category, CategorySlug, Gender, Product, Style } from "@/lib/types";
+import type { Category, ProductSummary } from "@/lib/types";
 
 interface Props {
-  products: Product[];
+  products: ProductSummary[];
   categories: Category[];
 }
 
@@ -20,10 +19,6 @@ const SORT_OPTIONS = [
 ] as const;
 
 type SortValue = (typeof SORT_OPTIONS)[number]["value"];
-
-function rupiah(n: number) {
-  return `Rp ${n.toLocaleString("id-ID")}`;
-}
 
 export default function ShopClient({
   products: allProducts,

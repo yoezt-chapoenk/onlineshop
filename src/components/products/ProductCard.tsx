@@ -1,63 +1,39 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
-import type { Product } from "@/lib/types";
+import type { ProductSummary } from "@/lib/types";
 import { formatRupiah } from "@/lib/format";
-import { useCart } from "@/components/cart/CartProvider";
 import { GlassesPlaceholder } from "@/components/ui/GlassesPlaceholder";
+import AddToBagButton from "./AddToBagButton";
 
 interface Props {
-  product: Product;
+  product: ProductSummary;
   className?: string;
 }
 
-export default function ProductCard({ product }: Props) {
-  const [hovered, setHovered] = useState(false);
-  const { addItem } = useCart();
-  const [added, setAdded] = useState(false);
+const FRAME_COLOR_HEX: Record<ProductSummary["frameColor"], string> = {
+  black: "#1a1a1a",
+  gold: "#c9a96e",
+  tortoise: "#4a3728",
+  silver: "#e8ddd0",
+  navy: "#3a3a3a",
+  rose: "#3a3a3a",
+  olive: "#3a3a3a",
+};
 
-  const hasVariants = (product.variants?.length ?? 0) > 0;
-
-  function handleAdd(e: React.MouseEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    addItem(product, 1);
-    setAdded(true);
-    window.setTimeout(() => setAdded(false), 1200);
-  }
-
-  // Map frameColor to hex
-  const mappedColor =
-    product.frameColor === "black"
-      ? "#1a1a1a"
-      : product.frameColor === "gold"
-      ? "#c9a96e"
-      : product.frameColor === "tortoise"
-      ? "#4a3728"
-      : product.frameColor === "silver"
-      ? "#e8ddd0"
-      : "#3a3a3a";
-
-  const tag = product.isNewArrival ? "New" : product.isBestSeller ? "Bestseller" : null;
+export default function ProductCard({ product, className }: Props) {
+  const mappedColor = FRAME_COLOR_HEX[product.frameColor] ?? "#3a3a3a";
+  const tag = product.isNewArrival
+    ? "New"
+    : product.isBestSeller
+    ? "Bestseller"
+    : null;
 
   return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{ cursor: "pointer" }}
-    >
-      <Link href={`/shop/${product.slug}`} style={{ textDecoration: 'none', display: 'block' }}>
-        <div
-          style={{
-            position: "relative",
-            background: "var(--surface)",
-            padding: "40px 32px 32px",
-            transition: "transform 0.35s ease",
-            transform: hovered ? "translateY(-4px)" : "none",
-            overflow: "hidden",
-          }}
-        >
+    <div className={`product-card ${className ?? ""}`.trim()}>
+      <Link
+        href={`/shop/${product.slug}`}
+        style={{ textDecoration: "none", display: "block" }}
+      >
+        <div className="product-card-media">
           <div
             style={{
               display: "flex",
@@ -66,7 +42,12 @@ export default function ProductCard({ product }: Props) {
               height: 120,
             }}
           >
-            <GlassesPlaceholder color={mappedColor} shape={product.frame} width={220} height={110} />
+            <GlassesPlaceholder
+              color={mappedColor}
+              shape={product.frame}
+              width={220}
+              height={110}
+            />
           </div>
           {tag && (
             <div
@@ -86,19 +67,7 @@ export default function ProductCard({ product }: Props) {
               {tag}
             </div>
           )}
-          {/* hover overlay */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: "var(--overlay-sm)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              opacity: hovered ? 1 : 0,
-              transition: "opacity 0.3s",
-            }}
-          >
+          <div className="product-card-overlay">
             <span
               style={{
                 fontFamily: "var(--font-sans)",
@@ -115,8 +84,7 @@ export default function ProductCard({ product }: Props) {
           </div>
         </div>
       </Link>
-      
-      {/* Info */}
+
       <div
         style={{
           padding: "18px 0 0",
@@ -137,7 +105,13 @@ export default function ProductCard({ product }: Props) {
           >
             {product.name}
           </div>
-          <div style={{ fontSize: 12, color: "var(--text-muted)", letterSpacing: "0.08em" }}>
+          <div
+            style={{
+              fontSize: 12,
+              color: "var(--text-muted)",
+              letterSpacing: "0.08em",
+            }}
+          >
             {product.categoryLabel}
           </div>
         </div>
@@ -145,47 +119,29 @@ export default function ProductCard({ product }: Props) {
           <div style={{ fontSize: 16, color: "var(--gold)", fontWeight: 400 }}>
             {formatRupiah(product.retailPrice)}
           </div>
-          {hasVariants ? (
-            <Link href={`/shop/${product.slug}`} style={{ textDecoration: 'none' }}>
-              <button
-                style={{
-                  marginTop: 6,
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: 10,
-                  letterSpacing: "0.16em",
-                  textTransform: "uppercase",
-                  color: hovered ? "var(--gold)" : "var(--text-dim)",
-                  fontFamily: "var(--font-sans)",
-                  transition: "color 0.2s",
-                  padding: 0,
-                }}
-              >
-                View Options
-              </button>
-            </Link>
-          ) : (
-            <button
-              onClick={handleAdd}
-              disabled={product.stock === 0}
+          {product.hasVariants ? (
+            <Link
+              href={`/shop/${product.slug}`}
+              className="product-card-cta"
               style={{
                 marginTop: 6,
-                background: "none",
-                border: "none",
-                cursor: product.stock === 0 ? "not-allowed" : "pointer",
+                display: "inline-block",
                 fontSize: 10,
                 letterSpacing: "0.16em",
                 textTransform: "uppercase",
-                color: hovered ? "var(--gold)" : "var(--text-dim)",
+                color: "var(--text-dim)",
                 fontFamily: "var(--font-sans)",
+                textDecoration: "none",
                 transition: "color 0.2s",
-                padding: 0,
-                opacity: product.stock === 0 ? 0.5 : 1
               }}
             >
-              {added ? "Added" : product.stock === 0 ? "Out of Stock" : "Add to Bag"}
-            </button>
+              View Options
+            </Link>
+          ) : (
+            <AddToBagButton
+              product={product}
+              className="product-card-cta"
+            />
           )}
         </div>
       </div>

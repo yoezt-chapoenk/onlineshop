@@ -66,6 +66,67 @@ export interface Product {
   imageUrls: string[];
 }
 
+/**
+ * Subset of Product fields used by storefront list views (home, shop, collections).
+ * Drops the heavy fields (`description`, `shortDescription`, `specs`, full
+ * `variants` array, image gallery beyond the first) so the RSC payload stays
+ * small as the catalog grows. `hasVariants` is precomputed so the card can
+ * render the right CTA without loading variant rows.
+ */
+export interface ProductSummary {
+  id: string;
+  slug: string;
+  sku: string;
+  name: string;
+  category: CategorySlug;
+  categoryLabel: string;
+  frame: FrameStyle;
+  retailPrice: number;
+  promotionalPrice?: number;
+  resellerPrice?: number;
+  priceTiers: PriceTier[];
+  minWholesaleQty: number;
+  stock: number;
+  weightGram: number;
+  isFeatured: boolean;
+  isBestSeller: boolean;
+  isNewArrival: boolean;
+  rating: number;
+  reviewCount: number;
+  frameColor: Product["frameColor"];
+  lensColor?: Product["lensColor"];
+  hasVariants: boolean;
+  /** Primary image URL only — gallery lives on the detail page. */
+  imageUrl?: string;
+}
+
+/**
+ * Structural input accepted by `addItem`. Both `Product` and `ProductSummary`
+ * satisfy this shape, so cards and detail pages can both add to cart without
+ * the cards having to hold a full Product payload.
+ */
+export type ProductCartInput = Pick<
+  Product,
+  | "id"
+  | "slug"
+  | "sku"
+  | "name"
+  | "retailPrice"
+  | "promotionalPrice"
+  | "resellerPrice"
+  | "priceTiers"
+  | "weightGram"
+  | "frame"
+  | "frameColor"
+  | "lensColor"
+  | "stock"
+  | "category"
+> & {
+  imageUrls?: string[];
+  /** Optional shortcut used by ProductSummary; falls back to imageUrls[0]. */
+  imageUrl?: string;
+};
+
 export interface CartItem {
   /**
    * Stable client-side key identifying this line. Either the product id
