@@ -155,33 +155,33 @@ export default function ProductDetailClient({ product }: Props) {
 
   return (
     <div>
-      <div style={{
-        background: "var(--surface)", width: "100%",
-        display: "grid", gridTemplateColumns: "1fr",
-        gap: 0,
-        position: "relative",
-      }} className="lg:grid-cols-2 lg:gap-14">
-        
+      <div className="product-detail-grid">
+
         {/* Visual */}
         <div>
           <div style={{
-            background: "var(--bg2)", display: "flex", alignItems: "center",
-            justifyContent: "center", padding: "64px 48px", position: "relative",
-            minHeight: 400
+            background: "var(--bg2)",
+            position: "relative",
+            aspectRatio: "1 / 1",
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            overflow: "hidden",
           }}>
             {activeImage ? (
               <Image
                 src={activeImage}
                 alt={product.name}
-                width={560}
-                height={300}
-                style={{ maxHeight: 300, objectFit: "contain", transition: "opacity 0.3s" }}
+                fill
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                style={{ objectFit: "contain", padding: "8%" }}
                 priority
               />
             ) : (
               <GlassesPlaceholder color={mappedColor} shape={product.frame} width={280} height={140} />
             )}
-            
+
             {tag && (
               <div style={{
                 position: "absolute", top: 20, left: 20,
@@ -194,35 +194,35 @@ export default function ProductDetailClient({ product }: Props) {
               </div>
             )}
           </div>
-          
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginTop: 16 }}>
-            {product.imageUrls && product.imageUrls.length > 1
-              ? product.imageUrls.slice(0, 4).map((url, i) => (
-                  <button
-                    key={url + i}
-                    type="button"
-                    onClick={() => setActiveImage(url)}
-                    style={{
-                      background: "var(--bg2)", border: activeImage === url ? "2px solid var(--gold)" : "2px solid transparent",
-                      aspectRatio: "1/1", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-                      padding: 0, overflow: "hidden"
-                    }}
-                  >
-                    <Image
-                      src={url}
-                      alt={`${product.name} ${i + 1}`}
-                      width={120}
-                      height={120}
-                      style={{ height: "100%", width: "100%", objectFit: "cover" }}
-                    />
-                  </button>
-                ))
-              : null}
-          </div>
+
+          {product.imageUrls && product.imageUrls.length > 1 && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginTop: 16 }}>
+              {product.imageUrls.slice(0, 4).map((url, i) => (
+                <button
+                  key={url + i}
+                  type="button"
+                  onClick={() => setActiveImage(url)}
+                  style={{
+                    background: "var(--bg2)", border: activeImage === url ? "2px solid var(--gold)" : "2px solid transparent",
+                    aspectRatio: "1/1", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+                    padding: 0, overflow: "hidden"
+                  }}
+                >
+                  <Image
+                    src={url}
+                    alt={`${product.name} ${i + 1}`}
+                    width={120}
+                    height={120}
+                    style={{ height: "100%", width: "100%", objectFit: "cover" }}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Details */}
-        <div style={{ padding: "48px 0" }}>
+        <div style={{ padding: "0" }}>
           <div style={{ fontSize: 10, letterSpacing: "0.22em", color: "var(--gold)", textTransform: "uppercase", marginBottom: 12 }}>
             {product.categoryLabel}
           </div>
@@ -417,7 +417,11 @@ export default function ProductDetailClient({ product }: Props) {
             </a>
           </div>
         </div>
-        <div style={{ marginTop: 48, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48 }}>
+      </div>
+
+      {/* Tier table + specs sit full-width below the image/details split so
+          both blocks have room to breathe on desktop. */}
+      <div style={{ marginTop: 64, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48 }}>
           {/* Tier table */}
           <div>
             <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12, color: "var(--text)" }}>Harga grosir bertingkat</h3>
@@ -492,12 +496,10 @@ export default function ProductDetailClient({ product }: Props) {
             <dt style={{ color: "var(--text-muted)", fontSize: 12, marginBottom: 4 }}>Stok Tersedia</dt>
             <dd style={{ color: "var(--text)", fontWeight: 500 }}>{product.stock} pcs</dd>
           </div>
+          </div>
         </div>
       </div>
     </div>
-
-  </div>
-</div>
   );
 }
 

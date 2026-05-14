@@ -228,3 +228,33 @@ html.light-mode body::after {
 }
 .product-card:hover .product-card-overlay { opacity: 1; }
 .product-card:hover .product-card-cta { color: var(--gold) !important; }
+
+/* Product detail page — image left / details right on desktop, stacked on
+   mobile. Uses CSS grid so the visual column drives a true 1:1 aspect ratio
+   while the details column can grow with content. */
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .product-detail-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 56px;
+  }
+}
+
+/* Related-products rail — always renders 4 columns on desktop so the
+   "Anda mungkin juga suka" section fits the requested 4 cards. */
+.related-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px 28px;
+}
+@media (min-width: 640px) {
+  .related-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .related-grid { grid-template-columns: repeat(4, 1fr); }
+}

@@ -428,6 +428,20 @@ export async function getRelatedProductSummaries(
   product: Pick<Product, "id" | "category">,
   limit = 4,
 ): Promise<ProductSummary[]> {
-  const all = await getProductSummariesByCategory(product.category);
-  return all.filter((p) => p.id !== product.id).slice(0, limit);
+  const sameCat = await getProductSummariesByCategory(product.category);
+  const result = sameCat.filter((p) => p.id !== product.id);
+  if (result.length >= limit) return result.slice(0, limit);
+
+  // Backfill from the rest of the catalog so the rail always shows `limit`
+  // products, even when the current category has fewer than `limit+1` items.
+  const all = await getProductSummaries();
+  const seen = new Set<string>([product.id, ...result.map((p) => p.id)]);
+  for (const p of all) {
+    if (result.length >= limit) break;
+    if (!seen.has(p.id)) {
+      result.push(p);
+      seen.add(p.id);
+    }
+  }
+  return result.slice(0, limit);
 }

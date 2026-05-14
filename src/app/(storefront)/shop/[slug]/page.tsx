@@ -118,7 +118,7 @@ export default async function ProductPage({ params }: PageProps) {
             <h2 style={{ fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 400, color: "var(--text)", marginBottom: 32 }}>
               Anda mungkin juga suka
             </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "48px 28px" }}>
+            <div className="related-grid">
               {related.map(p => (
                 <ProductCard key={p.id} product={p} />
               ))}
