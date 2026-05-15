@@ -25,6 +25,16 @@ export async function PATCH(
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
   const { id } = await params;
+
+  // Need the prior status so we know whether this transition crosses the
+  // "stock has been decremented" boundary (any status after pending).
+  const { data: prior } = await ctx.supabase
+    .from("orders")
+    .select("status")
+    .eq("id", id)
+    .maybeSingle();
+  const priorStatus = (prior as { status?: string } | null)?.status ?? null;
+
   const { data, error } = await ctx.supabase
     .from("orders")
     .update({
@@ -38,8 +48,44 @@ export async function PATCH(
     .select("*, items:order_items(*)")
     .maybeSingle();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  
+
   const order = data;
+
+  // If transitioning into cancelled/refunded from a state where stock was
+  // already decremented, restock the items and reverse any affiliate
+  // commission that was already paid out. The SQL function is idempotent
+  // so re-running with the same order_id is safe.
+  const becomingVoid =
+    (parsed.data.status === "cancelled" || parsed.data.status === "refunded") &&
+    priorStatus !== "cancelled" &&
+    priorStatus !== "refunded" &&
+    priorStatus !== null;
+  if (becomingVoid) {
+    await ctx.supabase.rpc("restock_order_items", { p_order_id: id });
+
+    // Reverse commission if one was already issued for this order
+    const { data: comm } = await ctx.supabase
+      .from("commissions")
+      .select("id, affiliate_id, amount, status")
+      .eq("order_id", id)
+      .maybeSingle();
+    if (comm && comm.status !== "refunded") {
+      const { data: affiliate } = await ctx.supabase
+        .from("users")
+        .select("balance")
+        .eq("id", comm.affiliate_id)
+        .maybeSingle();
+      const newBalance = Math.max(0, (affiliate?.balance ?? 0) - comm.amount);
+      await ctx.supabase
+        .from("users")
+        .update({ balance: newBalance })
+        .eq("id", comm.affiliate_id);
+      await ctx.supabase
+        .from("commissions")
+        .update({ status: "refunded" })
+        .eq("id", comm.id);
+    }
+  }
 
   // Process affiliate commission if status is 'fulfilled'
   if (parsed.data.status === "fulfilled" && order?.affiliate_code) {

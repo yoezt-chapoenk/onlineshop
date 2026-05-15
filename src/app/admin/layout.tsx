@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/supabase/server";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import ThemeToggleButton from "@/components/layout/ThemeToggleButton";
 import {
   LayoutDashboard,
   Package,
@@ -15,6 +17,10 @@ import {
   Key,
   BookOpen,
   Receipt,
+  Star,
+  ShieldCheck,
+  Ticket,
+  History,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -25,11 +31,15 @@ export const metadata: Metadata = {
 const NAV = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { href: "/admin/products", label: "Products", icon: Package },
+  { href: "/admin/stock", label: "Stock log", icon: History },
   { href: "/admin/categories", label: "Categories", icon: Tag },
   { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
   { href: "/admin/payments", label: "Payments", icon: Receipt },
+  { href: "/admin/coupons", label: "Coupons", icon: Ticket },
   { href: "/admin/customers", label: "Customers", icon: Users },
+  { href: "/admin/users", label: "Admin users", icon: ShieldCheck },
   { href: "/admin/reseller-applications", label: "Resellers", icon: UserPlus },
+  { href: "/admin/reviews", label: "Reviews", icon: Star },
   { href: "/admin/contact-messages", label: "Messages", icon: MessageSquare },
   { href: "/admin/articles", label: "Articles", icon: FileText },
   { href: "/admin/affiliates", label: "Affiliates", icon: Users },
@@ -48,14 +58,15 @@ export default async function AdminLayout({
     redirect("/login");
   }
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
-      <div style={{ display: "grid", minHeight: "100vh" }} className="lg:grid-cols-[240px_1fr]">
-        <aside style={{ 
-          position: "sticky", top: 0, height: "100vh", 
-          background: "var(--surface)", borderRight: "1px solid var(--border)", 
-          padding: "24px 20px", display: "flex", flexDirection: "column", gap: 8,
-          overflowY: "auto"
-        }}>
+    <ThemeProvider>
+      <div style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
+        <div style={{ display: "grid", minHeight: "100vh" }} className="lg:grid-cols-[240px_1fr]">
+          <aside style={{
+            position: "sticky", top: 0, height: "100vh",
+            background: "var(--surface)", borderRight: "1px solid var(--border)",
+            padding: "24px 20px", display: "flex", flexDirection: "column", gap: 8,
+            overflowY: "auto"
+          }}>
           <Link
             href="/admin"
             style={{ fontSize: 18, fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: 12, textDecoration: "none", display: "block" }}
@@ -78,18 +89,20 @@ export default async function AdminLayout({
               </Link>
             ))}
           </nav>
-          <div style={{ marginTop: "auto", paddingTop: 24, borderTop: "1px solid var(--border)" }}>
-            <Link
-              href="/"
-              className="link-muted"
-              style={{ fontSize: 12, textDecoration: "none" }}
-            >
-              ← Back to storefront
-            </Link>
-          </div>
-        </aside>
-        <main style={{ padding: "24px 32px" }}>{children}</main>
+            <div style={{ marginTop: "auto", paddingTop: 24, borderTop: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 12 }}>
+              <ThemeToggleButton />
+              <Link
+                href="/"
+                className="link-muted"
+                style={{ fontSize: 12, textDecoration: "none" }}
+              >
+                ← Back to storefront
+              </Link>
+            </div>
+          </aside>
+          <main style={{ padding: "24px 32px" }}>{children}</main>
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }

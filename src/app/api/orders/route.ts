@@ -33,6 +33,7 @@ const OrderSchema = z.object({
     destinationPostalCode: z.string().min(1),
   }),
   paymentMethod: z.enum(PAYMENT_METHODS),
+  couponCode: z.string().trim().min(2).max(40).optional().nullable(),
   items: z
     .array(
       z.object({
@@ -454,18 +455,18 @@ export async function POST(request: Request) {
     );
   }
 
-  const total = subtotal + shippingCost;
   const orderNumber = generateOrderNumber();
-
   const supabase = getAdminClient();
 
   if (!supabase) {
-    // Dev fallback: no Supabase configured. Return a stub response so the
-    // checkout flow keeps working without persistence.
+    // Dev fallback: no Supabase configured. Skip coupon validation and
+    // return a stub response so checkout works without persistence.
+    const total = subtotal + shippingCost;
     return NextResponse.json({
       orderNumber,
       subtotal,
       shippingCost,
+      couponDiscount: 0,
       total,
       itemCount,
       shippingLabel: `${shippingCourier} ${shippingService}`,
@@ -497,6 +498,11 @@ export async function POST(request: Request) {
   const cookieStore = await cookies();
   const affiliateCode = cookieStore.get("jg_ref")?.value || null;
 
+  // We insert the order first with a placeholder total = subtotal+shipping
+  // (no coupon yet) and then run the coupon RPC which writes a redemption
+  // row keyed by order_id. If the coupon is invalid we roll back the
+  // insert and surface the error so the customer can retry with no code.
+  const baseTotal = subtotal + shippingCost;
   const { data: orderRow, error: orderErr } = await supabase
     .from("orders")
     .insert({
@@ -516,7 +522,7 @@ export async function POST(request: Request) {
       shipping_cost: shippingCost,
       payment_method: paymentMethod,
       subtotal,
-      total,
+      total: baseTotal,
       item_count: itemCount,
       weight_gram: weightGram,
       status: "pending",
@@ -573,9 +579,14 @@ export async function POST(request: Request) {
   // instead of silently overselling.
   const { error: decErr } = await supabase.rpc("decrement_stock_atomic", {
     p_items: lineItems.map(({ product, variant, line }) => ({
-      product_id: variant ? null : product.rowId ?? null,
+      // Pass product_id even when a variant is the source of truth so the
+      // stock_movements ledger records both keys for traceability.
+      product_id: product.rowId ?? null,
       variant_id: variant?.id ?? null,
       quantity: line.quantity,
+      // The migration reads order_id from items[0].order_id so the
+      // ledger rows are linked to the order they came from.
+      order_id: orderRow.id,
     })),
   });
   if (decErr) {
@@ -588,11 +599,54 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: msg }, { status: 409 });
   }
 
+  // Apply coupon (if supplied). Done after stock is reserved so we don't
+  // burn a coupon use on a failed checkout. The RPC is transactional —
+  // either it returns a positive discount and increments uses, or it
+  // raises and leaves nothing changed.
+  let couponDiscount = 0;
+  const couponInput = parsed.data.couponCode?.trim();
+  if (couponInput) {
+    const { data: discount, error: couponErr } = await supabase.rpc(
+      "validate_and_consume_coupon",
+      {
+        p_code: couponInput,
+        p_subtotal: subtotal,
+        p_order_id: orderRow.id,
+        p_customer_email: customer.email,
+      },
+    );
+    if (couponErr) {
+      // Roll back everything we just committed so the customer can retry
+      // without a stuck pending order.
+      await supabase.rpc("restock_order_items", { p_order_id: orderRow.id });
+      await supabase.from("order_items").delete().eq("order_id", orderRow.id);
+      await supabase.from("orders").delete().eq("id", orderRow.id);
+      const msg = couponErr.message.includes("subtotal below")
+        ? "Subtotal Anda belum mencapai minimum untuk kupon ini."
+        : "Kode kupon tidak berlaku atau sudah habis.";
+      return NextResponse.json({ error: msg }, { status: 400 });
+    }
+    couponDiscount = Number(discount ?? 0);
+    if (couponDiscount > 0) {
+      await supabase
+        .from("orders")
+        .update({
+          coupon_code: couponInput.toUpperCase(),
+          coupon_discount: couponDiscount,
+          total: baseTotal - couponDiscount,
+        })
+        .eq("id", orderRow.id);
+    }
+  }
+
+  const finalTotal = baseTotal - couponDiscount;
+
   return NextResponse.json({
     orderNumber,
     subtotal,
     shippingCost,
-    total,
+    couponDiscount,
+    total: finalTotal,
     itemCount,
     shippingLabel: `${shippingCourier} ${shippingService}`,
     paymentMethod,

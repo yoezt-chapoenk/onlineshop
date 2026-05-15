@@ -33,6 +33,15 @@ interface LowStockItem {
   stock: number;
 }
 
+interface OverviewRpcResult {
+  totalSales: number;
+  totalOrders: number;
+  pendingPayments: number;
+  toProcess: number;
+  lowStockCount: number;
+  bestSellers: BestSeller[];
+}
+
 async function loadOverview(): Promise<{
   configured: boolean;
   stats: Stats;
@@ -51,14 +60,16 @@ async function loadOverview(): Promise<{
     };
   }
 
-  const [orders, recent, items, low] = await Promise.all([
-    supabase.from("orders").select("total, status"),
+  // Try the single-roundtrip RPC first (migration:
+  // 2026_05_15_admin_overview_stats.sql). If it isn't installed yet,
+  // fall back to the per-table queries so the dashboard keeps rendering.
+  const [rpc, recent, low] = await Promise.all([
+    supabase.rpc("admin_overview_stats"),
     supabase
       .from("orders")
       .select("id, order_number, customer_name, total, status, created_at")
       .order("created_at", { ascending: false })
       .limit(8),
-    supabase.from("order_items").select("product_name, quantity"),
     supabase
       .from("products")
       .select("id, name, sku, stock")
@@ -67,35 +78,57 @@ async function loadOverview(): Promise<{
       .limit(8),
   ]);
 
-  const allOrders = (orders.data ?? []) as { total: number; status: OrderStatus }[];
-  const totalSales = allOrders
-    .filter((o) => !["cancelled", "refunded"].includes(o.status))
-    .reduce((s, o) => s + (o.total ?? 0), 0);
-  const pendingPayments = allOrders.filter((o) => o.status === "pending").length;
-  const toProcess = allOrders.filter((o) =>
-    ["paid", "processing", "packed"].includes(o.status),
-  ).length;
+  let stats: Stats;
+  let bestSellers: BestSeller[];
 
-  const counts = new Map<string, number>();
-  for (const it of (items.data ?? []) as { product_name: string; quantity: number }[]) {
-    counts.set(it.product_name, (counts.get(it.product_name) ?? 0) + it.quantity);
+  if (!rpc.error && rpc.data) {
+    const r = rpc.data as unknown as OverviewRpcResult;
+    stats = {
+      totalSales: r.totalSales ?? 0,
+      totalOrders: r.totalOrders ?? 0,
+      pendingPayments: r.pendingPayments ?? 0,
+      toProcess: r.toProcess ?? 0,
+      lowStock: r.lowStockCount ?? 0,
+    };
+    bestSellers = r.bestSellers ?? [];
+  } else {
+    // Fallback path — slow but works without the RPC installed.
+    const [orders, items] = await Promise.all([
+      supabase.from("orders").select("total, status"),
+      supabase.from("order_items").select("product_id, product_name, quantity"),
+    ]);
+    const allOrders = (orders.data ?? []) as { total: number; status: OrderStatus }[];
+    const totalSales = allOrders
+      .filter((o) => !["cancelled", "refunded"].includes(o.status))
+      .reduce((s, o) => s + (o.total ?? 0), 0);
+    type Item = { product_id: string | null; product_name: string; quantity: number };
+    const counts = new Map<string, { name: string; qty: number }>();
+    for (const it of (items.data ?? []) as Item[]) {
+      const key = it.product_id ?? `name:${it.product_name}`;
+      const cur = counts.get(key) ?? { name: it.product_name, qty: 0 };
+      cur.qty += it.quantity;
+      counts.set(key, cur);
+    }
+    bestSellers = [...counts.values()]
+      .map(({ name, qty }) => ({ product_name: name, total_qty: qty }))
+      .sort((a, b) => b.total_qty - a.total_qty)
+      .slice(0, 5);
+    stats = {
+      totalSales,
+      totalOrders: allOrders.length,
+      pendingPayments: allOrders.filter((o) => o.status === "pending").length,
+      toProcess: allOrders.filter((o) =>
+        ["paid", "processing", "packed"].includes(o.status),
+      ).length,
+      lowStock: (low.data ?? []).length,
+    };
   }
-  const bestSellers = [...counts.entries()]
-    .map(([product_name, total_qty]) => ({ product_name, total_qty }))
-    .sort((a, b) => b.total_qty - a.total_qty)
-    .slice(0, 5);
 
   const lowStock = (low.data ?? []) as LowStockItem[];
 
   return {
     configured: true,
-    stats: {
-      totalSales,
-      totalOrders: allOrders.length,
-      pendingPayments,
-      toProcess,
-      lowStock: lowStock.length,
-    },
+    stats,
     recent: (recent.data ?? []) as RecentOrder[],
     bestSellers,
     lowStock,

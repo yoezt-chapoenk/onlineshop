@@ -14,7 +14,7 @@ export async function GET() {
       .select("id, order_number, customer_name, total, status, created_at")
       .order("created_at", { ascending: false })
       .limit(10),
-    ctx.supabase.from("order_items").select("product_name, quantity"),
+    ctx.supabase.from("order_items").select("product_id, product_name, quantity"),
     ctx.supabase
       .from("products")
       .select("id, name, sku, stock")
@@ -33,13 +33,16 @@ export async function GET() {
     ["paid", "processing", "packed"].includes(o.status),
   ).length;
 
-  type Item = { product_name: string; quantity: number };
-  const counts = new Map<string, number>();
+  type Item = { product_id: string | null; product_name: string; quantity: number };
+  const counts = new Map<string, { name: string; qty: number }>();
   for (const it of (items.data ?? []) as Item[]) {
-    counts.set(it.product_name, (counts.get(it.product_name) ?? 0) + it.quantity);
+    const key = it.product_id ?? `name:${it.product_name}`;
+    const cur = counts.get(key) ?? { name: it.product_name, qty: 0 };
+    cur.qty += it.quantity;
+    counts.set(key, cur);
   }
-  const bestSellers = [...counts.entries()]
-    .map(([product_name, total_qty]) => ({ product_name, total_qty }))
+  const bestSellers = [...counts.values()]
+    .map(({ name, qty }) => ({ product_name: name, total_qty: qty }))
     .sort((a, b) => b.total_qty - a.total_qty)
     .slice(0, 5);
 

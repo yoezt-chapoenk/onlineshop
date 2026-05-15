@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { adminClientOrError } from "@/lib/admin/api";
+import { revalidateCatalog } from "@/lib/admin/revalidate";
 import { ProductSchema, productToRow } from "./_shared";
 
 export const runtime = "nodejs";
@@ -71,5 +72,6 @@ export async function POST(request: Request) {
   if (varErr) {
     return NextResponse.json({ error: varErr.message }, { status: 500 });
   }
+  revalidateCatalog(parsed.data.slug);
   return NextResponse.json({ product: data });
 }

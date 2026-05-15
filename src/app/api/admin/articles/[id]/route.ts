@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { adminClientOrError } from "@/lib/admin/api";
+import { revalidateBlog } from "@/lib/admin/revalidate";
 
 const ArticleSchema = z.object({
   slug: z.string().min(1),
@@ -35,6 +36,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       .eq("id", id);
 
     if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+    revalidateBlog(parsed.data.slug);
     return NextResponse.json({ success: true });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
@@ -48,5 +50,6 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
   const { error } = await ctx.supabase.from("articles").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  revalidateBlog();
   return NextResponse.json({ success: true });
 }

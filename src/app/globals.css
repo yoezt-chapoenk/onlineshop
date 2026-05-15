@@ -27,6 +27,23 @@
   --overlay-md: rgba(8,12,20,0.7);
   --overlay-lg: rgba(8,12,20,0.88);
   --scrolled-border: rgba(126,179,232,0.12);
+
+  /* Legacy aliases — several admin pages still reference these tokens
+     from the old OBSCURA palette. Keeping aliases here means the admin
+     stays themable without touching 11 files. New code should use the
+     primary tokens directly. */
+  --color-navy-900: var(--text);
+  --color-navy-700: var(--text);
+  --color-navy-500: var(--text-muted);
+  --color-navy-400: var(--text-muted);
+  --color-navy-300: var(--text-dim);
+  --color-cloud-300: var(--border);
+  --color-cloud-200: var(--border);
+  --color-cloud-100: var(--bg2);
+  --color-cloud-50: var(--surface);
+  --color-blue-200: var(--gold-dim);
+  --color-blue-100: var(--surface2);
+  --color-blue-50: var(--surface);
 }
 
 :root.light-mode {

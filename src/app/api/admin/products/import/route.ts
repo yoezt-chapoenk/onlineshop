@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Papa from "papaparse";
 import ExcelJS from "exceljs";
 import { adminClientOrError } from "@/lib/admin/api";
+import { revalidateCatalog } from "@/lib/admin/revalidate";
 import { ProductSchema, productToRow } from "../_shared";
 
 export const runtime = "nodejs";
@@ -318,5 +319,8 @@ export async function POST(request: Request) {
     }
   }
 
+  if (inserted > 0 || updated > 0) {
+    revalidateCatalog();
+  }
   return NextResponse.json({ inserted, updated, failed });
 }

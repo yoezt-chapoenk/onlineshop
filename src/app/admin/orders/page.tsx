@@ -1,12 +1,10 @@
 import Link from "next/link";
 import { getAdminClient } from "@/lib/supabase/admin";
 import {
-  money,
-  formatDateTime,
-  STATUS_BADGE,
   ORDER_STATUSES,
   type OrderStatus,
 } from "@/lib/admin/format";
+import Pagination from "@/components/admin/Pagination";
 
 export const dynamic = "force-dynamic";
 
@@ -15,22 +13,32 @@ import OrdersTableClient, { type OrderRow } from "./OrdersTableClient";
 interface SearchParams {
   status?: string;
   q?: string;
+  page?: string;
 }
+
+const PAGE_SIZE = 25;
 
 async function loadOrders(searchParams: SearchParams): Promise<{
   configured: boolean;
   orders: OrderRow[];
+  total: number;
+  page: number;
 }> {
+  const page = Math.max(1, Number(searchParams.page ?? 1) || 1);
+  const from = (page - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
   const supabase = getAdminClient();
-  if (!supabase) return { configured: false, orders: [] };
+  if (!supabase) return { configured: false, orders: [], total: 0, page };
 
   let query = supabase
     .from("orders")
     .select(
       "id, order_number, customer_name, customer_email, total, item_count, status, payment_method, created_at",
+      { count: "exact" },
     )
     .order("created_at", { ascending: false })
-    .limit(100);
+    .range(from, to);
 
   if (searchParams.status && ORDER_STATUSES.includes(searchParams.status as OrderStatus)) {
     query = query.eq("status", searchParams.status);
@@ -52,8 +60,13 @@ async function loadOrders(searchParams: SearchParams): Promise<{
     }
   }
 
-  const { data } = await query;
-  return { configured: true, orders: (data ?? []) as OrderRow[] };
+  const { data, count } = await query;
+  return {
+    configured: true,
+    orders: (data ?? []) as OrderRow[],
+    total: count ?? 0,
+    page,
+  };
 }
 
 export default async function AdminOrdersPage({
@@ -62,7 +75,7 @@ export default async function AdminOrdersPage({
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
-  const { configured, orders } = await loadOrders(params);
+  const { configured, orders, total, page } = await loadOrders(params);
   const activeStatus = params.status ?? "all";
 
   return (
@@ -71,7 +84,7 @@ export default async function AdminOrdersPage({
         <div>
           <h1 style={{ fontSize: 24, fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)" }}>Orders</h1>
           <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 4 }}>
-            {orders.length} order{orders.length === 1 ? "" : "s"} shown
+            {total.toLocaleString()} order{total === 1 ? "" : "s"} · showing {orders.length} on page {page}
           </p>
         </div>
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
@@ -138,6 +151,14 @@ export default async function AdminOrdersPage({
       </form>
 
       <OrdersTableClient orders={orders} />
+
+      <Pagination
+        page={page}
+        pageSize={PAGE_SIZE}
+        total={total}
+        basePath="/admin/orders"
+        params={{ status: params.status, q: params.q }}
+      />
     </div>
   );
 }

@@ -75,6 +75,9 @@ export default function CheckoutPage() {
   // Payment
   const [paymentId, setPaymentId] = useState<string>(PAYMENT_METHODS[0].id);
 
+  // Coupon
+  const [couponCode, setCouponCode] = useState("");
+
   // Dynamic payment config from admin settings
   const [paymentConfig, setPaymentConfig] = useState<PaymentConfig>({ banks: [], qrisUrl: null });
   useEffect(() => {
@@ -252,6 +255,7 @@ export default function CheckoutPage() {
             destinationPostalCode: selectedArea.postalCode,
           },
           paymentMethod: paymentId,
+          couponCode: couponCode.trim() || undefined,
           items: items.map((it) => ({
             productId: it.productId,
             variantId: it.variantId,
@@ -479,12 +483,43 @@ export default function CheckoutPage() {
             </>
           )}
 
+          {/* Coupon */}
+          <section style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 32 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>Kode Kupon</h2>
+            <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 8 }}>
+              Punya kode promo? Masukkan di sini — diskon akan dihitung saat order dikirim.
+            </p>
+            <div style={{ marginTop: 16, display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <input
+                type="text"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                placeholder="SUMMER20"
+                style={{
+                  flex: 1,
+                  minWidth: 180,
+                  background: "var(--bg)",
+                  border: "1px solid var(--border)",
+                  color: "var(--text)",
+                  padding: "12px 16px",
+                  outline: "none",
+                  fontSize: 14,
+                  fontFamily: "monospace",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+                disabled={submitting}
+              />
+            </div>
+          </section>
+
           {/* Shipping Method — live rates */}
           <section style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: 32 }}>
             <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>Metode Pengiriman</h2>
             <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 8 }}>
-              Tarif kurir real-time dari Biteship berdasarkan tujuan dan total
-              berat ({(totals.weightGram / 1000).toFixed(2)} kg).
+              {totals.weightGram > 0
+                ? `Tarif kurir berdasarkan tujuan dan total berat (${(totals.weightGram / 1000).toFixed(2)} kg).`
+                : "Tarif kurir berdasarkan tujuan pengiriman."}
             </p>
             <div style={{ marginTop: 24 }}>
               <ShippingRates

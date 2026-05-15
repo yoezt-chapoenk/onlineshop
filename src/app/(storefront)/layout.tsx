@@ -1,6 +1,7 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
+import StorefrontPixels from "@/components/layout/StorefrontPixels";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { SessionProvider } from "@/components/auth/SessionProvider";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
@@ -28,6 +29,7 @@ export default function StorefrontLayout({
           <main className="flex-1">{children}</main>
           <Footer />
           <WhatsAppFloat />
+          <StorefrontPixels />
         </CartProvider>
       </SessionProvider>
     </ThemeProvider>

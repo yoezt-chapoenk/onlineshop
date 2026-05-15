@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { adminClientOrError } from "@/lib/admin/api";
+import { revalidateBlog } from "@/lib/admin/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +49,7 @@ export async function POST(req: Request) {
       .single();
 
     if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+    revalidateBlog(parsed.data.slug);
     return NextResponse.json({ id: data.id });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

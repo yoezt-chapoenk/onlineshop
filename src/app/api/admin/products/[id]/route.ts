@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { adminClientOrError } from "@/lib/admin/api";
+import { revalidateCatalog } from "@/lib/admin/revalidate";
 import { ProductSchema, productToRow } from "../_shared";
 
 export const runtime = "nodejs";
@@ -67,6 +68,7 @@ export async function PATCH(
   if (varErr) {
     return NextResponse.json({ error: varErr.message }, { status: 500 });
   }
+  revalidateCatalog(parsed.data.slug);
   return NextResponse.json({ product: data });
 }
 
@@ -77,7 +79,15 @@ export async function DELETE(
   const ctx = adminClientOrError();
   if (!ctx.ok) return ctx.response;
   const { id } = await params;
+  // Look up the slug first so we can target the right detail-page cache key
+  // before the row disappears.
+  const { data: pre } = await ctx.supabase
+    .from("products")
+    .select("slug")
+    .eq("id", id)
+    .maybeSingle();
   const { error } = await ctx.supabase.from("products").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  revalidateCatalog((pre as { slug?: string } | null)?.slug);
   return NextResponse.json({ ok: true });
 }

@@ -1,47 +1,51 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { adminClientOrError } from "@/lib/admin/api";
-import { revalidateCatalog } from "@/lib/admin/revalidate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const Schema = z.object({
-  name: z.string().min(1),
-  description: z.string().min(1),
-  sort_order: z.number().int(),
+  description: z.string().optional().nullable(),
+  discount_type: z.enum(["percent", "fixed"]).optional(),
+  discount_value: z.number().int().positive().optional(),
+  min_subtotal: z.number().int().nonnegative().optional(),
+  max_uses: z.number().int().positive().nullable().optional(),
+  valid_from: z.string().nullable().optional(),
+  valid_until: z.string().nullable().optional(),
+  is_active: z.boolean().optional(),
 });
 
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ slug: string }> },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const ctx = adminClientOrError();
   if (!ctx.ok) return ctx.response;
-  const { slug } = await params;
   const body = await request.json().catch(() => null);
   const parsed = Schema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+  }
+  const { id } = await params;
   const { data, error } = await ctx.supabase
-    .from("categories")
+    .from("coupons")
     .update(parsed.data)
-    .eq("slug", slug)
+    .eq("id", id)
     .select()
     .maybeSingle();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  revalidateCatalog();
-  return NextResponse.json({ category: data });
+  return NextResponse.json({ coupon: data });
 }
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: Promise<{ slug: string }> },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const ctx = adminClientOrError();
   if (!ctx.ok) return ctx.response;
-  const { slug } = await params;
-  const { error } = await ctx.supabase.from("categories").delete().eq("slug", slug);
+  const { id } = await params;
+  const { error } = await ctx.supabase.from("coupons").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  revalidateCatalog();
   return NextResponse.json({ ok: true });
 }

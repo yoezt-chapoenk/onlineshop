@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/constants";
@@ -76,22 +75,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         {children}
       </body>
-      <Script
-        strategy="afterInteractive"
-        src="https://www.googletagmanager.com/gtag/js?id=G-VK9XHSB6T6"
-      />
-      <Script
-        id="google-analytics"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-VK9XHSB6T6');
-          `,
-        }}
-      />
+      {/* Analytics pixels (GA / Meta / TikTok) are injected only on the
+          storefront via <StorefrontPixels />, driven by the admin settings
+          row. /admin pages intentionally don't load marketing scripts. */}
     </html>
   );
 }

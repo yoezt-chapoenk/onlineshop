@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { adminClientOrError } from "@/lib/admin/api";
+import { revalidateCatalog } from "@/lib/admin/revalidate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -35,5 +36,6 @@ export async function POST(request: Request) {
     .select()
     .maybeSingle();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  revalidateCatalog();
   return NextResponse.json({ category: data });
 }
