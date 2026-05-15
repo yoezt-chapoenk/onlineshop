@@ -1,0 +1,642 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-playfair), Georgia, serif;
+}
+
+:root {
+  --bg: #080c14;
+  --bg2: #0d1220;
+  --surface: #111827;
+  --surface2: #1a2540;
+  --border: #1e2d4a;
+  --gold: #7eb3e8;
+  --gold-light: #aacff5;
+  --gold-dim: #3d6a9e;
+  --text: #e8eef8;
+  --text-muted: #7a90b0;
+  --text-dim: #3a4d6a;
+  --nav-bg: rgba(8,12,20,0.92);
+  --hero-bg-start: #0d1a30;
+  --hero-bg-end: #080c14;
+  --hero-card-bg: rgba(13,18,32,0.7);
+  --hero-card-border: rgba(126,179,232,0.15);
+  --overlay-sm: rgba(8,12,20,0.6);
+  --overlay-md: rgba(8,12,20,0.7);
+  --overlay-lg: rgba(8,12,20,0.88);
+  --scrolled-border: rgba(126,179,232,0.12);
+
+  /* Legacy aliases — several admin pages still reference these tokens
+     from the old OBSCURA palette. Keeping aliases here means the admin
+     stays themable without touching 11 files. New code should use the
+     primary tokens directly. */
+  --color-navy-900: var(--text);
+  --color-navy-700: var(--text);
+  --color-navy-500: var(--text-muted);
+  --color-navy-400: var(--text-muted);
+  --color-navy-300: var(--text-dim);
+  --color-cloud-300: var(--border);
+  --color-cloud-200: var(--border);
+  --color-cloud-100: var(--bg2);
+  --color-cloud-50: var(--surface);
+  --color-blue-200: var(--gold-dim);
+  --color-blue-100: var(--surface2);
+  --color-blue-50: var(--surface);
+}
+
+:root.light-mode {
+  --bg: #ffffff;
+  --bg2: #f5f8fd;
+  --surface: #ffffff;
+  --surface2: #e8f0fa;
+  --border: #d0dff0;
+  --gold: #1a5ca8;
+  --gold-light: #0f4a8c;
+  --gold-dim: #5a8ec4;
+  --text: #0a1628;
+  --text-muted: #3a5070;
+  --text-dim: #8aabcc;
+  --nav-bg: rgba(255,255,255,0.95);
+  --hero-bg-start: #ddeaf8;
+  --hero-bg-end: #f5f8fd;
+  --hero-card-bg: rgba(255,255,255,0.8);
+  --hero-card-border: rgba(26,92,168,0.2);
+  --overlay-sm: rgba(240,246,255,0.7);
+  --overlay-md: rgba(10,22,40,0.4);
+  --overlay-lg: rgba(10,22,40,0.6);
+  --scrolled-border: rgba(26,92,168,0.15);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+/* Grain texture overlay — gated behind a media query so we skip it on
+   coarse-pointer devices (mobile/touch) where the cost of repainting a
+   fullscreen fractal-noise SVG every frame outweighs the aesthetic gain.
+   On desktop we keep the texture but mark the layer as a compositor
+   shortcut (`will-change`) so it stays on its own GPU surface instead of
+   forcing repaints of everything underneath. */
+@media (hover: hover) and (min-width: 768px) {
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.35;
+    will-change: opacity;
+    transition: opacity 0.4s;
+  }
+  html.light-mode body::after {
+    opacity: 0.08;
+  }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes floatUp {
+  from { opacity: 0; transform: translateY(-50%) translateY(20px); }
+  to   { opacity: 1; transform: translateY(-50%) translateY(0); }
+}
+@keyframes scrollLine {
+  0%,100% { opacity: 0.3; transform: scaleY(1); }
+  50%      { opacity: 1;   transform: scaleY(1.4); }
+}
+
+/* Hide scrollbar but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+/* Preserve legacy buttons for admin dashboard compatibility */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  border-radius: 0;
+  font-family: var(--font-sans);
+  transition: background-color 150ms ease, color 150ms ease,
+    border-color 150ms ease, opacity 150ms ease;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--gold);
+  color: var(--bg);
+  border: 1px solid var(--gold);
+}
+.btn-primary:hover {
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+}
+.btn-outline:hover {
+  background: var(--gold);
+  color: var(--bg);
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+.input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  font-size: 0.9375rem;
+  color: var(--text);
+  outline: none;
+}
+.input:focus {
+  border-color: var(--gold);
+}
+.label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.375rem;
+}
+
+/* Admin row hover & action button utilities */
+.admin-row:hover { background: var(--bg2); }
+.admin-btn-edit {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 8px; font-size: 12px; color: var(--text);
+  text-decoration: none; background: transparent; border: none;
+  cursor: pointer; transition: background 0.15s, color 0.15s;
+}
+.admin-btn-edit:hover { background: var(--bg2); color: var(--gold); }
+.admin-btn-delete {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 8px; font-size: 12px; color: var(--error);
+  background: transparent; border: none; cursor: pointer;
+  transition: background 0.15s;
+}
+.admin-btn-delete:hover { background: rgba(239,68,68,0.1); }
+.channel-label { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--border); background: var(--bg2); font-size: 13px; cursor: pointer; transition: border-color 0.2s; }
+.channel-label:hover { border-color: var(--gold); }
+
+/* Hover utilities for server components (no onMouseEnter needed) */
+.hover-surface:hover { background: var(--surface2) !important; }
+.hover-gold-text:hover { color: var(--gold) !important; }
+.hover-bg2:hover { background: var(--bg2) !important; }
+.hover-opacity:hover { opacity: 0.75; }
+.hover-border-gold:hover { border-color: var(--gold) !important; }
+.link-muted { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+.link-muted:hover { color: var(--gold); }
+.link-gold { color: var(--gold); text-decoration: none; transition: opacity 0.2s; }
+.link-gold:hover { opacity: 0.75; }
+.card-hover { transition: background 0.2s; }
+.card-hover:hover { background: var(--surface2) !important; }
+.blog-card:hover { border-color: var(--gold) !important; }
+
+/* Product card — hover lift + quick-view overlay, pure CSS so the card can
+   stay a Server Component. */
+.product-card { cursor: pointer; }
+.product-card-media {
+  position: relative;
+  background: var(--surface);
+  padding: 40px 32px 32px;
+  overflow: hidden;
+  transition: transform 0.35s ease;
+}
+.product-card:hover .product-card-media { transform: translateY(-4px); }
+.product-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.product-card:hover .product-card-overlay { opacity: 1; }
+.product-card:hover .product-card-cta { color: var(--gold) !important; }
+
+/* Collections section — Server Component, hover styled via CSS so we
+   don't ship a client island just to swap background colors. */
+.collections-section { padding: 100px 8%; background: var(--bg2); }
+.collections-section__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 56px;
+}
+.collections-section__eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.collections-section__title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 44px);
+  font-weight: 400;
+  color: var(--text);
+}
+.collections-section__view-all {
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-family: var(--font-sans);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.collections-section__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2px;
+}
+.collection-tile {
+  position: relative;
+  background: var(--surface);
+  padding: 56px 40px;
+  text-decoration: none;
+  display: block;
+  overflow: hidden;
+  height: 100%;
+  transition: background-color 0.3s;
+}
+.collection-tile:hover { background: var(--surface2); }
+.collection-tile__art { margin-bottom: 32px; }
+.collection-tile__count {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.collection-tile__name {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.collection-tile__subtitle { font-size: 13px; color: var(--text-muted); }
+.collection-tile__arrow {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-size: 16px;
+}
+.collection-tile__rule {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, var(--gold), transparent);
+  opacity: 0.4;
+}
+
+/* Hero — pure CSS, no client JS. Animations use opacity/transform only
+   (compositor-cheap). Decorative rings dropped the 120px box-shadow + the
+   drop-shadow filter on the glasses, which together were forcing a giant
+   blur composite on first paint. */
+.hero {
+  height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 70% at 70% 50%, var(--hero-bg-start) 0%, var(--hero-bg-end) 60%);
+}
+.hero__ring {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+}
+.hero__ring--lg {
+  right: 8%;
+  width: 42vw;
+  height: 42vw;
+  max-width: 600px;
+  max-height: 600px;
+  border: 1px solid rgba(201, 169, 110, 0.08);
+}
+.hero__ring--sm {
+  right: 12%;
+  width: 28vw;
+  height: 28vw;
+  max-width: 400px;
+  max-height: 400px;
+  border: 1px solid rgba(201, 169, 110, 0.12);
+}
+.hero__product {
+  position: absolute;
+  right: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 56px;
+  opacity: 0;
+  animation: heroFloatUp 1.2s ease 0.4s forwards;
+}
+.hero__product-caption {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+.hero__content {
+  position: relative;
+  z-index: 1;
+  padding: 0 8%;
+  max-width: 640px;
+}
+.hero__eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.1s forwards;
+}
+.hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(52px, 6vw, 88px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.2s forwards;
+}
+.hero__lede {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.75;
+  max-width: 420px;
+  margin-bottom: 44px;
+  font-weight: 300;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.3s forwards;
+}
+.hero__ctas {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.4s forwards;
+}
+.hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 36px;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-family: var(--font-sans);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+}
+.hero__cta--primary {
+  background: var(--gold);
+  color: var(--bg);
+  border: 1px solid var(--gold);
+  font-weight: 500;
+}
+.hero__cta--primary:hover {
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+  transform: translateY(-1px);
+}
+.hero__cta--ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  font-weight: 400;
+  padding: 14px 32px;
+}
+.hero__cta--ghost:hover {
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+.hero__scroll {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: fadeUp 1s ease 0.9s forwards;
+}
+.hero__scroll span {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.hero__scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--gold-dim), transparent);
+  animation: scrollLine 1.6s ease-in-out infinite;
+}
+@keyframes heroFloatUp {
+  from { opacity: 0; transform: translateY(-50%) translateY(20px); }
+  to   { opacity: 1; transform: translateY(-50%) translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__product,
+  .hero__eyebrow,
+  .hero__title,
+  .hero__lede,
+  .hero__ctas,
+  .hero__scroll {
+    animation: none;
+    opacity: 1;
+  }
+  .hero__scroll-line { animation: none; }
+}
+
+/* Site header — pure CSS so the navbar doesn't repaint on every hover and
+   we can drop the backdrop-filter blur that forces a GPU pass per frame
+   while scrolling. */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 40px;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: padding 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+}
+.site-header--scrolled {
+  padding: 14px 40px;
+  background: var(--nav-bg);
+  border-bottom-color: var(--scrolled-border);
+}
+.site-header__logo {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.18em;
+  color: var(--text);
+  font-weight: 500;
+  text-decoration: none;
+}
+.site-header__links {
+  display: flex;
+  gap: 36px;
+  align-items: center;
+}
+.site-header__link {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.site-header__link:hover { color: var(--gold); }
+.site-header__actions {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.site-header__theme {
+  background: none;
+  border: 1px solid var(--border);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s, color 0.2s;
+}
+.site-header__theme:hover { border-color: var(--gold); color: var(--gold); }
+.site-header__bag {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.site-header__bag-badge {
+  position: absolute;
+  top: -6px;
+  right: -14px;
+  background: var(--gold);
+  color: var(--bg);
+  font-size: 9px;
+  font-weight: 600;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Product detail page — image left / details right on desktop, stacked on
+   mobile. Uses CSS grid so the visual column drives a true 1:1 aspect ratio
+   while the details column can grow with content. */
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .product-detail-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 56px;
+  }
+}
+
+/* Related-products rail — always renders 4 columns on desktop so the
+   "Anda mungkin juga suka" section fits the requested 4 cards. */
+.related-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px 28px;
+}
+@media (min-width: 640px) {
+  .related-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .related-grid { grid-template-columns: repeat(4, 1fr); }
+}

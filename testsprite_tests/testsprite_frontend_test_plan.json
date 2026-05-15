@@ -1,0 +1,696 @@
+[
+  {
+    "id": "TC001",
+    "title": "Complete checkout with area autocomplete, shipping rate selection, and order success landing",
+    "description": "A shopper can fill checkout details, select an area and shipping service, choose a payment method, submit the order, and land on the success page.",
+    "category": "Checkout with Biteship Shipping",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /shop"
+      },
+      {
+        "type": "action",
+        "description": "Open a product from the product grid"
+      },
+      {
+        "type": "action",
+        "description": "Select a product variant option"
+      },
+      {
+        "type": "action",
+        "description": "Add the product to the cart from the product page"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /checkout"
+      },
+      {
+        "type": "action",
+        "description": "Fill a customer name into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid phone number into the phone field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid email address into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type a city or district name into the area autocomplete field"
+      },
+      {
+        "type": "action",
+        "description": "Select an area from the autocomplete dropdown results"
+      },
+      {
+        "type": "action",
+        "description": "Fill a detailed address into the address field"
+      },
+      {
+        "type": "action",
+        "description": "Wait for available shipping rates to be displayed"
+      },
+      {
+        "type": "action",
+        "description": "Select a shipping courier and service"
+      },
+      {
+        "type": "action",
+        "description": "Select a payment method"
+      },
+      {
+        "type": "action",
+        "description": "Submit the order"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the checkout success page"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Add a selected product variant to the cart and adjust quantity with live subtotal updates",
+    "description": "A shopper can add a product variant to the cart, change quantity up and down, and see the subtotal update accordingly.",
+    "category": "Shopping Cart",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /shop"
+      },
+      {
+        "type": "action",
+        "description": "Open a product from the product grid"
+      },
+      {
+        "type": "action",
+        "description": "Select a product variant option"
+      },
+      {
+        "type": "action",
+        "description": "Add the product to the cart from the product page"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /cart"
+      },
+      {
+        "type": "action",
+        "description": "Increase the cart item quantity by 1"
+      },
+      {
+        "type": "action",
+        "description": "Decrease the cart item quantity by 1"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the cart subtotal updates after quantity changes"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Open cart from homepage using cart shortcut",
+    "description": "Verifies a guest can open the cart page using the global cart shortcut and land on the cart view.",
+    "category": "Navigation and Layout",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the cart icon"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the cart page is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Reach shop from homepage using global header navigation",
+    "description": "Verifies a guest can use the header navigation from the homepage to reach the shop page and see products displayed.",
+    "category": "Navigation and Layout",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the header navigation link to view the shop"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a product grid or product list is displayed on the shop page"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Browse catalog with filters and view a product variant on PDP",
+    "description": "A shopper can filter the shop catalog, open a product detail page, and select a variant option successfully.",
+    "category": "Product Browsing",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /shop"
+      },
+      {
+        "type": "action",
+        "description": "Apply the category filter to Eyeglasses"
+      },
+      {
+        "type": "action",
+        "description": "Apply the color filter to Black"
+      },
+      {
+        "type": "action",
+        "description": "Open a product from the product grid"
+      },
+      {
+        "type": "action",
+        "description": "Select a product variant option"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify product specifications, pricing tiers, and variant options are displayed on the product page"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Login and reach account dashboard",
+    "description": "Verifies a returning customer can sign in with valid credentials and land on the account dashboard.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the account dashboard"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Block checkout submission when a required field is missing",
+    "description": "A shopper who leaves a required checkout field blank sees a validation error and cannot proceed to success.",
+    "category": "Checkout with Biteship Shipping",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /shop"
+      },
+      {
+        "type": "action",
+        "description": "Open a product from the product grid"
+      },
+      {
+        "type": "action",
+        "description": "Select a product variant option"
+      },
+      {
+        "type": "action",
+        "description": "Add the product to the cart from the product page"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /checkout"
+      },
+      {
+        "type": "action",
+        "description": "Fill a customer name into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid phone number into the phone field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid email address into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type a city or district name into the area autocomplete field"
+      },
+      {
+        "type": "action",
+        "description": "Select an area from the autocomplete dropdown results"
+      },
+      {
+        "type": "action",
+        "description": "Leave the detailed address field empty"
+      },
+      {
+        "type": "action",
+        "description": "Select a payment method"
+      },
+      {
+        "type": "action",
+        "description": "Submit the order"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a field-level validation error is visible for the missing required field"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Register a new account and reach account dashboard",
+    "description": "Verifies a new customer can register with valid details and land on the account dashboard.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "action",
+        "description": "Fill Test User into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill testuser+{{RANDOM}}@example.com into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid phone number into the phone field"
+      },
+      {
+        "type": "action",
+        "description": "Fill ValidPass123! into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the account dashboard"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Show empty results state when filters exclude all products",
+    "description": "A shopper who applies filters that match no products sees an empty-results message instead of a product grid.",
+    "category": "Product Browsing",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /shop"
+      },
+      {
+        "type": "action",
+        "description": "Apply a combination of filters that excludes all products"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a no-products-found empty state message is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Protect account dashboard from unauthenticated access",
+    "description": "Verifies visiting the account dashboard while logged out redirects the user to the login page.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /account"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is prompted to sign in"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Navigate to collections via mobile menu",
+    "description": "Verifies a guest can open the mobile hamburger menu and navigate to the collections page successfully.",
+    "category": "Navigation and Layout",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Resize the viewport to a mobile width"
+      },
+      {
+        "type": "action",
+        "description": "Click the mobile hamburger menu"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to view collections"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the collections page is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Protect reseller application route from unauthenticated access",
+    "description": "Verifies visiting the reseller application page while logged out redirects the user to the login page.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /account/become-reseller"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is prompted to sign in"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "Reject login with invalid credentials",
+    "description": "Verifies the login form blocks sign-in with incorrect credentials and shows an error state.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill invalid.user@example.com into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill WrongPassword123! into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an authentication error message is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC014",
+    "title": "Remove an item from the cart and see cart recalculated",
+    "description": "A shopper can remove a cart item and the cart updates with a recalculated subtotal.",
+    "category": "Shopping Cart",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /shop"
+      },
+      {
+        "type": "action",
+        "description": "Open a product from the product grid"
+      },
+      {
+        "type": "action",
+        "description": "Select a product variant option"
+      },
+      {
+        "type": "action",
+        "description": "Add the product to the cart from the product page"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /cart"
+      },
+      {
+        "type": "action",
+        "description": "Remove the item from the cart"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the cart shows an empty state or no longer lists the removed item and the subtotal is recalculated"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC015",
+    "title": "Submit reseller application and see pending confirmation",
+    "description": "Verifies an authenticated customer can submit a reseller application and sees a pending review confirmation.",
+    "category": "Reseller Application (Account)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the reseller application page"
+      },
+      {
+        "type": "action",
+        "description": "Fill the reseller application form with valid business details"
+      },
+      {
+        "type": "action",
+        "description": "Submit the reseller application"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a confirmation that the application is pending review is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC016",
+    "title": "Validate required fields on registration",
+    "description": "Verifies the registration form shows validation errors when required fields are missing.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify registration field validation errors are visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC017",
+    "title": "Submit contact message successfully",
+    "description": "Verifies a guest shopper can submit the contact form and see a success confirmation state.",
+    "category": "Contact Form",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /contact"
+      },
+      {
+        "type": "action",
+        "description": "Fill Test Sender into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill testsender+{{RANDOM}}@example.com into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill Wholesale inquiry into the subject field"
+      },
+      {
+        "type": "action",
+        "description": "Fill I would like more information about wholesale pricing and minimum order. into the message field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the contact form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a contact submission success confirmation is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC018",
+    "title": "Request password reset confirmation",
+    "description": "Verifies a shopper can request a password reset and sees a confirmation state on the page.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /forgot-password"
+      },
+      {
+        "type": "action",
+        "description": "Fill testuser+reset+{{RANDOM}}@example.com into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the password reset request form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a password reset request confirmation is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC019",
+    "title": "Reseller application requires mandatory fields",
+    "description": "Verifies the reseller application form blocks submission when required fields are missing and shows validation errors.",
+    "category": "Reseller Application (Account)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the reseller application page"
+      },
+      {
+        "type": "action",
+        "description": "Submit the reseller application"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify reseller application validation errors are visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC020",
+    "title": "Start WhatsApp contact from floating button",
+    "description": "Verifies a guest can use the floating WhatsApp button to initiate a WhatsApp contact action.",
+    "category": "Navigation and Layout",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the floating WhatsApp button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a new tab or window opens to a WhatsApp destination"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC021",
+    "title": "Contact form validates required fields",
+    "description": "Verifies the contact form shows validation errors when submitted with missing required fields.",
+    "category": "Contact Form",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /contact"
+      },
+      {
+        "type": "action",
+        "description": "Submit the contact form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify contact form validation errors are visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC022",
+    "title": "Navigate from login to register screen",
+    "description": "Verifies a shopper can switch from the login screen to the registration screen via the UI navigation.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to create a new account"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the registration form is displayed"
+      }
+    ],
+    "priority": "Low"
+  }
+]
