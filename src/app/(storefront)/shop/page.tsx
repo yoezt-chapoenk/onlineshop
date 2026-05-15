@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getCategories, getProductSummaries } from "@/lib/data";
 import ShopClient from "./ShopClient";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Belanja",
   description:

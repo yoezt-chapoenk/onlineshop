@@ -1,208 +1,95 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/components/cart/CartProvider";
 import { useTheme } from "@/components/layout/ThemeProvider";
+import { useSession } from "@/components/auth/SessionProvider";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 
-export interface HeaderAuthState {
-  isAuthenticated: boolean;
-  displayName: string | null;
-}
+const LINKS = [
+  { label: "Shop", href: "/shop" },
+  { label: "Collections", href: "/collections" },
+  { label: "About", href: "/about" },
+];
 
-export default function Header({ auth }: { auth: HeaderAuthState }) {
+export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const { itemCount, isHydrated } = useCart();
   const { isLightMode, toggleLightMode } = useTheme();
+  const { user } = useSession();
   const [cartOpen, setCartOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    // rAF-throttled scroll handler — the previous implementation called
+    // setState on every scroll event (~120 times/sec on a precision
+    // trackpad), re-rendering the entire navbar. Coalescing to one update
+    // per animation frame keeps the navbar idle while the user scrolls.
+    let frame = 0;
+    let lastValue = false;
+    function onScroll() {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const next = window.scrollY > 40;
+        if (next !== lastValue) {
+          lastValue = next;
+          setScrolled(next);
+        }
+      });
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
-  const links = [
-    { label: "Shop", href: "/shop" },
-    { label: "Collections", href: "/collections" },
-    { label: "About", href: "/about" },
-  ];
+  const displayName = user?.fullName ?? user?.email ?? "Account";
 
   return (
     <>
-      <nav
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1000,
-          padding: scrolled ? "14px 40px" : "22px 40px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          background: scrolled ? "var(--nav-bg)" : "transparent",
-          backdropFilter: scrolled ? "blur(12px)" : "none",
-          borderBottom: scrolled ? "1px solid var(--scrolled-border)" : "none",
-          transition: "all 0.35s ease",
-        }}
-      >
-        {/* Logo */}
-        <Link href="/" style={{ textDecoration: "none" }}>
-          <span
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: 22,
-              letterSpacing: "0.18em",
-              color: "var(--text)",
-              fontWeight: 500,
-            }}
-          >
-            JURAGAN GROSIR
-          </span>
+      <nav className={`site-header ${scrolled ? "site-header--scrolled" : ""}`}>
+        <Link href="/" className="site-header__logo">
+          JURAGAN GROSIR
         </Link>
 
-        {/* Desktop nav */}
-        <div style={{ display: "flex", gap: 36, alignItems: "center" }}>
-          {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontFamily: "var(--font-sans)",
-                fontSize: 12,
-                letterSpacing: "0.16em",
-                color: "var(--text-muted)",
-                textTransform: "uppercase",
-                transition: "color 0.2s",
-                textDecoration: "none"
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--gold)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
-            >
+        <div className="site-header__links">
+          {LINKS.map((l) => (
+            <Link key={l.href} href={l.href} className="site-header__link">
               {l.label}
             </Link>
           ))}
         </div>
 
-        {/* Right actions */}
-        <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
-          {auth.isAuthenticated ? (
-            <Link
-              href="/account"
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--text-muted)",
-                fontSize: 12,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                textDecoration: "none"
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--gold)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
-            >
-              {auth.displayName ?? "Account"}
+        <div className="site-header__actions">
+          {user ? (
+            <Link href="/account" className="site-header__link">
+              {displayName}
             </Link>
           ) : (
-            <Link
-              href="/login"
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--text-muted)",
-                fontSize: 12,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                textDecoration: "none"
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--gold)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
-            >
+            <Link href="/login" className="site-header__link">
               Login
             </Link>
           )}
 
-          {/* Light/Dark toggle */}
           <button
+            type="button"
             onClick={toggleLightMode}
             title={isLightMode ? "Switch to Dark" : "Switch to Light"}
-            style={{
-              background: "none",
-              border: "1px solid var(--border)",
-              cursor: "pointer",
-              width: 30,
-              height: 30,
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--text-muted)",
-              fontSize: 13,
-              flexShrink: 0,
-              transition: "border-color 0.2s, color 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "var(--gold)";
-              e.currentTarget.style.color = "var(--gold)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "var(--border)";
-              e.currentTarget.style.color = "var(--text-muted)";
-            }}
+            className="site-header__theme"
           >
             {isLightMode ? "☀" : "☽"}
           </button>
-          
+
           <button
+            type="button"
             onClick={() => setCartOpen(true)}
-            style={{
-              position: "relative",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-            }}
+            className="site-header__bag"
           >
-            <span
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: 12,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "var(--text-muted)",
-                transition: "color 0.2s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--gold)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
-            >
-              Bag
-            </span>
+            <span className="site-header__link">Bag</span>
             {isHydrated && itemCount > 0 && (
-              <span
-                style={{
-                  position: "absolute",
-                  top: -6,
-                  right: -14,
-                  background: "var(--gold)",
-                  color: "var(--bg)",
-                  fontSize: 9,
-                  fontWeight: 600,
-                  borderRadius: "50%",
-                  width: 16,
-                  height: 16,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {itemCount}
-              </span>
+              <span className="site-header__bag-badge">{itemCount}</span>
             )}
           </button>
         </div>

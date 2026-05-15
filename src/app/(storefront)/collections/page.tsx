@@ -3,6 +3,8 @@ import Link from "next/link";
 import { GlassesPlaceholder } from "@/components/ui/GlassesPlaceholder";
 import { getCategories } from "@/lib/data";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Koleksi",
   description:

@@ -5,6 +5,8 @@ import ProductGrid from "@/components/products/ProductGrid";
 import { getCategories, getProductSummariesByCategory } from "@/lib/data";
 import type { CategorySlug } from "@/lib/types";
 
+export const revalidate = 3600;
+
 interface PageProps {
   params: Promise<{ category: string }>;
 }

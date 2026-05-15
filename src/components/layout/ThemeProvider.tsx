@@ -1,41 +1,44 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 
-type ThemeContextType = {
+interface ThemeContextValue {
   isLightMode: boolean;
   toggleLightMode: () => void;
-};
+}
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextValue>({
+  isLightMode: false,
+  toggleLightMode: () => {},
+});
+
+// Read the theme that the inline init script in the root layout already
+// applied to <html>. Running this in a lazy initializer means we don't
+// need a setState-in-useEffect dance — by the time React hydrates the
+// provider, the DOM already reflects the saved preference, so we can
+// initialize state from it in one shot.
+function readInitial(): boolean {
+  if (typeof window === "undefined") return false;
+  return document.documentElement.classList.contains("light-mode");
+}
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [isLightMode, setIsLightMode] = useState(false);
+  const [isLightMode, setIsLightMode] = useState<boolean>(readInitial);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    // Default to dark mode (which is lack of 'light-mode' class) as requested
-    if (saved === "light") {
-      setIsLightMode(true);
-      document.documentElement.classList.add("light-mode");
-    } else {
-      document.documentElement.classList.remove("light-mode");
-    }
-  }, []);
-
-  const toggleLightMode = () => {
+  const toggleLightMode = useCallback(() => {
     setIsLightMode((prev) => {
       const next = !prev;
-      if (next) {
-        document.documentElement.classList.add("light-mode");
-        localStorage.setItem("theme", "light");
-      } else {
-        document.documentElement.classList.remove("light-mode");
-        localStorage.setItem("theme", "dark");
+      if (typeof window !== "undefined") {
+        document.documentElement.classList.toggle("light-mode", next);
+        try {
+          localStorage.setItem("theme", next ? "light" : "dark");
+        } catch {
+          // Ignore quota / disabled-storage errors.
+        }
       }
       return next;
     });
-  };
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ isLightMode, toggleLightMode }}>
@@ -44,10 +47,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
+export function useTheme(): ThemeContextValue {
+  return useContext(ThemeContext);
 }

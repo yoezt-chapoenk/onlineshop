@@ -1,7 +1,28 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { DM_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/constants";
+
+// next/font self-hosts these via the build pipeline and emits `font-display:
+// swap` preload links, so the browser doesn't block first paint on a
+// fonts.googleapis.com round-trip and there's no CLS when fonts arrive.
+// Restricting weight ranges keeps the bundled font files small — we don't
+// need 100-1000 of either family on the site.
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-dm-sans",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-playfair",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -37,17 +58,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className="h-full antialiased font-sans">
+    <html
+      lang="id"
+      className={`h-full antialiased font-sans ${dmSans.variable} ${playfair.variable}`}
+      suppressHydrationWarning
+    >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
-        <style dangerouslySetInnerHTML={{__html: `
-          :root {
-            --font-playfair: "Playfair Display", serif;
-            --font-dm-sans: "DM Sans", sans-serif;
-          }
-        `}} />
+        {/* Apply saved theme synchronously before React hydrates so there's
+            no flash-of-wrong-theme. This MUST run inline; an effect would
+            paint the default theme for one frame first. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem('theme')==='light'){document.documentElement.classList.add('light-mode')}}catch(e){}`,
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         {children}
